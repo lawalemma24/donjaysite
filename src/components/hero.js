@@ -5,7 +5,7 @@ export default function Hero() {
     <section className="relative h-screen w-full flex items-center justify-center text-center">
       {/* Background image */}
       <Image
-        src="/hero-bg.jpg" // put your image in /public/hero-bg.jpg
+        src="/hero-bg.png" // put your image in /public/hero-bg.jpg
         alt="Hero background"
         fill
         priority
