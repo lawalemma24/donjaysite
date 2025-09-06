@@ -1,9 +1,9 @@
-import Image from "next/image";
+import Hero from "@/components/hero";
 
 export default function Home() {
   return (
-    <div className="text-6xl font-bold text-center mt-5 text-primary">
-      <h1>Donjay Autos Website</h1>
-    </div>
+    <>
+      <Hero />
+    </>
   );
 }
