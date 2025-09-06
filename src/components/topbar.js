@@ -2,34 +2,35 @@
 import { useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
+import { Tags, Shuffle } from "lucide-react";
 
 export default function TopBar() {
   const [menuOpen, setMenuOpen] = useState(false);
   const [garageOpen, setGarageOpen] = useState(false);
 
   return (
-    <div className="w-full max-w-[1000px] mx-auto bg-white shadow-md rounded-lg mt-3">
-      <div className="max-w-7xl mx-auto flex items-center justify-between px-6 py-2">
+    <div className="absolute md:top-4 top-0 left-0 w-full shadow-md z-20">
+      <div className="max-w-[900px] mx-auto   bg-secondary flex items-center justify-between px-6 py-3 md:rounded-lg">
         {/* Logo */}
         <Link href="/" className="flex items-center gap-2">
           <Image
             src="/images/logo.png"
             alt="Don-Jay Autos Limited"
-            width={100}
-            height={40}
+            width={90}
+            height={35}
             priority
           />
         </Link>
 
         {/* Hamburger for mobile */}
         <button
-          className="md:hidden text-gray-700 focus:outline-none"
+          className="3xl:hidden text-gray-700 focus:outline-none"
           onClick={() => setMenuOpen(!menuOpen)}
         >
           {menuOpen ? (
             <svg
               xmlns="http://www.w3.org/2000/svg"
-              className="h-6 w-6"
+              className="h-8 w-8"
               fill="none"
               viewBox="0 0 24 24"
               stroke="currentColor"
@@ -44,7 +45,7 @@ export default function TopBar() {
           ) : (
             <svg
               xmlns="http://www.w3.org/2000/svg"
-              className="h-6 w-6"
+              className="h-8 w-8"
               fill="none"
               viewBox="0 0 24 24"
               stroke="currentColor"
@@ -60,13 +61,13 @@ export default function TopBar() {
         </button>
 
         {/* Desktop navigation */}
-        <nav className="hidden md:flex items-center gap-8">
-          <Link href="/" className="hover:text-blue-600">
+        <nav className="hidden 3xl:flex items-center gap-8 text-sm">
+          <Link href="/" className="hover:text-blue">
             Home
           </Link>
 
           <div className="relative group">
-            <button className="flex items-center gap-1 hover:text-blue-600">
+            <button className="flex items-center gap-1 hover:text-blue">
               Garage
               <svg
                 xmlns="http://www.w3.org/2000/svg"
@@ -83,29 +84,32 @@ export default function TopBar() {
                 />
               </svg>
             </button>
-            <div className="absolute left-0 mt-2 hidden group-hover:block bg-white border rounded shadow-md">
+            <div className="absolute left-0  hidden group-hover:block bg-white  rounded shadow-md min-w-[160px]">
               <Link
-                href="/garage/cars"
-                className="block px-4 py-2 hover:bg-gray-100"
+                href="/garage/buy-swap"
+                className="flex items-center gap-2 px-4 py-2 text-blue hover:bg-gray-100"
               >
-                Cars
+                <Shuffle size={16} className="text-blue" />
+                Buy or Swap
               </Link>
+
               <Link
-                href="/garage/bikes"
-                className="block px-4 py-2 hover:bg-gray-100"
+                href="/garage/sell"
+                className="flex items-center gap-2 px-4 py-2 text-blue hover:bg-gray-100"
               >
-                Bikes
+                <Tags size={16} className="text-blue" />
+                Sell
               </Link>
             </div>
           </div>
 
-          <Link href="/book-inspection" className="hover:text-blue-600">
+          <Link href="/book-inspection" className="hover:text-blue">
             Book Inspection
           </Link>
-          <Link href="/about" className="hover:text-blue-600">
+          <Link href="/about" className="hover:text-blue">
             About Us
           </Link>
-          <Link href="/contact" className="hover:text-blue-600">
+          <Link href="/contact" className="hover:text-blue">
             Contact Us
           </Link>
         </nav>
@@ -113,7 +117,7 @@ export default function TopBar() {
         {/* Desktop button */}
         <Link
           href="/auth/login"
-          className="hidden md:block bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700"
+          className="hidden 3xl:block bg-blue text-white px-4 py-2 rounded-lg hover:bg-blue-700"
         >
           Login/Register
         </Link>
@@ -121,14 +125,14 @@ export default function TopBar() {
 
       {/* Mobile dropdown menu */}
       {menuOpen && (
-        <div className="md:hidden px-6 pb-4 space-y-3">
-          <Link href="/" className="block hover:text-blue-600">
+        <div className="3xl:hidden px-6 py-4 space-y-3 bg-white ">
+          <Link href="/" className="block hover:text-blue">
             Home
           </Link>
 
           <button
             onClick={() => setGarageOpen(!garageOpen)}
-            className="flex items-center gap-1 w-full text-left hover:text-blue-600"
+            className="flex items-center gap-1 w-full text-left hover:text-blue"
           >
             Garage
             <svg
@@ -148,28 +152,28 @@ export default function TopBar() {
           </button>
           {garageOpen && (
             <div className="pl-4 space-y-2">
-              <Link href="/garage/cars" className="block hover:text-blue-600">
+              <Link href="/garage/cars" className="block hover:text-blue">
                 Cars
               </Link>
-              <Link href="/garage/bikes" className="block hover:text-blue-600">
+              <Link href="/garage/bikes" className="block hover:text-blue">
                 Bikes
               </Link>
             </div>
           )}
 
-          <Link href="/book-inspection" className="block hover:text-blue-600">
+          <Link href="/book-inspection" className="block hover:text-blue">
             Book Inspection
           </Link>
-          <Link href="/about" className="block hover:text-blue-600">
+          <Link href="/about" className="block hover:text-blue">
             About Us
           </Link>
-          <Link href="/contact" className="block hover:text-blue-600">
+          <Link href="/contact" className="block hover:text-blue">
             Contact Us
           </Link>
 
           <Link
             href="/auth/login"
-            className="block bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700"
+            className="block bg-blue text-white max-w-[500px] px-4 py-2 rounded hover:bg-blue-700"
           >
             Login/Register
           </Link>

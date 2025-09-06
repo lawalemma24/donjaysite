@@ -1,31 +1,40 @@
 import Image from "next/image";
+import { Tags } from "lucide-react";
+import { Shuffle } from "lucide-react";
 
 export default function Hero() {
   return (
-    <section className="relative h-screen w-full flex items-center justify-center text-center">
-      {/* Background image */}
+    <section className="relative h-[80vh] md:h[85vh] w-full flex items-center justify-center text-center mt-0">
       <Image
-        src="/hero-bg.jpg" // or change to .png if your image is PNG
+        src="/images/hero.png"
         alt="Hero background"
         fill
         priority
         className="object-cover"
       />
 
-      {/* Dark overlay for readability */}
-      <div className="absolute inset-0 bg-black/50" />
+      <div className="absolute inset-0 bg-black/30" />
 
-      {/* Content */}
       <div className="relative z-10 text-white px-4">
-        <h1 className="text-4xl md:text-6xl font-bold">
-          Welcome to Don-Jay Autos
-        </h1>
-        <p className="mt-4 text-lg md:text-xl max-w-2xl mx-auto">
-          Driving trust and quality with every car we sell and service.
+        <p className="mb-5 md:text-2xl text-xl max-w-2xl mx-auto">
+          Your All-in-One Car Marketplace
         </p>
-        <button className="mt-6 bg-blue-600 px-6 py-3 rounded-lg font-semibold hover:bg-blue-700">
-          Explore Garage
-        </button>
+        <h1 className="text-3xl mb-10 md:text-5xl font-semibold">
+          <span className="text-orange">Buy , Sell ,Swap </span> or{" "}
+          <span className="text-orange">Inspect </span> with ease
+        </h1>
+
+        <div className="grid grid-cols-2 gap-4  bg-white max-w-[400px] mx-auto rounded">
+          <div className="flex items-center gap-2 px-4 py-4 border-r border-text-muted text-blue cursor-pointer">
+            <Shuffle size={16} className="text-blue-600" />
+            <span>Buy or Swap</span>
+          </div>
+
+          <div className="flex items-center gap-2 px-4 py-4 text-blue cursor-pointer">
+            <Tags size={16} className="text-blue-600" />
+            <span>Sell</span>
+          </div>
+        </div>
       </div>
     </section>
   );
