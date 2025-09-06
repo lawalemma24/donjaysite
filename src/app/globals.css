@@ -4,11 +4,13 @@
   --font-display: "Satoshi", "sans-serif";
   --breakpoint-3xl: 120rem;
   --color-primary: oklch(53% 0.175 29.234);
-  --color-avocado-200: oklch(0.98 0.04 113.22);
-  --color-avocado-300: oklch(0.94 0.11 115.03);
-  --color-avocado-400: oklch(0.92 0.19 114.08);
-  --color-avocado-500: oklch(0.84 0.18 117.33);
-  --color-avocado-600: oklch(0.53 0.12 118.34);
+  --color-secondary: oklch(1 0 0);
+  --color-accent: oklch(0.452 0.313214 264.052 / 10.2%);
+  --color-black: oklch(0 0 0);
+  --color-orange: oklch(0.7927 0.171 70.67);
+  --color-text-muted: oklch(0.7348 0 0);
+  --color-lightgrey: oklch(0.8452 0 0);
+  --color-blue: oklch(0.452 0.313214 264.052);
   --ease-fluid: cubic-bezier(0.3, 0, 0, 1);
   --ease-snappy: cubic-bezier(0.2, 0, 0, 1);
   /* ... */
