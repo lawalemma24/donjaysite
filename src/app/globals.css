@@ -1,28 +1,17 @@
-@import url('https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;1,100;1,200;1,300&display=swap');
+@import "tailwindcss";
 
-
-:root {
-  --color-primary: #0000FF;
-  --color-secondary: #FFA500;
-  --color-accent: #10b981;
-  --color-background: #f9fafb;
-  --color-background2:#000000;
-  --color-background3:#E5E5FF;
-  --color-text: ##000000;
-  --color2-text:#FFA500;
-  --border-color:#FFA500;
-  --color3-text:#FFC107;
-  --font-family: 'Poppins', sans-serif;
-  --border-radius: 0.5rem;
-}
-
-button {
-  background-color: var(--color-primary);
-  color: white;
-  padding: 0.5rem 1rem;
-  border: none;
-  border-radius: var(--border-radius);
-  cursor: pointer;
-  font-family: var(--font-family);
-  transition: background-color 0.3s ease;
+@theme {
+  --font-display: "Satoshi", "sans-serif";
+  --breakpoint-3xl: 120rem;
+  --color-primary: oklch(53% 0.175 29.234);
+  --color-secondary: oklch(1 0 0);
+  --color-accent: oklch(0.452 0.313214 264.052 / 10.2%);
+  --color-black: oklch(0 0 0);
+  --color-orange: oklch(0.7927 0.171 70.67);
+  --color-text-muted: oklch(0.7348 0 0);
+  --color-lightgrey: oklch(0.8452 0 0);
+  --color-blue: oklch(0.452 0.313214 264.052);
+  --ease-fluid: cubic-bezier(0.3, 0, 0, 1);
+  --ease-snappy: cubic-bezier(0.2, 0, 0, 1);
+  /* ... */
 }
