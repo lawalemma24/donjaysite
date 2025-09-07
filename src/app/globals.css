@@ -13,9 +13,28 @@
   --color-blue: oklch(0.452 0.313214 264.052);
   --ease-fluid: cubic-bezier(0.3, 0, 0, 1);
   --ease-snappy: cubic-bezier(0.2, 0, 0, 1);
+  --input-bg:#FFFFFF;
+  --input-border: #A9A9A9;
+  --input-border-focus: #FF6600;
+  --input-placeholder: #A9A9A9;
+  --input-text: #000000;
+  --input-label: #000000;
+  --input-error: #FF0000;
+  --input-success: #00FF00;
+
   /* ... */
 }
 
 body {
   font-family: var(--font-poppins);
+}
+
+input{
+  background-color: var(--input-bg);
+  width: 100%;
+  border: 2px solid var(--input-border);
+  color: var(--input-text);
+  padding: 0.5rem;
+  border-radius: 20px;
+  transition: border-color 0.3s var(--ease-fluid), box-shadow 0.3s var(--ease-fluid);
 }
