@@ -1,3 +1,4 @@
+import Footer from "@/components/footer";
 import "./globals.css";
 import TopBar from "@/components/topbar";
 import { Poppins } from "next/font/google";
@@ -19,6 +20,7 @@ export default function RootLayout({ children }) {
       <body className={`${poppins.variable} antialiased`}>
         <TopBar />
         {children}
+        <Footer />
       </body>
     </html>
   );
