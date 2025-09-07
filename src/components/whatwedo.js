@@ -47,7 +47,6 @@ const services = [
 export default function WhatWeDo() {
   return (
     <section className="text-center bg-black w-full">
-      {/* Brand logos row */}
       <div className="flex flex-wrap items-center bg-white justify-center md:gap-14 gap-8 pb-8 pt-5 w-[90%] max-w-[1000px] mx-auto">
         {brands.map((src, i) => (
           <Image
@@ -62,7 +61,6 @@ export default function WhatWeDo() {
       </div>
 
       <div className="py-10 bg-white md:px-12 w-full px-6">
-        {/* Title + Description */}
         <h2 className="text-3xl font-semibold text-black mb-2">What We Do</h2>
         <div className="w-20 h-1 bg-orange mx-auto mb-6"></div>
         <p className="max-w-2xl mx-auto text-gray-600 mb-12">
@@ -89,7 +87,6 @@ export default function WhatWeDo() {
           ))}
         </div>
 
-        {/* CTA Button */}
         <div className="mt-10">
           <Link href="/services">
             <button className="bg-blue text-white px-6 py-2 rounded-lg shadow hover:bg-blue-700 transition">
