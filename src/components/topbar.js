@@ -9,8 +9,8 @@ export default function TopBar() {
   const [garageOpen, setGarageOpen] = useState(false);
 
   return (
-    <div className="absolute md:top-4 top-0 left-0 w-full  z-20">
-      <div className="max-w-[900px] mx-auto   bg-secondary flex items-center shadow justify-between px-6 py-3 md:rounded-lg">
+    <div className="absolute md:top-4 top-0 left-0 w-full shadow-md z-20">
+      <div className="max-w-[900px] mx-auto   bg-secondary flex items-center justify-between px-6 py-3 md:rounded-lg">
         {/* Logo */}
         <Link href="/" className="flex items-center gap-2">
           <Image

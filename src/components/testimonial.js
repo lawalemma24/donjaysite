@@ -4,22 +4,22 @@ const testimonials = [
   {
     name: "Andrew John",
     comment:
-      "I sold my Toyota Corolla in just a few hours. The process was straightforward and stress-free.",
-    image: "/images/testimonial1.png",
+      "I sold my old Toyota Corolla in just a few days. The process was straightforward and stress-free.",
+    image: "https://randomuser.me/api/portraits/men/34.jpg",
     stars: 5,
   },
   {
     name: "Gabriel Sam",
     comment:
       "Booked an inspection before buying a used car. The report was thorough and helped me make the right decision.",
-    image: "/images/testimonial2.png",
+    image: "https://randomuser.me/api/portraits/men/56.jpg",
     stars: 5,
   },
   {
     name: "Cynthia Philip",
     comment:
       "I bought my Honda Accord here and it was exactly as described clean, affordable, and ready to drive.",
-    image: "/images/testimonial3.png",
+    image: "https://randomuser.me/api/portraits/women/16.jpg",
     stars: 5,
   },
 ];

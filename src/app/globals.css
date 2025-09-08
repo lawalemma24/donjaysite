@@ -6,13 +6,13 @@
   --color-primary: oklch(53% 0.175 29.234);
   --color-secondary: oklch(1 0 0);
   --color-accent: oklch(0.452 0.313214 264.052 / 10.2%);
-
   --color-black: oklch(0 0 0);
   --color-orange: oklch(0.7927 0.171 70.67);
   --color-text-muted: oklch(0.7348 0 0);
   --color-lightgrey: oklch(0.8452 0 0);
   --color-blue: oklch(0.452 0.313214 264.052);
-
+  --ease-fluid: cubic-bezier(0.3, 0, 0, 1);
+  --ease-snappy: cubic-bezier(0.2, 0, 0, 1);
   /* ... */
 }
 

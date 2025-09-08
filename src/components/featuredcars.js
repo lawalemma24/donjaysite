@@ -16,25 +16,25 @@ const cars = [
   {
     name: "2025 Toyota Camry",
     price: 40000000,
-    image: "/images/toyota-camry.png",
+    image: "/images/toyota-camry.jpg",
     logo: "/images/toyota.png",
   },
   {
     name: "2025 Lexus RX 350",
     price: 60000000,
-    image: "/images/lexus-rx.png",
+    image: "/images/lexus-rx.jpg",
     logo: "/images/lexus.png",
   },
   {
     name: "2023 Nissan Maxima",
     price: 60000000,
-    image: "/images/nissan-maxima.png",
+    image: "/images/nissan-maxima.jpg",
     logo: "/images/nissan.png",
   },
   {
     name: "2021 Volkswagen Golf",
     price: 20000000,
-    image: "/images/vw-golf.png",
+    image: "/images/vw-golf.jpg",
     logo: "/images/vw.png",
   },
 ];
