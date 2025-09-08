@@ -2,6 +2,7 @@
 
 import { usePathname } from "next/navigation";
 import TopBar from "@/components/topbar";
+import Footer from "@/components/footer";
 
 export default function TopBarWrapper({ children }) {
   const pathname = usePathname();
@@ -11,6 +12,7 @@ export default function TopBarWrapper({ children }) {
     <>
       {!isAuthPage && <TopBar />}
       {children}
+      {!isAuthPage && <Footer />}
     </>
   );
 }
