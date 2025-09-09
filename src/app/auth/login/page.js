@@ -82,7 +82,7 @@ export default function Login() {
                 <label htmlFor="rememberMe">Remember me</label>
               </div>
               <a
-                href="/auth/forgot-password"
+                href="/auth/forgotpassword"
                 className="text-sm text-blue-600 hover:text-blue-800 transition-colors xs:self-center"
               >
                 Forgot Password?
