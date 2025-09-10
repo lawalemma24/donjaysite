@@ -102,11 +102,11 @@ export default function About() {
           <div className="max-w-6xl mx-auto px-4 grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
             <div className="relative">
               <Image
-                src="/images/hero.png"
+                src="/images/aboutus-mission.png"
                 alt="Our Mission"
                 width={500}
                 height={650}
-                className="rounded-2xl shadow-md border-16 border-r-blue border-t-blue border-l-orange border-b-orange "
+                className="rounded-4xl shadow-md border-16 border-r-blue border-t-blue border-l-orange border-b-orange "
               />
             </div>
 
@@ -171,7 +171,7 @@ export default function About() {
 
             <div className="absolute -bottom-5 -left-4 bg-white rounded-xl shadow-lg p-2">
               <Image
-                src="/images/accord.png"
+                src="/images/about-us-choose.png"
                 alt="Car Keys"
                 width={200}
                 height={150}

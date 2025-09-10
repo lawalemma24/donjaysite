@@ -131,7 +131,6 @@ export default function CarMarketplace() {
         className="relative bg-cover bg-center h-[400px] flex items-center justify-center text-center"
         style={{ backgroundImage: "url('/images/hero.png')" }}
       >
-        {/* Overlay */}
         <div className="absolute inset-0 bg-black/60"></div>
 
         {/* Content */}
@@ -262,28 +261,24 @@ export default function CarMarketplace() {
           </div>
         </aside>
 
-        {/* Main Content */}
         <main className="flex-1">
-          {/* Search Bar */}
-          <div className="flex gap-2 mb-6">
+          <div className="flex flex-col sm:flex-row gap-2 mb-6 w-full">
             <input
               type="text"
               placeholder="Search for cars"
-              className="flex-1 border border-lightgrey  rounded-lg px-4 py-2 focus:outline-1 focus:outline-blue focus:border-transparent"
+              className="flex-1 w-full border border-lightgrey rounded-lg px-4 py-2 focus:outline-1 focus:outline-blue focus:border-transparent"
             />
-            <button className="bg-blue text-white px-6 rounded-lg hover:bg-blue-700">
+            <button className="w-full sm:w-auto bg-blue text-white px-6 py-2 rounded-lg hover:bg-blue-700">
               Search
             </button>
           </div>
 
-          {/* Car Grid */}
           <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
             {paginatedCars.map((car) => (
               <CarCard key={car.id} car={car} />
             ))}
           </div>
 
-          {/* Pagination */}
           <div className="flex justify-center items-center gap-2 mt-8">
             <button
               className="p-2 border rounded disabled:opacity-50"

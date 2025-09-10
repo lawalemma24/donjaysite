@@ -152,11 +152,11 @@ export default function TopBar() {
           </button>
           {garageOpen && (
             <div className="pl-4 space-y-2">
-              <Link href="/garage/cars" className="block hover:text-blue">
-                Cars
+              <Link href="/garage/buy-swap" className="block hover:text-blue">
+                Buy or Swap
               </Link>
-              <Link href="/garage/bikes" className="block hover:text-blue">
-                Bikes
+              <Link href="/garage/sell" className="block hover:text-blue">
+                Sell
               </Link>
             </div>
           )}
