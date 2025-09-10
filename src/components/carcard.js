@@ -1,4 +1,5 @@
 import Image from "next/image";
+import Link from "next/link";
 
 export default function CarCard({ car }) {
   return (
@@ -24,9 +25,11 @@ export default function CarCard({ car }) {
         </p>
 
         <div className="flex justify-end mt-2">
-          <button className="bg-blue hover:bg-blue-700 text-white text-sm font-semibold px-5 py-2 rounded-lg shadow">
-            View
-          </button>
+          <Link href="/garage/details">
+            <button className="bg-blue hover:bg-blue-700 text-white text-sm font-semibold px-5 py-2 rounded-lg shadow">
+              View
+            </button>
+          </Link>
         </div>
       </div>
     </div>
