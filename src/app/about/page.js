@@ -62,21 +62,21 @@ export default function About() {
         <div className="text-center px-4">
           <div className="flex flex-col lg:flex-row items-center justify-center gap-6 mb-8">
             <Image
-              src="/images/accord.png"
+              src="/images/about-us-2.png"
               alt="Car sales"
               width={350}
               height={400}
               className="rounded-2xl shadow-md"
             />
             <Image
-              src="/images/accord.png"
+              src="/images/about-us-1.png"
               alt="Car guidance"
               width={400}
               height={600}
               className="rounded-2xl shadow-md"
             />
             <Image
-              src="/images/accord.png"
+              src="/images/about-us-3.png"
               alt="Car inspection"
               width={350}
               height={400}
@@ -102,7 +102,7 @@ export default function About() {
           <div className="max-w-6xl mx-auto px-4 grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
             <div className="relative">
               <Image
-                src="/images/aboutus-mission.png"
+                src="/images/about-us-hero1.png"
                 alt="Our Mission"
                 width={500}
                 height={650}
@@ -162,7 +162,7 @@ export default function About() {
 
           <div className="relative">
             <Image
-              src="/images/hero.png"
+              src="/images/about-us-6.png"
               alt="Luxury Car"
               width={500}
               height={350}
@@ -171,7 +171,7 @@ export default function About() {
 
             <div className="absolute -bottom-5 -left-4 bg-white rounded-xl shadow-lg p-2">
               <Image
-                src="/images/about-us-choose.png"
+                src="/images/about-us-4.png"
                 alt="Car Keys"
                 width={200}
                 height={150}
