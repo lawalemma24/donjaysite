@@ -66,21 +66,21 @@ export default function About() {
               alt="Car sales"
               width={350}
               height={400}
-              className="rounded-2xl shadow-md"
+              className="rounded-2xl"
             />
             <Image
               src="/images/about-us-1.png"
               alt="Car guidance"
               width={400}
               height={600}
-              className="rounded-2xl shadow-md"
+              className="rounded-2xl"
             />
             <Image
               src="/images/about-us-3.png"
               alt="Car inspection"
               width={350}
               height={400}
-              className="rounded-2xl shadow-md"
+              className="rounded-2xl "
             />
           </div>
           <p className="text-black max-w-3xl mx-auto mt-16 mb-16">
@@ -102,7 +102,7 @@ export default function About() {
           <div className="max-w-6xl mx-auto px-4 grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
             <div className="relative">
               <Image
-                src="/images/about-us-hero1.png"
+                src="/images/aboutus-mission.png"
                 alt="Our Mission"
                 width={500}
                 height={650}
