@@ -3,6 +3,7 @@ import { useState } from "react";
 import Image from "next/image";
 import RelatedCars from "@/components/relatedcars";
 import { Eye } from "lucide-react";
+import Link from "next/link";
 
 const allImages = [
   "/images/viewcar.png",
@@ -142,12 +143,17 @@ export default function CarDetails() {
             <hr className="my-4 border-0 h-[1px] bg-lightgrey" />
 
             <div className="flex gap-4 mt-6">
-              <button className="flex-1 border border-blue-600 text-blue-600 rounded-lg px-4 py-2 font-medium hover:bg-blue-50">
-                Swap
-              </button>
-              <button className="flex-1 bg-blue-600 text-white rounded-lg px-4 py-2 font-medium hover:bg-blue-700">
-                Buy
-              </button>
+              <Link href="/garage/swapcar">
+                <button className="flex-1 border border-blue-600 text-blue-600 rounded-lg px-9 py-2 font-medium hover:bg-blue-50">
+                  Swap
+                </button>
+              </Link>
+
+              <Link href="/garage/ordersummary">
+                <button className="flex-1 bg-blue-600 text-white rounded-lg px-9 py-2 font-medium hover:bg-blue-700">
+                  Buy
+                </button>
+              </Link>
             </div>
 
             <hr className="my-4 border-0 h-[1px] bg-lightgrey" />
