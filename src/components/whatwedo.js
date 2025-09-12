@@ -26,14 +26,14 @@ const services = [
     desc: "Looking for your next ride? Browse our cars for sale and drive home a vehicle that suits your needs and budget.",
     icon: <Tag size={32} className="text-yellow-500" />,
     bg: "bg-yellow-100",
-    link: "/services/buy",
+    link: "/garage/buy-swap",
   },
   {
     title: "Swap Car",
     desc: "Exchange your current car for another from our collection. Upgrade with ease and enjoy a smarter way to switch rides.",
     icon: <Shuffle size={32} className="text-green-500" />,
     bg: "bg-green-100",
-    link: "/services/swap",
+    link: "/garage/buy-swap",
   },
   {
     title: "Book Inspection",
@@ -88,7 +88,7 @@ export default function WhatWeDo() {
         </div>
 
         <div className="mt-10">
-          <Link href="/services">
+          <Link href="/auth/register">
             <button className="bg-blue text-white px-6 py-2 rounded-lg shadow hover:bg-blue-700 transition">
               Get Started
             </button>

@@ -1,6 +1,7 @@
 import Image from "next/image";
 import { Tags } from "lucide-react";
 import { Shuffle } from "lucide-react";
+import Link from "next/link";
 
 export default function Hero() {
   return (
@@ -24,16 +25,24 @@ export default function Hero() {
           <span className="text-orange">Inspect </span> with ease
         </h1>
 
-        <div className="grid grid-cols-2 gap-4  bg-white max-w-[400px] mx-auto rounded">
-          <div className="flex items-center gap-2 px-4 py-4 border-r border-text-muted text-blue cursor-pointer">
+        <div className="grid grid-cols-2 gap-4 bg-white max-w-[400px] mx-auto rounded">
+          {/* Buy or Swap */}
+          <Link
+            href="/garage/buy-swap"
+            className="flex items-center gap-2 px-4 py-4 border-r border-text-muted text-blue cursor-pointer hover:bg-gray-50"
+          >
             <Shuffle size={16} className="text-blue-600" />
             <span>Buy or Swap</span>
-          </div>
+          </Link>
 
-          <div className="flex items-center gap-2 px-4 py-4 text-blue cursor-pointer">
+          {/* Sell */}
+          <Link
+            href="/garage/sell"
+            className="flex items-center gap-2 px-4 py-4 text-blue cursor-pointer hover:bg-gray-50"
+          >
             <Tags size={16} className="text-blue-600" />
             <span>Sell</span>
-          </div>
+          </Link>
         </div>
       </div>
     </section>
