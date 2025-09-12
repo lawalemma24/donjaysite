@@ -72,7 +72,7 @@ const links = [
     items: [
       { label: "Home", url: "/" },
       { label: "About Us", url: "/about" },
-      { label: "Featured Cars", url: "/cars" },
+      { label: "Featured Cars", url: "/garage/buy-swap" },
       { label: "What We Do", url: "/services" },
       { label: "Testimonials", url: "/testimonials" },
       { label: "Contact Us", url: "/contact" },
@@ -81,9 +81,9 @@ const links = [
   {
     title: "Services",
     items: [
-      { label: "Buy Car", url: "/services/buy" },
-      { label: "Sell Car", url: "/services/sell" },
-      { label: "Swap Cars", url: "/services/swap" },
+      { label: "Buy Car", url: "/garage/buy-swap" },
+      { label: "Sell Car", url: "/garage/sell" },
+      { label: "Swap Cars", url: "/garage/buy-swap" },
       { label: "Book Inspection", url: "/services/inspection" },
     ],
   },

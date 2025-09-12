@@ -32,10 +32,10 @@ const PaymentCard = () => {
         <h2 className="text-xl font-bold text-center mb-6">Payment Details</h2>
 
         {/* Tabs */}
-        <div className="flex justify-between gap-3 mb-6">
+        <div className="flex justify-between gap-3 mb-6 text-xs">
           <button
             onClick={() => setTab("card")}
-            className={`flex items-center gap-2 px-4 py-2 border rounded-md text-sm font-medium ${
+            className={`flex items-center gap-2 px-4 py-2 border rounded-md font-medium ${
               tab === "card"
                 ? "border-blue text-blue-600"
                 : "border-gray-300 text-gray-500"
@@ -45,7 +45,7 @@ const PaymentCard = () => {
           </button>
           <button
             onClick={() => setTab("bank")}
-            className={`flex items-center gap-2 px-4 py-2 border rounded-md text-sm font-medium ${
+            className={`flex items-center gap-2 px-4 py-2 border rounded-md  font-medium ${
               tab === "bank"
                 ? "border-blue text-blue-600"
                 : "border-gray-300 text-gray-500"
@@ -55,7 +55,7 @@ const PaymentCard = () => {
           </button>
           <button
             onClick={() => setTab("delivery")}
-            className={`flex items-center gap-2 px-4 py-2 border rounded-md text-sm font-medium ${
+            className={`flex items-center gap-2 px-4 py-2 border rounded-md font-medium ${
               tab === "delivery"
                 ? "border-blue text-blue-600"
                 : "border-gray-300 text-gray-500"
