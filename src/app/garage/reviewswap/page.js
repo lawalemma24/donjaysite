@@ -114,7 +114,7 @@ const ReviewSwapPage = () => {
 
           {/* Balance + note */}
           <div className="border-t border-gray-200 pt-6">
-            <div className="flex justify-between font-semibold text-xl my-4">
+            <div className="flex justify-between flex-col md:flex-row font-semibold text-xl my-4">
               <span>Balance to Pay</span>
               <span className="text-green-700 text-sm">pending review</span>
             </div>
@@ -128,7 +128,7 @@ const ReviewSwapPage = () => {
           <div className="mt-8">
             <button
               onClick={() => setShowConfirm(true)}
-              className="w-full bg-blue text-white font-medium py-3 rounded-xl shadow-lg hover:bg-blue-700 transition duration-300"
+              className="w-full bg-blue text-white font-medium py-1 px-2 rounded-xl shadow-lg hover:bg-blue-700 transition duration-300"
             >
               Confirm & Submit Swap Request
             </button>
