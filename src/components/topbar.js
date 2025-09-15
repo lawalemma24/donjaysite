@@ -4,6 +4,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { Tags, Shuffle } from "lucide-react";
 import { usePathname } from "next/navigation";
+import AccountMenu from "./accountmenu";
 
 export default function TopBar() {
   const [menuOpen, setMenuOpen] = useState(false);
@@ -137,14 +138,17 @@ export default function TopBar() {
         </nav>
 
         {/* Desktop button */}
-        <Link
+        <div className="hidden 3xl:flex items-center gap-4">
+          <AccountMenu />
+          {/* <Link
           href="/auth/login"
           className={`hidden 3xl:block bg-blue text-white px-4 py-2 rounded-lg hover:bg-blue-700 ${
             pathname === "/auth/login" ? "bg-blue-700" : ""
           }`}
         >
           Login/Register
-        </Link>
+        </Link> */}
+        </div>
       </div>
 
       {/* Mobile dropdown menu */}
