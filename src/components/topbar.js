@@ -5,6 +5,8 @@ import Image from "next/image";
 import { Tags, Shuffle } from "lucide-react";
 import { usePathname } from "next/navigation";
 import AccountMenu from "./accountmenu";
+import { LogOut } from "lucide-react";
+import { ArrowRight } from "lucide-react";
 
 export default function TopBar() {
   const [menuOpen, setMenuOpen] = useState(false);
@@ -153,7 +155,19 @@ export default function TopBar() {
 
       {/* Mobile dropdown menu */}
       {menuOpen && (
-        <div className="3xl:hidden px-6 py-4 space-y-3 bg-white">
+        <div className="3xl:hidden px-6 py-4 space-y-3 bg-white border-b border-lightgrey shadow-md">
+          <Link
+            onClick={handleLinkClick}
+            href="/dashboard/profile"
+            className="block"
+          >
+            <div className="flex flex-col p-2 w-[98%] mx-auto border border-lightgrey/50 rounded-lg cursor-pointer hover:bg-gray-50">
+              <p className="text-black font-bold hover:text-blue">Jay Autos</p>
+              <p className="text-xs text-text-muted flex flex-row gap-1 hover:text-black">
+                View Profile <ArrowRight size={18} />
+              </p>
+            </div>
+          </Link>
           <Link
             href="/"
             className={`block hover:text-blue ${linkClass("/")}`}
@@ -225,15 +239,21 @@ export default function TopBar() {
             Contact Us
           </Link>
 
-          <Link
-            href="/auth/login"
-            className={`block bg-blue text-white max-w-[500px] px-4 py-2 rounded hover:bg-blue-700 ${
-              pathname === "/auth/login" ? "bg-blue-700" : ""
-            }`}
-            onClick={handleLinkClick}
-          >
-            Login/Register
-          </Link>
+          <div className="border-t border-lightgrey/40 pt-4">
+            <button className="text-red-600 mb-2  font-bold flex flex-row gap-2">
+              <LogOut size={18} /> Log Out
+            </button>
+
+            {/* <Link
+              href="/auth/login"
+              className={`block bg-blue text-white max-w-[500px] px-4 py-2 rounded hover:bg-blue-700 ${
+                pathname === "/auth/login" ? "bg-blue-700" : ""
+              }`}
+              onClick={handleLinkClick}
+            >
+              Login/Register
+            </Link> */}
+          </div>
         </div>
       )}
     </div>
