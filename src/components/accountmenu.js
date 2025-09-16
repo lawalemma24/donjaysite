@@ -51,7 +51,7 @@ const AccountMenu = () => {
       {open && (
         <div className="absolute right-0 mt-2 w-48 md:w-65 bg-white shadow py-2 z-50 rounded-md">
           <Link
-            href="/"
+            href="/dashboard/profile"
             onClick={handleClose}
             className="flex items-center gap-2 px-4 py-3 hover:bg-blue-50 mb-1"
           >
@@ -59,7 +59,7 @@ const AccountMenu = () => {
           </Link>
 
           <Link
-            href="/"
+            href="/dashboard/deals"
             onClick={handleClose}
             className="flex items-center gap-2 px-4 py-3 hover:bg-blue-50 mb-1"
           >
