@@ -28,7 +28,7 @@ export default function DashboardLayout({ children }) {
   ];
 
   return (
-    <div className="min-h-screen bg-white max-w-5xl mx-auto">
+    <div className="min-h-screen bg-white max-w-6xl mx-auto">
       <div className="px-2 md:px-10 py-16">
         {/* Tabs */}
         <div className="flex flex-wrap gap-2 mb-8 mt-10">
