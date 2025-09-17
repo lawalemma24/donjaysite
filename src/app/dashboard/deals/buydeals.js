@@ -86,7 +86,7 @@ export default function BuyDealsTable() {
                       alt={deal.car}
                       width={50}
                       height={50}
-                      className="rounded-md"
+                      className="rounded-md w-[50px] h-auto"
                     />
                     <span className="truncate">{deal.car}</span>
                   </td>
