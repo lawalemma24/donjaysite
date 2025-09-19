@@ -7,14 +7,14 @@ export default function Hero() {
   return (
     <section className="relative h-[80vh] md:h[85vh] w-full flex items-center justify-center text-center mt-0">
       <Image
-        src="/images/hero.png"
+        src="/images/rangebg.webp"
         alt="Hero background"
         fill
         priority
-        className="object-cover"
+        className="object-cover object-center"
       />
 
-      <div className="absolute inset-0 bg-black/30" />
+      <div className="absolute inset-0 bg-black/70" />
 
       <div className="relative z-10 text-white px-4">
         <p className="mb-5 md:text-2xl text-xl max-w-2xl mx-auto">
