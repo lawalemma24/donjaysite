@@ -1,3 +1,4 @@
+import BackToTopButton from "@/components/backtotop";
 import FeaturedCars from "@/components/featuredcars";
 import Hero from "@/components/hero";
 import Testimonials from "@/components/testimonial";
@@ -12,6 +13,7 @@ export default function Home() {
       <Trusted />
       <FeaturedCars />
       <Testimonials />
+      <BackToTopButton />
     </>
   );
 }

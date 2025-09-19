@@ -5,37 +5,37 @@ const cars = [
     name: "2025 Mercedes Benz GLE",
     price: 70000000,
     image: "/images/gle.png",
-    logo: "/images/mercedes.png",
+    logo: "/images/mercedeslogo.jpg",
   },
   {
     name: "2025 Honda Accord",
     price: 30000000,
     image: "/images/accord.png",
-    logo: "/images/honda.png",
+    logo: "/images/hondalogo.svg",
   },
   {
     name: "2025 Toyota Camry",
     price: 40000000,
     image: "/images/toyota-camry.png",
-    logo: "/images/toyota.png",
+    logo: "/images/toyotalogo.jpg",
   },
   {
     name: "2025 Lexus RX 350",
     price: 60000000,
     image: "/images/lexus-rx.png",
-    logo: "/images/lexus.png",
+    logo: "/images/lexuslogo.svg",
   },
   {
     name: "2023 Nissan Maxima",
     price: 60000000,
     image: "/images/nissan-maxima.png",
-    logo: "/images/nissan.png",
+    logo: "/images/nissanlogo.svg",
   },
   {
     name: "2021 Volkswagen Golf",
     price: 20000000,
     image: "/images/vw-golf.png",
-    logo: "/images/vw.png",
+    logo: "/images/volkslogo.png",
   },
 ];
 
