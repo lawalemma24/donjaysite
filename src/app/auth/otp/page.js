@@ -1,10 +1,14 @@
 "use client";
 import { useState, useRef } from "react";
+import { useSearchParams, useRouter } from "next/navigation";
 import toast from "react-hot-toast";
 
 export default function Otp() {
-  const [code, setCode] = useState(["", "", "", ""]);
+  const [code, setCode] = useState(["", "", "", "", "", ""]);
   const inputs = useRef([]);
+  const searchParams = useSearchParams();
+  const router = useRouter();
+  const email = searchParams.get("email"); // dynamic email from signup
 
   const handleChange = (value, index) => {
     if (/^[0-9]?$/.test(value)) {
@@ -12,7 +16,7 @@ export default function Otp() {
       newCode[index] = value;
       setCode(newCode);
 
-      if (value && index < 3) {
+      if (value && index < 5) {
         inputs.current[index + 1].focus();
       }
     }
@@ -24,16 +28,40 @@ export default function Otp() {
     }
   };
 
-  const handleVerify = (e) => {
+  const handleVerify = async (e) => {
     e.preventDefault();
-    if (code.join("").length === 4) {
-      toast.success("Code verified: " + code.join(""));
-    } else {
-      toast.error("Enter all 4 digits");
+    const otp = code.join("");
+
+    if (otp.length !== 6) {
+      toast.error("Enter all 6 digits");
+      return;
+    }
+
+    try {
+      const res = await fetch("/verify-otp", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email, otp }),
+      });
+
+      const data = await res.json();
+
+      if (!res.ok) {
+        toast.error(data.message || "Verification failed");
+        return;
+      }
+
+      toast.success(data.message);
+      localStorage.setItem("token", data.token);
+      router.push("/dashboard/profile");
+    } catch (error) {
+      console.error(error);
+      toast.error("Something went wrong");
     }
   };
 
   const handleResend = () => {
+    // Call your resend OTP API here if available
     toast("New code sent to your email", { icon: "✉️" });
   };
 
@@ -48,7 +76,7 @@ export default function Otp() {
           Enter Verification Code
         </h1>
         <p className="text-gray-500 mb-6">
-          We sent a code to <span className="text-blue">jayauto@gmail.com</span>
+          We sent a code to <span className="text-blue">{email}</span>
         </p>
 
         <form onSubmit={handleVerify} className="space-y-6">
@@ -83,7 +111,7 @@ export default function Otp() {
             <button
               type="button"
               className="px-6 py-2 border border-blue text-blue rounded-lg hover:bg-blue-50 transition"
-              onClick={() => toast("Cancelled")}
+              onClick={() => router.push("/signup")}
             >
               Cancel
             </button>

@@ -142,6 +142,14 @@ export default function CarDetails() {
 
             <hr className="my-4 border-0 h-[1px] bg-lightgrey" />
 
+            <div>
+              <Link href="/inspection">
+                <button className="flex-1 border border-blue-600 text-blue-600 rounded-lg px-9 py-2 font-medium hover:bg-blue-50">
+                  Book Inspection
+                </button>
+              </Link>
+            </div>
+
             <div className="flex gap-4 mt-6">
               <Link href="/garage/swapcar">
                 <button className="flex-1 border border-blue-600 text-blue-600 rounded-lg px-9 py-2 font-medium hover:bg-blue-50">

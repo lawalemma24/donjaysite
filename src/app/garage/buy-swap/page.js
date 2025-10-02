@@ -1,5 +1,5 @@
 "use client";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import {
   ChevronLeft,
   ChevronRight,
@@ -8,122 +8,36 @@ import {
 } from "lucide-react";
 
 import CarCard from "@/components/carcard";
-
-const cars = [
-  {
-    id: 1,
-    name: "2025 Mercedes Benz GLE",
-    price: 70000000,
-    image: "/images/gle.png",
-    logo: "/images/mercedeslogo.jpg",
-  },
-  {
-    id: 2,
-    name: "2025 Honda Accord",
-    price: 30000000,
-    image: "/images/accord.png",
-    logo: "/images/hondalogo.svg",
-  },
-  {
-    id: 3,
-    name: "2025 Toyota Camry",
-    price: 40000000,
-    image: "/images/toyota-camry.png",
-    logo: "/images/toyotalogo.jpg",
-  },
-  {
-    id: 4,
-    name: "2025 Lexus RX 350",
-    price: 60000000,
-    image: "/images/lexus-rx.png",
-    logo: "/images/lexuslogo.svg",
-  },
-  {
-    id: 5,
-    name: "2023 Nissan Maxima",
-    price: 60000000,
-    image: "/images/nissan-maxima.png",
-    logo: "/images/nissanlogo.svg",
-  },
-  {
-    id: 6,
-    name: "2021 Volkswagen Golf",
-    price: 20000000,
-    image: "/images/vw-golf.png",
-    logo: "/images/volkslogo.png",
-  },
-  {
-    id: 7,
-    name: "2025 Lexus RX 350",
-    price: 60000000,
-    image: "/images/lexus-rx.png",
-    logo: "/images/lexuslogo.svg",
-  },
-  {
-    id: 8,
-    name: "2025 Mercedes Benz GLE",
-    price: 70000000,
-    image: "/images/gle.png",
-    logo: "/images/mercedeslogo.jpg",
-  },
-  {
-    id: 9,
-    name: "2021 Volkswagen Golf",
-    price: 20000000,
-    image: "/images/vw-golf.png",
-    logo: "/images/volkslogo.png",
-  },
-  {
-    id: 10,
-    name: "2025 Toyota Camry",
-    price: 40000000,
-    image: "/images/toyota-camry.png",
-    logo: "/images/toyotalogo.jpg",
-  },
-  {
-    id: 11,
-    name: "2025 Honda Accord",
-    price: 30000000,
-    image: "/images/accord.png",
-    logo: "/images/hondalogo.svg",
-  },
-  {
-    id: 12,
-    name: "2023 Nissan Maxima",
-    price: 60000000,
-    image: "/images/nissan-maxima.png",
-    logo: "/images/nissanlogo.svg",
-  },
-  {
-    id: 13,
-    name: "2025 Mercedes Benz GLE",
-    price: 70000000,
-    image: "/images/gle.png",
-    logo: "/images/mercedeslogo.jpg",
-  },
-  {
-    id: 14,
-    name: "2025 Lexus RX 350",
-    price: 60000000,
-    image: "/images/lexus-rx.png",
-    logo: "/images/lexuslogo.svg",
-  },
-  {
-    id: 15,
-    name: "2021 Volkswagen Golf",
-    price: 20000000,
-    image: "/images/vw-golf.png",
-    logo: "/images/volkslogo.png",
-  },
-];
+import api from "@/utils/api"; // your axios instance
 
 const PER_PAGE = 9;
 
 export default function CarMarketplace() {
+  const [cars, setCars] = useState([]);
   const [page, setPage] = useState(1);
-  const totalPages = Math.ceil(cars.length / PER_PAGE);
-  const start = (page - 1) * PER_PAGE;
-  const paginatedCars = cars.slice(start, start + PER_PAGE);
+  const [totalPages, setTotalPages] = useState(1);
+  const [loading, setLoading] = useState(false);
+
+  const fetchCars = async (pageNumber = 1) => {
+    setLoading(true);
+    try {
+      const res = await api.get("/approved", {
+        params: { page: pageNumber, limit: PER_PAGE },
+      });
+      console.log("Fetched cars:", res.data.cars); // log cars
+      console.log("Pagination:", res.data.pagination); // log pagination
+      setCars(res.data.cars || []);
+      setTotalPages(res.data.pagination?.totalPages || 1);
+    } catch (err) {
+      console.error("Error fetching cars:", err);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchCars(page);
+  }, [page]);
 
   return (
     <div>
@@ -132,8 +46,6 @@ export default function CarMarketplace() {
         style={{ backgroundImage: "url('/images/hero.png')" }}
       >
         <div className="absolute inset-0 bg-black/60"></div>
-
-        {/* Content */}
         <div className="relative z-10 text-white px-4">
           <h1 className="text-3xl md:text-5xl font-bold mb-4">
             Find Your Dream Car Today
@@ -144,8 +56,8 @@ export default function CarMarketplace() {
           </p>
         </div>
       </div>
-      {/* Breadcrumbs */}
-      <div className="max-w-7xl mx-auto  px-8 pt-4">
+
+      <div className="max-w-7xl mx-auto px-8 pt-4">
         <nav className="text-sm text-gray-500 ">
           Home <span className="mx-1">/</span> Garage{" "}
           <span className="mx-1">/</span>
@@ -154,11 +66,9 @@ export default function CarMarketplace() {
       </div>
 
       <div className="flex max-w-7xl mx-auto flex-col md:flex-row gap-6 px-4 md:px-10 py-6">
-        {/* Sidebar Filter */}
         <aside className="w-full md:w-64 bg-white rounded-lg shadow-sm border border-lightgrey p-5 flex-shrink-0">
+          {/* Sidebar filters unchanged */}
           <h2 className="font-semibold mb-4 text-lg">Filter Cars</h2>
-
-          {/* Condition */}
           <div className="mb-4">
             <h3 className="font-medium mb-2">Condition</h3>
             <div className="space-y-2">
@@ -170,8 +80,6 @@ export default function CarMarketplace() {
               </label>
             </div>
           </div>
-
-          {/* Make */}
           <div className="mb-4">
             <h3 className="font-medium mb-2">Make</h3>
             <select className="w-full border border-lightgrey rounded px-2 py-1">
@@ -180,8 +88,6 @@ export default function CarMarketplace() {
               <option>Honda</option>
             </select>
           </div>
-
-          {/* Year */}
           <div className="mb-4">
             <h3 className="font-medium mb-2">Year</h3>
             <div className="flex gap-2">
@@ -203,8 +109,6 @@ export default function CarMarketplace() {
               </div>
             </div>
           </div>
-
-          {/* Price Range */}
           <div className="mb-4">
             <h3 className="font-medium mb-2">Price Range</h3>
             <input
@@ -218,8 +122,6 @@ export default function CarMarketplace() {
               <span>₦500,000,000</span>
             </div>
           </div>
-
-          {/* Transmission */}
           <div className="mb-4">
             <h3 className="font-medium mb-2">Transmission</h3>
             <label className="flex items-center gap-2">
@@ -230,8 +132,6 @@ export default function CarMarketplace() {
               <input type="radio" name="transmission" /> Manual
             </label>
           </div>
-
-          {/* Fuel Type */}
           <div className="mb-6">
             <h3 className="font-medium mb-2">Fuel Type</h3>
             <div className="space-y-2">
@@ -249,8 +149,6 @@ export default function CarMarketplace() {
               </label>
             </div>
           </div>
-
-          {/* Buttons */}
           <div className="flex gap-2">
             <button className="flex-1 border border-blue text-blue rounded px-3 py-1">
               Reset
@@ -273,11 +171,15 @@ export default function CarMarketplace() {
             </button>
           </div>
 
-          <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-            {paginatedCars.map((car) => (
-              <CarCard key={car.id} car={car} />
-            ))}
-          </div>
+          {loading ? (
+            <p className="text-center py-12 text-gray-500">Loading cars...</p>
+          ) : (
+            <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+              {cars.map((car) => (
+                <CarCard key={car._id} car={car} />
+              ))}
+            </div>
+          )}
 
           <div className="flex justify-center items-center gap-2 mt-8">
             <button

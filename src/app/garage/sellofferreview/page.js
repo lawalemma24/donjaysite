@@ -1,48 +1,49 @@
 "use client";
+
 import ConfirmSellOverlay from "@/components/confirmsell";
 import SellSuccessModal from "@/components/sellconfirmed";
 import Link from "next/link";
-
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { FaChevronLeft, FaChevronRight } from "react-icons/fa";
-
-const images = [
-  "/images/lexus-rx.png",
-  "/images/gle.png",
-  "/images/nissan-maxima.png",
-  "/images/toyota-camry.png",
-  "/images/vw-golf.png",
-];
+import api from "@/utils/api";
 
 export default function SellOfferReview() {
+  const [car, setCar] = useState(null);
   const [current, setCurrent] = useState(0);
   const [lightbox, setLightbox] = useState(false);
   const [open, setOpen] = useState(false);
   const [successOpen, setSuccessOpen] = useState(false);
 
-  const prevImage = () => {
+  useEffect(() => {
+    const storedCar = sessionStorage.getItem("carToReview");
+    if (storedCar) setCar(JSON.parse(storedCar));
+  }, []);
+
+  const images = car?.images || [];
+
+  const prevImage = () =>
     setCurrent((prev) => (prev === 0 ? images.length - 1 : prev - 1));
-  };
-
-  const nextImage = () => {
+  const nextImage = () =>
     setCurrent((prev) => (prev === images.length - 1 ? 0 : prev + 1));
+
+  const handleSubmit = async () => {
+    if (!car) return;
+    try {
+      await api.post("/", car);
+      setSuccessOpen(true);
+    } catch (err) {
+      console.error(err);
+      alert("Failed to submit sell offer");
+    }
   };
 
-  const handleSubmit = () => {
-    setSuccessOpen(true);
-  };
+  if (!car) return <p>Loading...</p>;
 
   return (
     <div className="min-h-screen bg-white px-4 py-16">
       <div className="max-w-7xl mx-auto px-8 pt-4 mt-5 mb-5">
         <nav className="text-sm text-gray-500">
-          Home <span className="mx-1">/</span> Garage{" "}
-          <span className="mx-1">/</span>
-          <span className="text-gray-500 font-medium">Car Details</span>
-          <span className="mx-1">/</span>
-          <span className="text-gray-500 font-medium">Sell</span>
-          <span className="mx-1">/</span>
-          <span className="text-blue font-medium">Review sell</span>
+          Home / Garage / Car Details / Sell / Review sell
         </nav>
       </div>
 
@@ -51,7 +52,6 @@ export default function SellOfferReview() {
           Review Your Selling Offer
         </h2>
 
-        {/* Image Section */}
         <div
           className="relative cursor-pointer"
           onClick={() => setLightbox(true)}
@@ -81,7 +81,6 @@ export default function SellOfferReview() {
           </button>
         </div>
 
-        {/* Thumbnails */}
         <div className="flex gap-2 mt-3 overflow-x-auto">
           {images.map((img, index) => (
             <img
@@ -98,27 +97,26 @@ export default function SellOfferReview() {
           ))}
         </div>
 
-        {/* Car Info */}
         <div className="mt-4">
-          <h3 className="font-bold text-lg">2024 Hyundai Tucson</h3>
+          <h3 className="font-bold text-lg">{car.carName}</h3>
           <hr className="my-2 border-lightgrey" />
           <div className="text-sm text-gray-700 mt-2 space-y-1">
             <p>
-              Condition: <span className="float-right">Used</span>
+              Condition: <span className="float-right">{car.condition}</span>
             </p>
             <p>
-              Transmission: <span className="float-right">Automatic</span>
+              Transmission:{" "}
+              <span className="float-right">{car.transmission}</span>
             </p>
             <p>
-              Fuel Type: <span className="float-right">Petrol</span>
+              Fuel Type: <span className="float-right">{car.fuelType}</span>
             </p>
             <p>
-              Estimated Value: <span className="float-right">₦20,000,000</span>
+              Estimated Value: <span className="float-right">₦{car.price}</span>
             </p>
           </div>
         </div>
 
-        {/* Offer Overview */}
         <div className="mt-4 border border-lightgrey rounded-lg p-4 bg-gray-50 text-center">
           <h4 className="font-semibold mb-1">Offer Overview</h4>
           <p className="text-gray-600 text-sm">
@@ -127,7 +125,6 @@ export default function SellOfferReview() {
           </p>
         </div>
 
-        {/* Buttons */}
         <div className="mt-4 grid grid-cols-2 gap-3">
           <Link href="/garage/sell">
             <button className="flex-1 py-2 px-3 border border-blue rounded-lg text-blue">
@@ -143,14 +140,12 @@ export default function SellOfferReview() {
           </button>
         </div>
 
-        {/* Modals */}
         {open && (
           <ConfirmSellOverlay
             onClose={() => setOpen(false)}
             onSubmit={handleSubmit}
           />
         )}
-
         <SellSuccessModal
           isOpen={successOpen}
           onClose={() => setSuccessOpen(false)}

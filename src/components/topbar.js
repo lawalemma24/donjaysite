@@ -7,8 +7,10 @@ import { usePathname } from "next/navigation";
 import AccountMenu from "./accountmenu";
 import { LogOut } from "lucide-react";
 import { ArrowRight } from "lucide-react";
+import { useAuth } from "@/app/contexts/AuthContext";
 
 export default function TopBar() {
+  const { user, logout } = useAuth();
   const [menuOpen, setMenuOpen] = useState(false);
   const [garageOpen, setGarageOpen] = useState(false);
   const pathname = usePathname();
@@ -141,15 +143,18 @@ export default function TopBar() {
 
         {/* Desktop button */}
         <div className="hidden 3xl:flex items-center gap-4">
-          <AccountMenu />
-          {/* <Link
-          href="/auth/login"
-          className={`hidden 3xl:block bg-blue text-white px-4 py-2 rounded-lg hover:bg-blue-700 ${
-            pathname === "/auth/login" ? "bg-blue-700" : ""
-          }`}
-        >
-          Login/Register
-        </Link> */}
+          {user ? (
+            <AccountMenu />
+          ) : (
+            <Link
+              href="/auth/login"
+              className={`hidden 3xl:block bg-blue text-white px-4 py-2 rounded-lg hover:bg-blue-700 ${
+                pathname === "/auth/login" ? "bg-blue-700" : ""
+              }`}
+            >
+              Login/Register
+            </Link>
+          )}
         </div>
       </div>
 
@@ -162,7 +167,9 @@ export default function TopBar() {
             className="block"
           >
             <div className="flex flex-col p-2 w-[98%] mx-auto border border-lightgrey/50 rounded-lg cursor-pointer hover:bg-gray-50">
-              <p className="text-black font-bold hover:text-blue">Jay Autos</p>
+              <p className="text-black font-bold hover:text-blue">
+                {user.name}
+              </p>
               <p className="text-xs text-text-muted flex flex-row gap-1 hover:text-black">
                 View Profile <ArrowRight size={18} />
               </p>
