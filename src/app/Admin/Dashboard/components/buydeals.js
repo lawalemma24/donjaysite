@@ -4,7 +4,6 @@ import { useState } from "react";
 import {
   MoreVertical,
   Filter,
-  Plus,
   Search,
   ChevronLeft,
   ChevronRight,
@@ -12,18 +11,12 @@ import {
   ChevronsRight,
 } from "lucide-react";
 import FilterCard from "../components/FilterCard";
-import AddUserModal from "../components/adduser";
-import AddUserSuccess from "../components/addusersuccess";
-import ViewUserModal from "../components/viewuser";
-import SuspendUserConfirm from "../components/suspenduser";
-import DeleteUserConfirm from "../components/deleteuser";
-import SuspendUserSuccess from "../components/suspendsuccess";
-import DeleteUserSuccess from "../components/deletesuccess";
-import { Trash2 } from "lucide-react";
-import { Edit } from "lucide-react";
-import AddCarForm from "../components/addcar";
 
-const initialUsers = [
+import AddCarForm from "../components/addcar";
+import { Eye, Download, CheckCircle, Trash2 } from "lucide-react";
+import BuyDealDetails from "./buydealdetails";
+
+const initialdeals = [
   {
     id: 1,
     name: "Volks Wagon",
@@ -89,11 +82,11 @@ const initialUsers = [
   },
 ];
 
-export default function CarListingPage() {
-  const [users, setUsers] = useState(initialUsers);
+export default function Buydeals() {
+  const [deals, setdeals] = useState(initialdeals);
   const [showFilter, setShowFilter] = useState(false);
-  const [showAddUser, setShowAddUser] = useState(false);
-  const [showAddUserSuccess, setShowAddUserSuccess] = useState(false);
+  const [showAdddeal, setShowAdddeal] = useState(false);
+  const [showAdddealSuccess, setShowAdddealSuccess] = useState(false);
   const [actionMenuOpenFor, setActionMenuOpenFor] = useState(null);
   const [selectedForView, setSelectedForView] = useState(null);
   const [selectedForSuspend, setSelectedForSuspend] = useState(null);
@@ -107,7 +100,7 @@ export default function CarListingPage() {
   const totalPages = Math.ceil(totalEntries / pageSize);
   const [page, setPage] = useState(1);
 
-  const paginatedUsers = users.slice((page - 1) * pageSize, page * pageSize);
+  const paginateddeals = deals.slice((page - 1) * pageSize, page * pageSize);
 
   function handlePageChange(newPage) {
     if (newPage < 1 || newPage > totalPages) return;
@@ -116,57 +109,34 @@ export default function CarListingPage() {
 
   return (
     <div className="p-6">
-      {/* Header */}
-      <div>
-        <h1 className="text-3xl font-bold">Car Listing</h1>
-        <p className="text-text-muted mt-1">
-          Manage all cars available for sale and keep listings up to date
-        </p>
-      </div>
-
       {/* Toolbar */}
-      <div className="mt-6 flex flex-col md:flex-row md:items-center md:justify-between gap-4 bg-white px-3 py-4 rounded-md">
-        <div className="flex items-center">
-          <div className="text-lg font-semibold">
-            All Listing: <span className="text-gray-400">{totalEntries}</span>
+
+      <div className="flex items-center justify-between gap-3">
+        {/* Search */}
+        <div className="relative">
+          <input
+            type="text"
+            placeholder="Search"
+            className="pl-10 pr-4 py-2 rounded-lg border border-gray-200 bg-white w-64 text-sm focus:outline-none focus:ring-none focus:border-blue"
+          />
+          <div className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400">
+            <Search size={16} />
           </div>
         </div>
 
-        <div className="flex items-center gap-3">
-          {/* Search */}
-          <div className="relative">
-            <input
-              type="text"
-              placeholder="Search"
-              className="pl-10 pr-4 py-2 rounded-lg border border-gray-200 bg-white w-64 text-sm focus:outline-none focus:ring-none focus:border-blue"
-            />
-            <div className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400">
-              <Search size={16} />
-            </div>
-          </div>
-
-          {/* Filter */}
-          <div className="relative">
-            <button
-              onClick={() => setShowFilter((s) => !s)}
-              className="inline-flex items-center gap-2 border border-text-muted/60 px-3 py-2 rounded-lg bg-white hover:bg-gray-50"
-            >
-              <Filter size={16} /> Filter
-            </button>
-            {showFilter && (
-              <div className="absolute right-0 mt-2 z-50">
-                <FilterCard onClose={() => setShowFilter(false)} />
-              </div>
-            )}
-          </div>
-
-          {/* Add User */}
+        {/* Filter */}
+        <div className="relative">
           <button
-            onClick={() => setShowAddUser(true)}
-            className="inline-flex items-center gap-2 bg-blue text-white px-4 py-2 rounded-lg shadow"
+            onClick={() => setShowFilter((s) => !s)}
+            className="inline-flex items-center gap-2 border border-text-muted/60 px-3 py-2 rounded-lg bg-white hover:bg-gray-50"
           >
-            <Plus size={16} /> Add User
+            <Filter size={16} /> Filter
           </button>
+          {showFilter && (
+            <div className="absolute right-0 mt-2 z-50">
+              <FilterCard onClose={() => setShowFilter(false)} />
+            </div>
+          )}
         </div>
       </div>
 
@@ -185,60 +155,82 @@ export default function CarListingPage() {
             </tr>
           </thead>
           <tbody>
-            {paginatedUsers.map((user, i) => (
+            {paginateddeals.map((deal, i) => (
               <tr
-                key={user.id}
+                key={deal.id}
                 className="border-b border-text-muted/70 last:border-b-0"
               >
                 <td className="py-4">{(page - 1) * pageSize + i + 1}</td>
                 <td className="py-4 flex items-center gap-3">
                   <img
-                    src={user.avatar}
-                    alt={user.name}
+                    src={deal.avatar}
+                    alt={deal.name}
                     className="w-10 h-10 rounded-full border border-text-muted/70 object-cover"
                   />
-                  {user.name}
+                  {deal.name}
                 </td>
-                <td className="py-4 text-text-muted">{user.year}</td>
-                <td className="py-4">{user.condition}</td>
+                <td className="py-4 text-text-muted">{deal.year}</td>
+                <td className="py-4">{deal.condition}</td>
 
-                <td className="py-4">{user.price}</td>
+                <td className="py-4">{deal.price}</td>
 
-                <td className="py-4 text-black/60">{user.listed}</td>
+                <td className="py-4 text-black/60">{deal.listed}</td>
                 <td className="py-4 relative">
                   <button
                     className="p-2 rounded-full hover:bg-gray-100"
                     onClick={() =>
                       setActionMenuOpenFor(
-                        actionMenuOpenFor === user.id ? null : user.id
+                        actionMenuOpenFor === deal.id ? null : deal.id
                       )
                     }
                   >
                     <MoreVertical size={18} />
                   </button>
 
-                  {actionMenuOpenFor === user.id && (
-                    <div className="absolute right-0 mt-2 z-50 bg-white border border-gray-200 rounded shadow w-40 text-sm">
+                  {actionMenuOpenFor === deal.id && (
+                    <div className="absolute right-0 mt-2 z-50 bg-white border border-gray-200 rounded shadow w-60 text-sm">
                       <button
                         className="w-full flex items-center gap-2 px-3 py-2 hover:bg-gray-100"
                         onClick={() => {
-                          setSelectedForView(user);
+                          setSelectedForView(deal);
                           setActionMenuOpenFor(null);
                         }}
                       >
-                        <Edit size={16} className="text-gray-600" />
-                        Edit Car
+                        <Eye size={16} className="text-gray-600" />
+                        View Details
+                      </button>
+
+                      <button
+                        className="w-full flex items-center gap-2 px-3 py-2 hover:bg-gray-100"
+                        onClick={() => {
+                          setSelectedForView(deal);
+                          setActionMenuOpenFor(null);
+                        }}
+                      >
+                        <Download size={16} className="text-gray-600" />
+                        Download Receipt
+                      </button>
+
+                      <button
+                        className="w-full flex items-center gap-2 px-3 py-2 hover:bg-gray-100"
+                        onClick={() => {
+                          setSelectedForView(deal);
+                          setActionMenuOpenFor(null);
+                        }}
+                      >
+                        <CheckCircle size={16} className="text-gray-600" />
+                        Mark as Completed
                       </button>
 
                       <button
                         className="w-full flex items-center gap-2 px-3 py-2 hover:bg-gray-100 text-red-600"
                         onClick={() => {
-                          setSelectedForDelete(user);
+                          setSelectedForDelete(deal);
                           setActionMenuOpenFor(null);
                         }}
                       >
                         <Trash2 size={16} className="text-red-600" />
-                        Delete Car
+                        Cancel Order
                       </button>
                     </div>
                   )}
@@ -308,24 +300,24 @@ export default function CarListingPage() {
       </div>
 
       {/* Keep your modals and functionality */}
-      {showAddUser && <AddCarForm onClose={() => setShowAddUser(false)} />}
+      {showAdddeal && <AddCarForm onClose={() => setShowAdddeal(false)} />}
 
       {selectedForView && (
-        <ViewUserModal
-          user={selectedForView}
+        <BuyDealDetails
+          deal={selectedForView}
           onClose={() => setSelectedForView(null)}
         />
       )}
 
       {selectedForDelete && (
-        <DeleteUserConfirm
-          user={selectedForDelete}
+        <BuyDealDetails
+          deal={selectedForDelete}
           onClose={() => setSelectedForDelete(null)}
           onConfirm={() => {}}
         />
       )}
       {deleteSuccess && (
-        <DeleteUserSuccess onClose={() => setDeleteSuccess(false)} />
+        <BuyDealDetails onClose={() => setDeleteSuccess(false)} />
       )}
     </div>
   );
