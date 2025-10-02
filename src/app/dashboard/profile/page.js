@@ -1,9 +1,12 @@
 "use client";
-import { useState, useRef } from "react";
+import { useState, useRef, use } from "react";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
 import { User, KeyRound, Edit3 } from "lucide-react";
+import { useAuth } from "@/app/contexts/AuthContext";
+import ChangePassword from "@/components/changepassword";
 
 const Dashboard = () => {
+  const { user } = useAuth();
   const [activeTab, setActiveTab] = useState("profile");
   const [profileImage, setProfileImage] = useState("https://i.pravatar.cc/100");
   const fileInputRef = useRef(null);
@@ -96,7 +99,7 @@ const Dashboard = () => {
                     <label className="text-sm text-gray-600">Full Name</label>
                     <input
                       type="text"
-                      defaultValue="Jay Autos"
+                      defaultValue={user?.name}
                       className="mt-1 block w-full border border-text-muted focus:ring-none focus:outline-none focus:border-blue rounded-md px-3 py-2 text-sm"
                     />
                   </div>
@@ -106,7 +109,7 @@ const Dashboard = () => {
                     </label>
                     <input
                       type="email"
-                      defaultValue="donjayautos@gmail.com"
+                      defaultValue={user?.email}
                       className="mt-1 block w-full border border-text-muted focus:ring-none focus:outline-none focus:border-blue rounded-md px-3 py-2 text-sm"
                     />
                   </div>
@@ -116,7 +119,7 @@ const Dashboard = () => {
                     </label>
                     <input
                       type="text"
-                      defaultValue="08123456789"
+                      defaultValue={user?.phone}
                       className="mt-1 block w-full border border-text-muted focus:ring-none focus:outline-none focus:border-blue rounded-md px-3 py-2 text-sm"
                     />
                   </div>
@@ -149,84 +152,7 @@ const Dashboard = () => {
 
             {activeTab === "password" && (
               <>
-                <div className="max-w-md mx-auto bg-white rounded-xl p-6">
-                  <h2 className="text-xl font-semibold mb-7">
-                    Change Your Password
-                  </h2>
-
-                  {/* Current Password */}
-                  <div className="mb-4">
-                    <label className="block mb-1 text-black text-sm">
-                      Current Password
-                    </label>
-                    <div className="relative">
-                      <input
-                        type={showPassword.current ? "text" : "password"}
-                        className="w-full border rounded-lg px-3 py-2 pr-10 focus:outline-none focus:ring-none focus:border-blue border-lightgrey"
-                        placeholder="******"
-                      />
-                      <button
-                        type="button"
-                        onClick={() => togglePassword("current")}
-                        className="absolute right-3 top-2.5 text-gray-500"
-                      >
-                        {showPassword.current ? <FaEyeSlash /> : <FaEye />}
-                      </button>
-                    </div>
-                  </div>
-
-                  {/* New Password */}
-                  <div className="mb-4">
-                    <label className="block mb-1 text-black text-sm">
-                      New Password
-                    </label>
-                    <div className="relative">
-                      <input
-                        type={showPassword.new ? "text" : "password"}
-                        className="w-full border rounded-lg px-3 py-2 pr-10 focus:outline-none focus:ring-none focus:border-blue border-lightgrey"
-                        placeholder="******"
-                      />
-                      <button
-                        type="button"
-                        onClick={() => togglePassword("new")}
-                        className="absolute right-3 top-2.5 text-gray-500"
-                      >
-                        {showPassword.new ? <FaEyeSlash /> : <FaEye />}
-                      </button>
-                    </div>
-                  </div>
-
-                  {/* Confirm New Password */}
-                  <div className="mb-6">
-                    <label className="block mb-1 text-black text-sm">
-                      Confirm New Password
-                    </label>
-                    <div className="relative">
-                      <input
-                        type={showPassword.confirm ? "text" : "password"}
-                        className="w-full border rounded-lg px-3 py-2 pr-10 focus:outline-none focus:ring-none focus:border-blue border-lightgrey"
-                        placeholder="******"
-                      />
-                      <button
-                        type="button"
-                        onClick={() => togglePassword("confirm")}
-                        className="absolute right-3 top-2.5 text-gray-500"
-                      >
-                        {showPassword.confirm ? <FaEyeSlash /> : <FaEye />}
-                      </button>
-                    </div>
-                  </div>
-
-                  {/* Buttons */}
-                  <div className="flex justify-between">
-                    <button className="px-6 py-2 border border-blue text-blue rounded-lg hover:bg-blue/10">
-                      Cancel
-                    </button>
-                    <button className="px-6 py-2 bg-blue text-white rounded-lg hover:bg-blue/80">
-                      Change Password
-                    </button>
-                  </div>
-                </div>
+                <ChangePassword />
               </>
             )}
           </div>

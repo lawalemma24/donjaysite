@@ -1,26 +1,40 @@
 "use client";
 
 import Link from "next/link";
-import React, { useState } from "react";
+import { useState } from "react";
+import { useRouter } from "next/navigation";
 
 const SellPage = () => {
+  const [form, setForm] = useState({
+    carName: "Toyota Camry",
+    year: "2023",
+    condition: "Used",
+    transmission: "Automatic",
+    fuelType: "Petrol",
+    price: "",
+    note: "",
+  });
   const [images, setImages] = useState([]);
+  const router = useRouter();
 
   const handleImageChange = (e) => {
     const files = Array.from(e.target.files);
-    const imageUrls = files.map((file) => URL.createObjectURL(file));
-    setImages((prev) => [...prev, ...imageUrls]);
+    const objectUrls = files.map((file) => URL.createObjectURL(file));
+    setImages((prev) => [...prev, ...objectUrls]);
+  };
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    const carToReview = { ...form, images };
+    sessionStorage.setItem("carToReview", JSON.stringify(carToReview));
+    router.push("/garage/sellofferreview");
   };
 
   return (
     <div className="min-h-screen bg-white px-4 py-16">
       <div className="max-w-7xl mx-auto px-8 pt-4 mt-5 mb-5">
         <nav className="text-sm text-gray-500">
-          Home <span className="mx-1">/</span> Garage{" "}
-          <span className="mx-1">/</span>
-          <span className="text-gray-500 font-medium">Car Details</span>
-          <span className="mx-1">/</span>
-          <span className="text-blue font-medium">Sell</span>
+          Home / Garage / Car Details / Sell
         </nav>
       </div>
 
@@ -33,119 +47,121 @@ const SellPage = () => {
             Tell us about the car you want to sell
           </p>
 
-          <form className="space-y-6">
+          <form className="space-y-6" onSubmit={handleSubmit}>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div>
-                <label
-                  htmlFor="make"
-                  className="block text-sm font-medium text-gray-700"
-                >
+                <label className="block text-sm font-medium text-gray-700">
                   Make/Name of car
                 </label>
                 <select
-                  id="make"
-                  className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue  focus:outline-none focus:ring-none sm:text-sm h-10 px-3 border"
+                  className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue focus:outline-none sm:text-sm h-10 px-3 border"
+                  value={form.carName}
+                  onChange={(e) =>
+                    setForm({ ...form, carName: e.target.value })
+                  }
                 >
                   <option>Toyota Camry</option>
+                  <option>Lexus RX</option>
+                  <option>Nissan Maxima</option>
                 </select>
               </div>
 
               <div>
-                <label
-                  htmlFor="year"
-                  className="block text-sm font-medium text-gray-700"
-                >
+                <label className="block text-sm font-medium text-gray-700">
                   Year
                 </label>
                 <select
-                  id="year"
-                  className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue focus:outline-none focus:ring-none sm:text-sm h-10 px-3 border"
+                  className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue focus:outline-none sm:text-sm h-10 px-3 border"
+                  value={form.year}
+                  onChange={(e) => setForm({ ...form, year: e.target.value })}
                 >
                   <option>2023</option>
+                  <option>2022</option>
+                  <option>2021</option>
                 </select>
               </div>
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div>
-                <label
-                  htmlFor="condition"
-                  className="block text-sm font-medium text-gray-700"
-                >
+                <label className="block text-sm font-medium text-gray-700">
                   Condition
                 </label>
                 <select
-                  id="condition"
-                  className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue focus:outline-none focus:ring-none sm:text-sm h-10 px-3 border"
+                  className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue focus:outline-none sm:text-sm h-10 px-3 border"
+                  value={form.condition}
+                  onChange={(e) =>
+                    setForm({ ...form, condition: e.target.value })
+                  }
                 >
                   <option>Used</option>
+                  <option>New</option>
                 </select>
               </div>
 
               <div>
-                <label
-                  htmlFor="transmission"
-                  className="block text-sm font-medium text-gray-700"
-                >
+                <label className="block text-sm font-medium text-gray-700">
                   Transmission
                 </label>
                 <select
-                  id="transmission"
-                  className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue focus:outline-none focus:ring-none sm:text-sm h-10 px-3 border"
+                  className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue focus:outline-none sm:text-sm h-10 px-3 border"
+                  value={form.transmission}
+                  onChange={(e) =>
+                    setForm({ ...form, transmission: e.target.value })
+                  }
                 >
                   <option>Automatic</option>
+                  <option>Manual</option>
                 </select>
               </div>
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div>
-                <label
-                  htmlFor="value"
-                  className="block text-sm font-medium text-gray-700"
-                >
+                <label className="block text-sm font-medium text-gray-700">
                   Estimated Value
                 </label>
                 <input
                   type="text"
-                  id="value"
                   placeholder="Final decision after inspection"
-                  className="mt-1 block w-full rounded-md border-text-muted shadow-sm focus:border-blue focus:outline-none focus:outline-none focus:ring-none sm:text-sm h-10 px-3 border placeholder:text-gray-400"
+                  className="mt-1 block w-full rounded-md border-text-muted shadow-sm focus:border-blue focus:outline-none sm:text-sm h-10 px-3 border placeholder:text-gray-400"
+                  value={form.price}
+                  onChange={(e) => setForm({ ...form, price: e.target.value })}
                 />
                 <p className="text-red-400 text-xs">
-                  This is not a final offer.A final offer will be made after
-                  final inspection
+                  This is not a final offer. A final offer will be made after
+                  inspection
                 </p>
               </div>
 
               <div>
-                <label
-                  htmlFor="fuel"
-                  className="block text-sm font-medium text-gray-700"
-                >
+                <label className="block text-sm font-medium text-gray-700">
                   Fuel type
                 </label>
                 <select
-                  id="fuel"
-                  className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue focus:outline-none focus:ring-none sm:text-sm h-10 px-3 border"
+                  className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue focus:outline-none sm:text-sm h-10 px-3 border"
+                  value={form.fuelType}
+                  onChange={(e) =>
+                    setForm({ ...form, fuelType: e.target.value })
+                  }
                 >
                   <option>Petrol</option>
+                  <option>Diesel</option>
+                  <option>Electric</option>
                 </select>
               </div>
             </div>
 
             <div>
-              <label
-                htmlFor="note"
-                className="block text-sm font-medium text-gray-700"
-              >
+              <label className="block text-sm font-medium text-gray-700">
                 Additional Note
               </label>
               <textarea
-                id="note"
                 rows="3"
                 placeholder="Any specific note about damage, modifications, or service history?"
-                className="mt-1 block w-full rounded-md border-text-muted shadow-sm focus:border-blue focus:outline-none focus:ring-none focus:outline-none sm:text-sm p-3 border resize-none"
+                className="mt-1 block w-full rounded-md border-text-muted shadow-sm focus:border-blue focus:outline-none sm:text-sm p-3 border resize-none"
+                value={form.note}
+                onChange={(e) => setForm({ ...form, note: e.target.value })}
               ></textarea>
             </div>
 
@@ -166,27 +182,10 @@ const SellPage = () => {
                   htmlFor="fileInput"
                   className="flex justify-center items-center cursor-pointer mb-2 text-blue font-medium"
                 >
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    className="h-6 w-6 mr-2"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    stroke="currentColor"
-                    strokeWidth={2}
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"
-                    />
-                  </svg>
                   Upload Images
                 </label>
                 <p className="text-xs text-gray-500">
-                  Choose images or drag and drop it here
-                </p>
-                <p className="text-xs text-gray-500">
-                  JPG, JPEG, PNG, and HEIC files. Max size 10MB
+                  JPG, JPEG, PNG, HEIC. Max size 10MB
                 </p>
               </div>
               <div className="flex flex-wrap mt-4 gap-4">
@@ -202,14 +201,12 @@ const SellPage = () => {
             </div>
 
             <div className="pt-4">
-              <Link href="/garage/sellofferreview">
-                <button
-                  type="submit"
-                  className="w-full bg-blue text-white font-medium py-3 rounded-xl shadow-lg hover:bg-blue-700 transition duration-300"
-                >
-                  Continue
-                </button>
-              </Link>
+              <button
+                type="submit"
+                className="w-full bg-blue text-white font-medium py-3 rounded-xl shadow-lg hover:bg-blue-700 transition duration-300"
+              >
+                Continue
+              </button>
             </div>
           </form>
         </div>

@@ -6,6 +6,7 @@ import { Toaster } from "react-hot-toast";
 import { useEffect, useState } from "react";
 import { usePathname } from "next/navigation";
 import Preloader from "@/components/preloader";
+import { AuthProvider } from "./contexts/AuthContext";
 
 const poppins = Poppins({
   subsets: ["latin"],
@@ -32,9 +33,13 @@ export default function RootLayout({ children }) {
   return (
     <html lang="en">
       <body className={`${poppins.variable} antialiased`}>
-        {loading && <Preloader />}
-        <LayoutWrapper>{children}</LayoutWrapper>
-        <Toaster position="top-center" reverseOrder={false} />
+        <AuthProvider>
+          {" "}
+          {/* ⬅️ wrap entire app */}
+          {loading && <Preloader />}
+          <LayoutWrapper>{children}</LayoutWrapper>
+          <Toaster position="top-center" reverseOrder={false} />
+        </AuthProvider>
       </body>
     </html>
   );

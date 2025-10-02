@@ -9,11 +9,19 @@ import {
 } from "react-icons/fa";
 import Image from "next/image";
 import Link from "next/link";
+import { useAuth } from "@/app/contexts/AuthContext";
 
 const AccountMenu = () => {
   const [open, setOpen] = useState(false);
+  const { user, logout } = useAuth();
 
   const handleClose = () => setOpen(false);
+
+  const handleLogout = () => {
+    logout();
+    setOpen(false);
+    window.location.href = "/auth/login";
+  };
 
   return (
     <div className="relative">
@@ -29,7 +37,7 @@ const AccountMenu = () => {
           height={32}
           className="rounded-full"
         />
-        <span className="font-medium hidden lg:block">Jay Autos</span>
+        <span className="font-medium hidden lg:block">{user.name}</span>
         <svg
           className={`w-4 h-4 transform transition-transform ${
             open ? "rotate-180" : ""
@@ -82,13 +90,12 @@ const AccountMenu = () => {
             <FaHeadset className="text-blue-600" /> Customer Support
           </Link>
 
-          <Link
-            href="/"
-            onClick={handleClose}
-            className="flex items-center gap-2 px-4 py-3 hover:bg-blue-50 text-red-600 mb-1"
+          <button
+            onClick={handleLogout}
+            className="w-full text-left flex items-center gap-2 px-4 py-3 hover:bg-blue-50 text-red-600 mb-1"
           >
             <FaSignOutAlt /> Logout
-          </Link>
+          </button>
         </div>
       )}
     </div>
