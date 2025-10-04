@@ -5,9 +5,9 @@ export default function BuyDealDetails({ deal, onClose }) {
   if (!deal) return null;
 
   const statusColors = {
-    Completed: "text-green-600",
-    Pending: "text-yellow-500",
-    Cancelled: "text-red-600",
+    Pending: "bg-yellow-100 text-yellow-700",
+    Completed: "bg-green-100 text-green-700",
+    Cancelled: "bg-red-100 text-red-700",
   };
 
   return (
@@ -19,7 +19,8 @@ export default function BuyDealDetails({ deal, onClose }) {
         className="bg-white rounded-xl p-6 w-full max-w-md shadow-lg relative"
         onClick={(e) => e.stopPropagation()}
       >
-        <h2 className="text-xl font-bold mb-3">{deal.name}</h2>
+        <h2 className="text-xl font-bold mb-3">Buy Details</h2>
+        <h2 className="text-md font-semibold mb-3">{deal.name}</h2>
         <div className="flex justify-between mb-4">
           <Image
             src={deal.avatar}
@@ -28,10 +29,12 @@ export default function BuyDealDetails({ deal, onClose }) {
             height={90}
             className="rounded-md mb-4"
           />
-          <p className="text-black text-xs">
-            Status:{" "}
+          <p className="text-xs font-medium">
+            Status:
             <span
-              className={`mb-2 ${statusColors[deal.status] || "text-gray-500"}`}
+              className={`ml-2 px-2 py-1 rounded-full text-[11px] font-semibold ${
+                statusColors[deal.status] || "bg-gray-100 text-gray-600"
+              }`}
             >
               {deal.status || "Pending"}
             </span>
