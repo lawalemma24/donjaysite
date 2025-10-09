@@ -18,13 +18,13 @@ export function AuthProvider({ children }) {
   const login = (data) => {
     const normalizedUser = {
       _id: data._id,
-      name: data.username || data.fullName || "Guest",
-      email: data.email || "unknown@email.com",
+      name: data.name,
+      email: data.email,
       profilePic: data.profilePic,
-      role: data.role || "customer",
+      role: data.role,
       notifications: data.notifications || [],
-      country: data.country || "",
-      phone: data.phone || "+1234567890",
+      address: data.address || "",
+      phone: data.phoneNumber || "",
     };
 
     localStorage.setItem("token", data.token);

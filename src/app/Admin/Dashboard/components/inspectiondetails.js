@@ -19,7 +19,7 @@ export default function InspectionDetails({ deal, onClose }) {
         className="bg-white rounded-xl p-6 w-full max-w-md shadow-lg relative"
         onClick={(e) => e.stopPropagation()}
       >
-        <h2 className="text-xl font-bold mb-3">Buy Details</h2>
+        <h2 className="text-xl font-bold mb-3">Inspection Details</h2>
         <h2 className="text-md font-semibold mb-3">{deal.name}</h2>
         <div className="flex justify-between mb-4">
           <Image

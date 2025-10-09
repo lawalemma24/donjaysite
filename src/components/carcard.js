@@ -5,11 +5,11 @@ export default function CarCard({ car }) {
   const carImage = car.images?.[0] || "/images/placeholder.png";
 
   return (
-    <div className="bg-white rounded-2xl p-2 hover:shadow transition">
+    <div className="bg-white rounded-2xl p-2 shadow transition">
       <div className="relative w-full h-45 rounded-xl overflow-hidden">
         <Image
-          src={carImage}
-          alt={car.carName}
+          src={carImage || "/images/lexus-rx.png"}
+          alt={car.carName || "Car image"}
           fill
           sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
           className="object-cover"
@@ -27,7 +27,7 @@ export default function CarCard({ car }) {
         <p className="text-text-muted text-sm">{car.note || ""}</p>
 
         <div className="flex justify-end mt-2">
-          <Link href={`/garage/details/${car._id}`}>
+          <Link href={`/garage/details/${car.id}`}>
             <button className="bg-blue hover:bg-blue-700 text-white text-sm font-semibold px-5 py-2 rounded-lg shadow">
               View
             </button>

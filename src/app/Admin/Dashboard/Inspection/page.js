@@ -1,6 +1,5 @@
 "use client";
-
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import {
   MoreVertical,
   Filter,
@@ -17,98 +16,61 @@ import FilterCard from "../components/FilterCard";
 import AddCarForm from "../components/addcar";
 import SetInspection from "../components/setinspection";
 import InspectionDetails from "../components/inspectiondetails";
-
-const initialInspections = [
-  {
-    id: 1,
-    user: "Don Jay",
-    car: "Mercedes Benz GLE",
-    year: "2025",
-    condition: "Brand New",
-    datetime: "Sept. 10, 2025 2:00PM to 2:40PM",
-    status: "Completed",
-    avatar: "/images/gle.png",
-  },
-  {
-    id: 2,
-    user: "Don Jay",
-    car: "Mercedes Benz GLE",
-    year: "2025",
-    condition: "Brand New",
-    datetime: "Sept. 10, 2025 2:00PM to 2:40PM",
-    status: "Pending",
-    avatar: "/images/gle.png",
-  },
-  {
-    id: 3,
-    user: "Don Jay",
-    car: "Mercedes Benz GLE",
-    year: "2025",
-    condition: "Brand New",
-    datetime: "Sept. 10, 2025 2:00PM to 2:40PM",
-    status: "Cancelled",
-    avatar: "/images/gle.png",
-  },
-  {
-    id: 4,
-    user: "Don Jay",
-    car: "Mercedes Benz GLE",
-    year: "2025",
-    condition: "Brand New",
-    datetime: "Sept. 10, 2025 2:00PM to 2:40PM",
-    status: "Completed",
-    avatar: "/images/gle.png",
-  },
-  {
-    id: 5,
-    user: "Don Jay",
-    car: "Mercedes Benz GLE",
-    year: "2025",
-    condition: "Brand New",
-    datetime: "Sept. 10, 2025 2:00PM to 2:40PM",
-    status: "Pending",
-    avatar: "/images/gle.png",
-  },
-  {
-    id: 6,
-    user: "Don Jay",
-    car: "Mercedes Benz GLE",
-    year: "2025",
-    condition: "Brand New",
-    datetime: "Sept. 10, 2025 2:00PM to 2:40PM",
-    status: "Cancelled",
-    avatar: "/images/gle.png",
-  },
-  {
-    id: 7,
-    user: "Don Jay",
-    car: "Mercedes Benz GLE",
-    year: "2025",
-    condition: "Brand New",
-    datetime: "Sept. 10, 2025 2:00PM to 2:40PM",
-    status: "Completed",
-    avatar: "/images/gle.png",
-  },
-];
+import api from "@/utils/api"; // ✅ make sure this exists and points to your backend
 
 export default function InspectionPage() {
-  const [inspections, setInspections] = useState(initialInspections);
+  const [inspections, setInspections] = useState([]);
+  const [loading, setLoading] = useState(false);
   const [showFilter, setShowFilter] = useState(false);
   const [showAdd, setShowAdd] = useState(false);
   const [actionMenuOpenFor, setActionMenuOpenFor] = useState(null);
   const [selectedInspection, setSelectedInspection] = useState(null);
+  const [pagination, setPagination] = useState({
+    currentPage: 1,
+    totalPages: 1,
+    totalInspections: 0,
+  });
 
-  const totalEntries = 120;
-  const pageSize = 7;
-  const totalPages = Math.ceil(totalEntries / pageSize);
   const [page, setPage] = useState(1);
 
-  const paginated = inspections.slice((page - 1) * pageSize, page * pageSize);
+  // ✅ Fetch all inspections (Admin)
+  const fetchInspections = async (page = 1) => {
+    setLoading(true);
+    try {
+      const res = await api.get(
+        "http://localhost:5000/api/inspections/admin/all",
+        {
+          params: { page, limit: 7 },
+        }
+      );
 
-  function handlePageChange(newPage) {
-    if (newPage < 1 || newPage > totalPages) return;
+      console.log("Fetched inspections:", res.data);
+
+      setInspections(res.data?.inspections || []);
+      setPagination(
+        res.data?.pagination || {
+          currentPage: 1,
+          totalPages: 1,
+          totalInspections: 0,
+        }
+      );
+    } catch (err) {
+      console.error("Failed to fetch inspections:", err);
+      setInspections([]);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchInspections();
+  }, []);
+
+  const handlePageChange = (newPage) => {
+    if (newPage < 1 || newPage > pagination.totalPages) return;
     setPage(newPage);
-  }
+    fetchInspections(newPage);
+  };
 
   return (
     <div className="p-6">
@@ -124,7 +86,10 @@ export default function InspectionPage() {
       <div className="mt-6 flex flex-col md:flex-row md:items-center md:justify-between gap-4 bg-white px-3 py-4 rounded-md">
         <div className="flex items-center">
           <div className="text-lg font-semibold">
-            All Booking: <span className="text-gray-400">{totalEntries}</span>
+            All Booking:{" "}
+            <span className="text-gray-400">
+              {pagination.totalInspections || 0}
+            </span>
           </div>
         </div>
 
@@ -182,90 +147,114 @@ export default function InspectionPage() {
             </tr>
           </thead>
           <tbody>
-            {paginated.map((item, i) => (
-              <tr
-                key={item.id}
-                className="border-b border-text-muted/70 last:border-b-0"
-              >
-                <td className="py-4">{(page - 1) * pageSize + i + 1}</td>
-                <td className="py-4">{item.user}</td>
+            {!loading &&
+              inspections.map((item, i) => (
+                <tr
+                  key={item._id}
+                  className="border-b border-text-muted/70 last:border-b-0"
+                >
+                  <td className="py-4">{(page - 1) * 7 + i + 1}</td>
+                  <td className="py-4">{item.customer?.name || "—"}</td>
 
-                <td className="py-4 flex items-center gap-3">
-                  <img
-                    src={item.avatar}
-                    alt={item.car}
-                    className="w-10 h-10 rounded-full border border-gray-200 object-cover"
-                  />
-                  {item.car}
-                </td>
+                  <td className="py-4 flex items-center gap-3">
+                    <img
+                      src={item.car?.images?.[0] || "/images/default-car.jpg"}
+                      alt={item.car?.carName}
+                      className="w-10 h-10 rounded-full border border-gray-200 object-cover"
+                    />
+                    {item.car?.carName || "—"}
+                  </td>
 
-                <td className="py-4 text-text-muted">{item.year}</td>
-                <td className="py-4">{item.condition}</td>
-                <td className="py-4 text-black/60">{item.datetime}</td>
+                  <td className="py-4 text-text-muted">
+                    {item.car?.year || "—"}
+                  </td>
+                  <td className="py-4">{item.car?.condition || "—"}</td>
+                  <td className="py-4 text-black/60">
+                    {new Date(item.inspectionDate).toLocaleDateString()}{" "}
+                    {item.timeSlot?.startTime
+                      ? `${item.timeSlot.startTime} - ${item.timeSlot.endTime}`
+                      : ""}
+                  </td>
 
-                <td className="py-4">
-                  <span
-                    className={`px-3 py-1 text-xs font-medium rounded-full ${
-                      item.status === "Completed"
-                        ? "bg-green-100 text-green-700"
-                        : item.status === "Pending"
-                        ? "bg-yellow-100 text-yellow-700"
-                        : "bg-red-100 text-red-700"
-                    }`}
-                  >
-                    {item.status}
-                  </span>
-                </td>
+                  <td className="py-4">
+                    <span
+                      className={`px-3 py-1 text-xs font-medium rounded-full ${
+                        item.status === "completed"
+                          ? "bg-green-100 text-green-700"
+                          : item.status === "pending"
+                          ? "bg-yellow-100 text-yellow-700"
+                          : "bg-red-100 text-red-700"
+                      }`}
+                    >
+                      {item.status}
+                    </span>
+                  </td>
 
-                <td className="py-4 relative">
-                  <button
-                    className="p-2 rounded-full hover:bg-gray-100"
-                    onClick={() =>
-                      setActionMenuOpenFor(
-                        actionMenuOpenFor === item.id ? null : item.id
-                      )
-                    }
-                  >
-                    <MoreVertical size={18} />
-                  </button>
+                  <td className="py-4 relative">
+                    <button
+                      className="p-2 rounded-full hover:bg-gray-100"
+                      onClick={() =>
+                        setActionMenuOpenFor(
+                          actionMenuOpenFor === item._id ? null : item._id
+                        )
+                      }
+                    >
+                      <MoreVertical size={18} />
+                    </button>
 
-                  {actionMenuOpenFor === item.id && (
-                    <div className="absolute right-0 mt-2 z-50 bg-white border border-gray-200 rounded shadow w-44 text-sm">
-                      <button
-                        onClick={() => {
-                          setSelectedInspection(item);
-                          setActionMenuOpenFor(null);
-                        }}
-                        className="w-full flex items-center gap-2 px-3 py-2 hover:bg-gray-100"
-                      >
-                        <Search size={16} className="text-gray-600" />
-                        View Details
-                      </button>
-                      <button className="w-full flex items-center gap-2 px-3 py-2 hover:bg-gray-100">
-                        <Edit size={16} className="text-blue-600" />
-                        Reschedule Inspection
-                      </button>
-                      <button className="w-full flex items-center gap-2 px-3 py-2 hover:bg-gray-100">
-                        <CheckCircle className="text-green-600" size={16} />
-                        Mark as Completed
-                      </button>
-                      <button className="w-full flex items-center gap-2 px-3 py-2 hover:bg-gray-100 text-red-600">
-                        <Trash2 size={16} />
-                        Cancel Request
-                      </button>
-                    </div>
-                  )}
+                    {actionMenuOpenFor === item._id && (
+                      <div className="absolute right-0 mt-2 z-50 bg-white border border-gray-200 rounded shadow w-44 text-sm">
+                        <button
+                          onClick={() => {
+                            setSelectedInspection(item);
+                            setActionMenuOpenFor(null);
+                          }}
+                          className="w-full flex items-center gap-2 px-3 py-2 hover:bg-gray-100"
+                        >
+                          <Search size={16} className="text-gray-600" />
+                          View Details
+                        </button>
+                        <button className="w-full flex items-center gap-2 px-3 py-2 hover:bg-gray-100">
+                          <Edit size={16} className="text-blue-600" />
+                          Reschedule Inspection
+                        </button>
+                        <button className="w-full flex items-center gap-2 px-3 py-2 hover:bg-gray-100">
+                          <CheckCircle className="text-green-600" size={16} />
+                          Mark as Completed
+                        </button>
+                        <button className="w-full flex items-center gap-2 px-3 py-2 hover:bg-gray-100 text-red-600">
+                          <Trash2 size={16} />
+                          Cancel Request
+                        </button>
+                      </div>
+                    )}
+                  </td>
+                </tr>
+              ))}
+
+            {loading && (
+              <tr>
+                <td colSpan="8" className="py-6 text-center text-gray-500">
+                  Loading inspections...
                 </td>
               </tr>
-            ))}
+            )}
+            {!loading && inspections.length === 0 && (
+              <tr>
+                <td colSpan="8" className="py-6 text-center text-gray-500">
+                  No inspections found.
+                </td>
+              </tr>
+            )}
           </tbody>
         </table>
 
         {/* Footer */}
         <div className="mt-4 flex flex-col md:flex-row md:items-center md:justify-between text-sm text-gray-500 gap-3">
           <div>
-            Showing {(page - 1) * pageSize + 1} to{" "}
-            {Math.min(page * pageSize, totalEntries)} of {totalEntries} entries
+            Showing {(page - 1) * 7 + 1} to{" "}
+            {Math.min(page * 7, pagination.totalInspections)} of{" "}
+            {pagination.totalInspections} entries
           </div>
 
           <div className="flex items-center gap-1">
@@ -282,26 +271,9 @@ export default function InspectionPage() {
               <ChevronLeft size={16} />
             </button>
 
-            {[1, 2, 3].map((num) => (
-              <button
-                key={num}
-                onClick={() => handlePageChange(num)}
-                className={`px-3 py-1 rounded border border-text-muted ${
-                  page === num ? "bg-blue text-white" : "hover:bg-gray-100"
-                }`}
-              >
-                {num}
-              </button>
-            ))}
-            <span className="px-2">...</span>
-            <button
-              onClick={() => handlePageChange(totalPages)}
-              className={`px-3 py-1 rounded border border-text-muted ${
-                page === totalPages ? "bg-blue text-white" : "hover:bg-gray-100"
-              }`}
-            >
-              {totalPages}
-            </button>
+            <span className="px-2">
+              Page {pagination.currentPage} of {pagination.totalPages}
+            </span>
 
             <button
               onClick={() => handlePageChange(page + 1)}
@@ -310,7 +282,7 @@ export default function InspectionPage() {
               <ChevronRight size={16} />
             </button>
             <button
-              onClick={() => handlePageChange(totalPages)}
+              onClick={() => handlePageChange(pagination.totalPages)}
               className="px-2 py-1 rounded border border-text-muted hover:bg-gray-100"
             >
               <ChevronsRight size={16} />
