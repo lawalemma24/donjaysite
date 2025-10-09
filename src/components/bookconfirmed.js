@@ -1,4 +1,5 @@
 "use client";
+
 import { FaCheckCircle } from "react-icons/fa";
 
 const BookSuccessModal = ({ isOpen, onClose }) => {
@@ -14,9 +15,8 @@ const BookSuccessModal = ({ isOpen, onClose }) => {
         </div>
 
         <h2 className="text-2xl font-bold mb-2">Booking Confirmed</h2>
-
         <p className="text-gray-600 text-sm mb-6">
-          Your inspection has been succesfully scheduled.Our team will contact
+          Your inspection has been successfully scheduled. Our team will contact
           you shortly with further details.
         </p>
 

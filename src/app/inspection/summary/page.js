@@ -1,27 +1,80 @@
 "use client";
+
 import BookSuccessModal from "@/components/bookconfirmed";
 import ConfirmBookOverlay from "@/components/confirmbooking";
-import Link from "next/link";
+import React, { useState } from "react";
 
-import { useState } from "react";
-import { FaChevronLeft, FaChevronRight } from "react-icons/fa";
-
-const images = [
-  "/images/lexus-rx.png",
-  "/images/gle.png",
-  "/images/nissan-maxima.png",
-  "/images/toyota-camry.png",
-  "/images/vw-golf.png",
-];
-
-export default function SellOfferReview() {
-  const [current, setCurrent] = useState(0);
-  const [lightbox, setLightbox] = useState(false);
+export default function InspectionOfferReview({
+  car,
+  date,
+  time,
+  note,
+  onBack,
+}) {
   const [open, setOpen] = useState(false);
   const [successOpen, setSuccessOpen] = useState(false);
+  const [loading, setLoading] = useState(false);
 
-  const handleSubmit = () => {
-    setSuccessOpen(true);
+  const token =
+    typeof window !== "undefined" ? localStorage.getItem("token") : null;
+
+  // helper: convert to expected time slot label
+  const getTimeSlot = (time) => {
+    const hour = parseInt(time.split(":")[0]);
+    if (hour >= 9 && hour < 12) return "morning";
+    if (hour >= 12 && hour < 17) return "afternoon";
+    if (hour >= 17 && hour < 20) return "evening";
+    return "morning";
+  };
+  const handleSubmit = async () => {
+    setLoading(true);
+    try {
+      // Map your time input to backend slot periods
+      const getTimeSlot = (time) => {
+        const hour = parseInt(time.split(":")[0]);
+        if (hour >= 9 && hour < 12)
+          return { period: "morning", startTime: "09:00", endTime: "09:30" };
+        if (hour >= 12 && hour < 17)
+          return { period: "afternoon", startTime: "13:00", endTime: "13:30" };
+        return { period: "night", startTime: "18:00", endTime: "18:30" };
+      };
+
+      const timeSlot = getTimeSlot(time);
+
+      const payload = {
+        carId: car.id,
+        inspectionDate: date,
+        timeSlot,
+        customerNotes: note || "",
+      };
+
+      console.log("📦 Payload being sent:", payload);
+
+      const res = await fetch("http://localhost:5000/api/inspections/book", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify(payload),
+      });
+
+      const data = await res.json().catch(() => ({}));
+
+      console.log("🔁 Response status:", res.status);
+      console.log("🧾 Response body:", data);
+
+      if (!res.ok) {
+        throw new Error(data.error || `Failed: ${res.statusText}`);
+      }
+
+      setSuccessOpen(true);
+    } catch (err) {
+      console.error("Booking error:", err);
+      alert(err.message);
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -30,57 +83,60 @@ export default function SellOfferReview() {
         <nav className="text-sm text-gray-500">
           Home <span className="mx-1">/</span> Garage{" "}
           <span className="mx-1">/</span>
-          <span className="text-gray-500 font-medium">Car Details</span>
-          <span className="mx-1">/</span>
-          <span className="text-gray-500 font-medium">Sell</span>
-          <span className="mx-1">/</span>
-          <span className="text-blue font-medium">Review sell</span>
+          <span className="text-blue font-medium">Review Booking</span>
         </nav>
       </div>
 
       <div className="max-w-md mx-auto bg-white rounded-2xl shadow p-6">
-        {/* Car Info */}
-        <div className="mt-4">
-          <h3 className="font-bold text-xl md:text-2xl text-center mb-6">
-            Booking Summary
-          </h3>
+        <h3 className="font-bold text-xl md:text-2xl text-center mb-6">
+          Booking Summary
+        </h3>
 
-          <div className="text-sm text-lightgrey mt-2 space-y-1">
-            <p>
-              Car Name:{" "}
-              <span className="float-right text-black">Honda Accord</span>
-            </p>
-            <p>
-              Condition: <span className="float-right  text-black">Used</span>
-            </p>
-            <p>
-              Transmission:{" "}
-              <span className="float-right  text-black">Automatic</span>
-            </p>
-            <p>
-              Preffered Date:{" "}
-              <span className="float-right  text-black">Thu, sep 2026</span>
-            </p>
-          </div>
+        <div className="text-sm text-lightgrey mt-2 space-y-1">
+          <p>
+            Car Name:{" "}
+            <span className="float-right text-black">
+              {car.carName} ({car.year})
+            </span>
+          </p>
+          <p>
+            Condition:{" "}
+            <span className="float-right text-black">{car.condition}</span>
+          </p>
+          <p>
+            Transmission:{" "}
+            <span className="float-right text-black">{car.transmission}</span>
+          </p>
+          <p>
+            Preferred Date:{" "}
+            <span className="float-right text-black">
+              {date} at {time}
+            </span>
+          </p>
+          <p>
+            Note: <span className="float-right text-black">{note || "-"}</span>
+          </p>
         </div>
 
-        {/* Buttons */}
         <div className="mt-4 grid grid-cols-2 gap-3">
-          <Link href="/inspection">
-            <button className="flex-1 py-2 px-3 border border-blue rounded-lg text-blue">
-              Edit Details
-            </button>
-          </Link>
+          <button
+            onClick={onBack}
+            className="flex-1 py-2 px-3 border border-blue rounded-lg text-blue"
+          >
+            Edit Details
+          </button>
 
           <button
             onClick={() => setOpen(true)}
-            className="flex-1 py-2 rounded-lg bg-blue px-2 text-white text-sm"
+            disabled={loading}
+            className={`flex-1 py-2 rounded-lg px-2 text-white text-sm ${
+              loading ? "bg-blue/70" : "bg-blue hover:bg-blue-700"
+            }`}
           >
-            Confirm Booking
+            {loading ? "Booking..." : "Confirm Booking"}
           </button>
         </div>
 
-        {/* Modals */}
         {open && (
           <ConfirmBookOverlay
             onClose={() => setOpen(false)}
@@ -92,19 +148,6 @@ export default function SellOfferReview() {
           isOpen={successOpen}
           onClose={() => setSuccessOpen(false)}
         />
-
-        {lightbox && (
-          <div
-            className="fixed inset-0 bg-black/80 flex items-center justify-center z-50"
-            onClick={() => setLightbox(false)}
-          >
-            <img
-              src={images[current]}
-              alt="large"
-              className="max-w-full max-h-[90vh] rounded-lg"
-            />
-          </div>
-        )}
       </div>
     </div>
   );

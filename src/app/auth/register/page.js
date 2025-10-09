@@ -11,6 +11,7 @@ export default function Register() {
     name: "",
     email: "",
     phone: "",
+    address: "",
     password: "",
     confirmPassword: "",
   });
@@ -75,6 +76,7 @@ export default function Register() {
       password: form.password,
       confirmPassword: form.confirmPassword,
       phoneNumber: form.phone,
+      address: form.address,
     };
     console.log("Sending signup payload:", payload);
 
@@ -95,7 +97,7 @@ export default function Register() {
         router.push("/auth/otp");
       } else {
         console.error("Signup failed:", data);
-        toast.error(data?.message || "Something went wrong");
+        toast.error(data?.error || "Something went wrong");
       }
     } catch (error) {
       console.error("Network error:", error);
@@ -123,7 +125,7 @@ export default function Register() {
           </p>
 
           <form className="space-y-4 md:space-y-5" onSubmit={handleSubmit}>
-            {["name", "email", "phone"].map((field) => (
+            {["name", "email", "phone", "address"].map((field) => (
               <div key={field}>
                 <label
                   className="block text-sm font-medium mb-2 text-black"
@@ -133,6 +135,8 @@ export default function Register() {
                     ? "Email Address"
                     : field === "phone"
                     ? "Phone Number"
+                    : field === "address"
+                    ? "Address"
                     : "Name"}
                 </label>
                 <input

@@ -31,7 +31,7 @@ const AccountMenu = () => {
         className="flex items-center gap-2 px-3 py-2 hover:bg-gray-50"
       >
         <Image
-          src="/images/garrage2.png"
+          src={user?.profilePic || "/images/default-profile.png"}
           alt="profile"
           width={32}
           height={32}

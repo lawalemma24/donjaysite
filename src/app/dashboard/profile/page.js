@@ -73,7 +73,7 @@ const Dashboard = () => {
                 {/* Profile Image with Edit */}
                 <div className="relative flex items-start p-4 mb-6">
                   <img
-                    src={profileImage}
+                    src={user?.profilePic}
                     alt="Profile"
                     className="w-24 h-24 rounded-full object-cover"
                   />
@@ -127,7 +127,7 @@ const Dashboard = () => {
                     <label className="text-sm text-gray-600">Address</label>
                     <input
                       type="text"
-                      defaultValue="Akin Adesola Street, Victoria Island, Lagos State"
+                      defaultValue={user?.address}
                       className="mt-1 block w-full border border-text-muted focus:ring-none focus:outline-none focus:border-blue rounded-md px-3 py-2 text-sm"
                     />
                   </div>

@@ -8,7 +8,7 @@ import {
 } from "lucide-react";
 
 import CarCard from "@/components/carcard";
-import api from "@/utils/api"; // your axios instance
+import api from "@/utils/api";
 
 const PER_PAGE = 9;
 
@@ -24,9 +24,10 @@ export default function CarMarketplace() {
       const res = await api.get("/approved", {
         params: { page: pageNumber, limit: PER_PAGE },
       });
-      console.log("Fetched cars:", res.data.cars); // log cars
-      console.log("Pagination:", res.data.pagination); // log pagination
+      console.log("Fetched cars:", res.data.cars);
+      console.log("Pagination:", res.data.pagination);
       setCars(res.data.cars || []);
+
       setTotalPages(res.data.pagination?.totalPages || 1);
     } catch (err) {
       console.error("Error fetching cars:", err);
