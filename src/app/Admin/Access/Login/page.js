@@ -8,6 +8,54 @@ import { useAuth } from "@/app/contexts/AuthContext";
 
 export default function AdminLogin() {
   const [showPassword, setShowPassword] = useState(false);
+  const { login } = useAuth();
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+
+    const email = e.target.email.value.trim();
+    const password = e.target.password.value.trim();
+
+    if (!email || !password) {
+      toast.error("Please fill in all fields");
+      return;
+    }
+
+    try {
+      const res = await fetch("http://localhost:5000/api/auth/login", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email, password }),
+      });
+
+      if (!res.ok) {
+        toast.error(
+          res.status === 400
+            ? "Invalid email or password"
+            : "Something went wrong"
+        );
+        return;
+      }
+
+      const data = await res.json();
+      console.log("ADMIN LOGIN RESPONSE:", data);
+
+      // ✅ Role validation
+      if (data.role !== "admin") {
+        toast.error("Access denied. Admins only.");
+        return;
+      }
+
+      toast.success("Admin login successful!");
+      login(data); // store in context
+
+      // ✅ Redirect to admin dashboard
+      window.location.href = "/Admin/Dashboard/Home";
+    } catch (error) {
+      console.error("Server error:", error);
+      toast.error("Server error");
+    }
+  };
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue to-indigo-900 flex items-center justify-center p-4">
@@ -30,7 +78,7 @@ export default function AdminLogin() {
             Please enter your details to log in
           </p>
 
-          <form className="space-y-4 md:space-y-5">
+          <form className="space-y-4 md:space-y-5" onSubmit={handleSubmit}>
             {/* Email */}
             <div>
               <label

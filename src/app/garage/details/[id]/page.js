@@ -164,6 +164,37 @@ export default function CarDetails() {
               <Eye className="w-5 h-5" />
               <span>{car.views || 0} people viewed this car</span>
             </div>
+            <div className="my-4 ">
+              <h3 className="text-xl font-bold ">Car Description</h3>
+              <p className="text-sm text-text-muted">{car.note}</p>
+            </div>
+            <div className="my-4 space-y-2 ">
+              <h3 className="text-xl font-bold ">Specifications</h3>
+              <p className="flex justify-between text-sm">
+                <span>Condition:</span>
+                <span className="text-text-muted">{car.condition}</span>
+              </p>
+
+              <p className="flex justify-between text-sm">
+                <span>Transmission:</span>
+                <span className="text-text-muted">{car.transmission}</span>
+              </p>
+
+              <p className="flex justify-between text-sm">
+                <span>Fuel Type:</span>
+                <span className="text-text-muted">{car.fuelType}</span>
+              </p>
+
+              <p className="flex justify-between text-sm">
+                <span>Engine:</span>
+                <span className="text-text-muted">{car.engine}</span>
+              </p>
+
+              <p className="flex justify-between text-sm">
+                <span>Mileage:</span>
+                <span className="text-text-muted">{car.mileage}</span>
+              </p>
+            </div>
 
             {/* Book inspection */}
             <button

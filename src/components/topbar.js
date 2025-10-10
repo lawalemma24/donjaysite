@@ -20,8 +20,9 @@ export default function TopBar() {
     setGarageOpen(false);
   };
 
+  // ✅ Only change: make active page blue + underline on big screen
   const linkClass = (href) =>
-    pathname === href ? "text-blue font-semibold" : "";
+    pathname === href ? "text-blue font-semibold 3xl:underline" : "";
 
   return (
     <div className="fixed top-0 left-0 w-full z-50 bg-transparent md:pt-4">
@@ -123,7 +124,7 @@ export default function TopBar() {
           </div>
           <Link
             href="/inspection"
-            className={`hover:text-blue ${linkClass("/book-inspection")}`}
+            className={`hover:text-blue ${linkClass("/inspection")}`}
           >
             Book Inspection
           </Link>
@@ -226,7 +227,7 @@ export default function TopBar() {
 
           <Link
             href="/inspection"
-            className={`block hover:text-blue ${linkClass("/book-inspection")}`}
+            className={`block hover:text-blue ${linkClass("/inspectionn")}`}
             onClick={handleLinkClick}
           >
             Book Inspection
@@ -250,16 +251,6 @@ export default function TopBar() {
             <button className="text-red-600 mb-2  font-bold flex flex-row gap-2">
               <LogOut size={18} /> Log Out
             </button>
-
-            {/* <Link
-              href="/auth/login"
-              className={`block bg-blue text-white max-w-[500px] px-4 py-2 rounded hover:bg-blue-700 ${
-                pathname === "/auth/login" ? "bg-blue-700" : ""
-              }`}
-              onClick={handleLinkClick}
-            >
-              Login/Register
-            </Link> */}
           </div>
         </div>
       )}
