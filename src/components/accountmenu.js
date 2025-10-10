@@ -20,7 +20,7 @@ const AccountMenu = () => {
   const handleLogout = () => {
     logout();
     setOpen(false);
-    window.location.href = "/auth/login";
+    window.location.href = "/";
   };
 
   return (
