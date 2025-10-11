@@ -40,16 +40,13 @@ export default function AdminLogin() {
       const data = await res.json();
       console.log("ADMIN LOGIN RESPONSE:", data);
 
-      // ✅ Role validation
       if (data.role !== "admin") {
         toast.error("Access denied. Admins only.");
         return;
       }
 
       toast.success("Admin login successful!");
-      login(data); // store in context
-
-      // ✅ Redirect to admin dashboard
+      login(data);
       window.location.href = "/Admin/Dashboard/Home";
     } catch (error) {
       console.error("Server error:", error);

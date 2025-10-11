@@ -1,31 +1,43 @@
-// components/ProtectedRoute.js
 "use client";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { useAuth } from "@/app/contexts/AuthContext";
 
 export default function ProtectedRoute({ children, allowedRoles }) {
   const { user } = useAuth();
   const router = useRouter();
+  const [checking, setChecking] = useState(true);
 
   useEffect(() => {
-    // Not logged in
-    if (!user) {
-      router.push("/auth/login");
-      return;
-    }
+    const checkAccess = () => {
+      // Try restore from storage if user not yet in context
+      let currentUser = user;
+      if (!currentUser) {
+        const stored = localStorage.getItem("user");
+        if (stored) {
+          currentUser = JSON.parse(stored);
+        }
+      }
 
-    // Logged in but role not allowed
-    if (allowedRoles && !allowedRoles.includes(user.role)) {
-      router.push("/unauthorized");
-    }
+      // Still nothing → not logged in
+      if (!currentUser) {
+        router.push("/auth/login");
+        return;
+      }
+
+      // Role restriction
+      if (allowedRoles && !allowedRoles.includes(currentUser.role)) {
+        router.push("/unauthorized");
+        return;
+      }
+
+      setChecking(false);
+    };
+
+    checkAccess();
   }, [user, router, allowedRoles]);
 
-  // Wait until user is confirmed
-  if (!user) return null;
+  if (checking) return null; // wait until check finishes
 
-  // Role check passes
-  if (allowedRoles && allowedRoles.includes(user.role)) return children;
-
-  return null;
+  return children;
 }
