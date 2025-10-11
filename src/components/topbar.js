@@ -8,11 +8,13 @@ import AccountMenu from "./accountmenu";
 import { LogOut } from "lucide-react";
 import { ArrowRight } from "lucide-react";
 import { useAuth } from "@/app/contexts/AuthContext";
+import NotRegisteredOverlay from "./notuser";
 
 export default function TopBar() {
   const { user, logout } = useAuth();
   const [menuOpen, setMenuOpen] = useState(false);
   const [garageOpen, setGarageOpen] = useState(false);
+  const [showOverlay, setShowOverlay] = useState(false);
   const pathname = usePathname();
 
   const handleLinkClick = () => {
@@ -20,13 +22,21 @@ export default function TopBar() {
     setGarageOpen(false);
   };
 
-  // ✅ Only change: make active page blue + underline on big screen
+  // Only trigger overlay for protected actions
+  const handleProtectedClick = () => {
+    if (!user) {
+      setShowOverlay(true);
+      return;
+    }
+    handleLinkClick();
+  };
+
   const linkClass = (href) =>
     pathname === href ? "text-blue font-semibold 3xl:underline" : "";
 
   return (
     <div className="fixed top-0 left-0 w-full z-50 bg-transparent md:pt-4">
-      <div className="max-w-[900px] mx-auto bg-secondary flex items-center shadow  justify-between px-6 py-3 md:rounded-lg ">
+      <div className="max-w-[900px] mx-auto bg-secondary flex items-center shadow justify-between px-6 py-3 md:rounded-lg ">
         {/* Logo */}
         <Link
           href="/"
@@ -104,6 +114,7 @@ export default function TopBar() {
               </svg>
             </button>
             <div className="absolute left-0 hidden group-hover:block bg-white rounded shadow-md min-w-[160px]">
+              {/* Buy & Swap always accessible */}
               <Link
                 href="/garage/buy-swap"
                 className={`flex items-center gap-2 px-4 py-2 text-blue hover:bg-gray-100 ${linkClass(
@@ -112,22 +123,23 @@ export default function TopBar() {
               >
                 <Shuffle size={16} className="text-blue" /> Buy or Swap
               </Link>
-              <Link
-                href="/garage/sell"
+              {/* Sell requires registration */}
+              <button
                 className={`flex items-center gap-2 px-4 py-2 text-blue hover:bg-gray-100 ${linkClass(
                   "/garage/sell"
                 )}`}
+                onClick={handleProtectedClick}
               >
                 <Tags size={16} className="text-blue" /> Sell
-              </Link>
+              </button>
             </div>
           </div>
-          <Link
-            href="/inspection"
+          <button
             className={`hover:text-blue ${linkClass("/inspection")}`}
+            onClick={handleProtectedClick}
           >
             Book Inspection
-          </Link>
+          </button>
           <Link
             href="/about"
             className={`hover:text-blue ${linkClass("/about")}`}
@@ -167,14 +179,16 @@ export default function TopBar() {
             href="/dashboard/profile"
             className="block"
           >
-            <div className="flex flex-col p-2 w-[98%] mx-auto border border-lightgrey/50 rounded-lg cursor-pointer hover:bg-gray-50">
-              <p className="text-black font-bold hover:text-blue">
-                {user.name}
-              </p>
-              <p className="text-xs text-text-muted flex flex-row gap-1 hover:text-black">
-                View Profile <ArrowRight size={18} />
-              </p>
-            </div>
+            {user ? (
+              <div className="flex flex-col p-2 w-[98%] mx-auto border border-lightgrey/50 rounded shadow cursor-pointer ">
+                <p className="text-blue/70 text-lg font-bold hover:text-blue">
+                  {user.name}
+                </p>
+                <p className="text-xs text-orange flex flex-row gap-1 hover:text-black">
+                  View Profile <ArrowRight size={18} />
+                </p>
+              </div>
+            ) : null}
           </Link>
           <Link
             href="/"
@@ -206,6 +220,7 @@ export default function TopBar() {
           </button>
           {garageOpen && (
             <div className="pl-4 space-y-2">
+              {/* Buy & Swap accessible */}
               <Link
                 href="/garage/buy-swap"
                 className={`block hover:text-blue ${linkClass(
@@ -215,23 +230,22 @@ export default function TopBar() {
               >
                 Buy or Swap
               </Link>
-              <Link
-                href="/garage/sell"
+              {/* Sell protected */}
+              <button
                 className={`block hover:text-blue ${linkClass("/garage/sell")}`}
-                onClick={handleLinkClick}
+                onClick={handleProtectedClick}
               >
                 Sell
-              </Link>
+              </button>
             </div>
           )}
 
-          <Link
-            href="/inspection"
-            className={`block hover:text-blue ${linkClass("/inspectionn")}`}
-            onClick={handleLinkClick}
+          <button
+            className={`block hover:text-blue ${linkClass("/inspection")}`}
+            onClick={handleProtectedClick}
           >
             Book Inspection
-          </Link>
+          </button>
           <Link
             href="/about"
             className={`block hover:text-blue ${linkClass("/about")}`}
@@ -246,13 +260,26 @@ export default function TopBar() {
           >
             Contact Us
           </Link>
+          <button
+            className={`block hover:text-blue ${linkClass(
+              "/services/customersupport"
+            )}`}
+            onClick={handleProtectedClick}
+          >
+            Customer Support
+          </button>
 
           <div className="border-t border-lightgrey/40 pt-4">
-            <button className="text-red-600 mb-2  font-bold flex flex-row gap-2">
+            <button className="text-red-600 mb-2 font-bold flex flex-row gap-2">
               <LogOut size={18} /> Log Out
             </button>
           </div>
         </div>
+      )}
+
+      {/* Overlay */}
+      {showOverlay && (
+        <NotRegisteredOverlay onClose={() => setShowOverlay(false)} />
       )}
     </div>
   );

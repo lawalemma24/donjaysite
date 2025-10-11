@@ -1,4 +1,7 @@
-import React from "react";
+"use client";
+import React, { useState } from "react";
+import { useAuth } from "@/app/contexts/AuthContext";
+import NotRegisteredOverlay from "./notuser";
 
 const socialIcons = [
   {
@@ -82,9 +85,13 @@ const links = [
     title: "Services",
     items: [
       { label: "Buy Car", url: "/garage/buy-swap" },
-      { label: "Sell Car", url: "/garage/sell" },
+      { label: "Sell Car", url: "/garage/sell", restricted: true },
       { label: "Swap Cars", url: "/garage/buy-swap" },
-      { label: "Book Inspection", url: "/services/inspection" },
+      {
+        label: "Book Inspection",
+        url: "/services/inspection",
+        restricted: true,
+      },
     ],
   },
   {
@@ -93,7 +100,11 @@ const links = [
       { label: "FAQs", url: "/faqs" },
       { label: "Terms & Conditions", url: "/terms" },
       { label: "Privacy Policy", url: "/privacy" },
-      { label: "Customer Support (Chat with Us)", url: "/support" },
+      {
+        label: "Customer Support (Chat with Us)",
+        url: "/support",
+        restricted: true,
+      },
     ],
   },
   {
@@ -108,6 +119,16 @@ const links = [
 ];
 
 const Footer = () => {
+  const { user } = useAuth();
+  const [showOverlay, setShowOverlay] = useState(false);
+
+  const handleRestrictedClick = (e, restricted) => {
+    if (restricted && !user) {
+      e.preventDefault();
+      setShowOverlay(true);
+    }
+  };
+
   return (
     <footer className="bg-black text-white py-16 px-4 sm:px-6 lg:px-8 text-xs md:text-sm">
       <div className="max-w-7xl mx-auto">
@@ -121,7 +142,8 @@ const Footer = () => {
                   <li key={i}>
                     <a
                       href={item.url}
-                      className="text-white/70 hover:text-white transition-colors duration-200"
+                      onClick={(e) => handleRestrictedClick(e, item.restricted)}
+                      className="text-white/70 hover:text-white transition-colors duration-200 cursor-pointer"
                     >
                       {item.label}
                     </a>
@@ -184,6 +206,11 @@ const Footer = () => {
           <p>&copy; 2025 Don-Jay Autos Limited. All rights reserved</p>
         </div>
       </div>
+
+      {/* Overlay */}
+      {showOverlay && (
+        <NotRegisteredOverlay onClose={() => setShowOverlay(false)} />
+      )}
     </footer>
   );
 };

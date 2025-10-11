@@ -1,6 +1,7 @@
 "use client";
 import { useState } from "react";
 import { Paperclip, Send } from "lucide-react";
+import ProtectedRoute from "@/app/protectedroutes/protected";
 
 const ChatSupport = () => {
   const [messages, setMessages] = useState([
@@ -43,57 +44,59 @@ const ChatSupport = () => {
   };
 
   return (
-    <div className="min-h-screen bg-white px-4 py-16">
-      <div className="max-w-lg mx-auto mt-10 rounded-2xl shadow-lg border border-lightgrey bg-white">
-        <div className="bg-blue text-white font-semibold px-6 py-3 rounded-t-2xl">
-          Customer Support
-        </div>
+    <ProtectedRoute allowedRoles={["customer"]}>
+      <div className="min-h-screen bg-white px-4 py-16">
+        <div className="max-w-lg mx-auto mt-10 rounded-2xl shadow-lg border border-lightgrey bg-white">
+          <div className="bg-blue text-white font-semibold px-6 py-3 rounded-t-2xl">
+            Customer Support
+          </div>
 
-        <div className="p-6 space-y-4 h-150 overflow-y-auto">
-          <p className="text-center text-xs text-gray-400">Monday</p>
-          {messages.map((msg) => (
-            <div
-              key={msg.id}
-              className={`flex ${
-                msg.sender === "user" ? "justify-end" : "justify-start"
-              }`}
-            >
+          <div className="p-6 space-y-4 h-150 overflow-y-auto">
+            <p className="text-center text-xs text-gray-400">Monday</p>
+            {messages.map((msg) => (
               <div
-                className={`max-w-xs px-4 py-2 rounded-lg text-sm ${
-                  msg.sender === "user"
-                    ? "bg-blue-100 text-black"
-                    : "bg-gray-100 text-black"
+                key={msg.id}
+                className={`flex ${
+                  msg.sender === "user" ? "justify-end" : "justify-start"
                 }`}
               >
-                <p>{msg.text}</p>
-                <p className="text-[10px] text-gray-500 text-right mt-1">
-                  {msg.time}
-                </p>
+                <div
+                  className={`max-w-xs px-4 py-2 rounded-lg text-sm ${
+                    msg.sender === "user"
+                      ? "bg-blue-100 text-black"
+                      : "bg-gray-100 text-black"
+                  }`}
+                >
+                  <p>{msg.text}</p>
+                  <p className="text-[10px] text-gray-500 text-right mt-1">
+                    {msg.time}
+                  </p>
+                </div>
               </div>
-            </div>
-          ))}
-        </div>
+            ))}
+          </div>
 
-        <form
-          onSubmit={handleSend}
-          className="flex items-center gap-2 border-t px-4 py-3"
-        >
-          <button type="button" className="text-blue">
-            <Paperclip size={20} />
-          </button>
-          <input
-            type="text"
-            value={input}
-            onChange={(e) => setInput(e.target.value)}
-            placeholder="Write your message here..."
-            className="flex-1 border-none outline-none text-sm text-gray-700"
-          />
-          <button type="submit" className="text-blue">
-            <Send size={20} />
-          </button>
-        </form>
+          <form
+            onSubmit={handleSend}
+            className="flex items-center gap-2 border-t px-4 py-3"
+          >
+            <button type="button" className="text-blue">
+              <Paperclip size={20} />
+            </button>
+            <input
+              type="text"
+              value={input}
+              onChange={(e) => setInput(e.target.value)}
+              placeholder="Write your message here..."
+              className="flex-1 border-none outline-none text-sm text-gray-700"
+            />
+            <button type="submit" className="text-blue">
+              <Send size={20} />
+            </button>
+          </form>
+        </div>
       </div>
-    </div>
+    </ProtectedRoute>
   );
 };
 

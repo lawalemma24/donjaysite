@@ -1,9 +1,23 @@
+"use client";
+
 import Image from "next/image";
-import { Tags } from "lucide-react";
-import { Shuffle } from "lucide-react";
+import { Tags, Shuffle } from "lucide-react";
 import Link from "next/link";
+import { useState } from "react";
+import { useAuth } from "@/app/contexts/AuthContext";
+import NotRegisteredOverlay from "./notuser";
 
 export default function Hero() {
+  const { user } = useAuth();
+  const [showOverlay, setShowOverlay] = useState(false);
+
+  const handleSellClick = (e) => {
+    if (!user) {
+      e.preventDefault(); // prevent navigation
+      setShowOverlay(true);
+    }
+  };
+
   return (
     <section className="relative h-[80vh] md:h[85vh] w-full flex items-center justify-center text-center mt-0">
       <Image
@@ -38,6 +52,7 @@ export default function Hero() {
           {/* Sell */}
           <Link
             href="/garage/sell"
+            onClick={handleSellClick}
             className="flex items-center gap-2 px-4 py-4 text-blue cursor-pointer hover:bg-gray-50"
           >
             <Tags size={16} className="text-blue-600" />
@@ -45,6 +60,11 @@ export default function Hero() {
           </Link>
         </div>
       </div>
+
+      {/* Overlay */}
+      {showOverlay && (
+        <NotRegisteredOverlay onClose={() => setShowOverlay(false)} />
+      )}
     </section>
   );
 }

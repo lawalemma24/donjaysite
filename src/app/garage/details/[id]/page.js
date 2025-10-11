@@ -1,6 +1,6 @@
 "use client";
 import { useState, useEffect } from "react";
-import { useParams } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
 import Image from "next/image";
 import Link from "next/link";
 import { Eye } from "lucide-react";
@@ -8,7 +8,7 @@ import RelatedCars from "@/components/relatedcars";
 import api from "@/utils/api";
 import ConfirmBookOverlay from "@/components/confirmbooking";
 import BookSuccessModal from "@/components/bookconfirmed";
-import { useRouter } from "next/navigation";
+import NotRegisteredOverlay from "@/components/notuser";
 
 export default function CarDetails() {
   const { id } = useParams();
@@ -20,22 +20,18 @@ export default function CarDetails() {
   const [modalImage, setModalImage] = useState(null);
   const [activeTab, setActiveTab] = useState("offer");
 
-  // new states
+  // Booking & overlays
   const [showConfirm, setShowConfirm] = useState(false);
   const [showSuccess, setShowSuccess] = useState(false);
   const [submitting, setSubmitting] = useState(false);
+  const [showNotRegistered, setShowNotRegistered] = useState(false);
 
-  console.log("🟦 useParams ID:", id);
   // Fetch car data
   useEffect(() => {
     const fetchCar = async () => {
-      console.log("Fetching car with ID:", id);
       try {
         const res = await api.get(`/${id}`);
-
-        console.log("API response:", res.data);
         const fetchedCar = res.data?.car || null;
-
         setCar(fetchedCar);
         setMainImage(fetchedCar?.images?.[0] || "/images/placeholder.png");
       } catch (err) {
@@ -54,16 +50,35 @@ export default function CarDetails() {
   };
   const handleModalClose = () => setIsModalOpen(false);
 
-  // 🟦 BOOKING HANDLER
-
+  // Booking & actions with not-registered overlay
   const handleBookInspection = () => {
+    const token = localStorage.getItem("token");
+    if (!token) {
+      setShowNotRegistered(true);
+      return;
+    }
     if (!car || !car.id) return;
-
-    // Save the selected car details temporarily
     sessionStorage.setItem("selectedCar", JSON.stringify(car));
-
-    // Redirect to inspection page with carId in the query
     router.push(`/inspection?carId=${car.id}`);
+  };
+
+  const handleBuyClick = () => {
+    const token = localStorage.getItem("token");
+    if (!token) {
+      setShowNotRegistered(true);
+      return;
+    }
+    sessionStorage.setItem("selectedCar", JSON.stringify(car));
+    router.push("/garage/ordersummary");
+  };
+
+  const handleSwapClick = () => {
+    const token = localStorage.getItem("token");
+    if (!token) {
+      setShowNotRegistered(true);
+      return;
+    }
+    router.push("/garage/swapcar");
   };
 
   const submitBooking = async () => {
@@ -71,19 +86,14 @@ export default function CarDetails() {
       setSubmitting(true);
       const token = localStorage.getItem("token");
       if (!token) {
-        alert("You must be logged in to book an inspection.");
+        setShowNotRegistered(true);
         return;
       }
-
       const res = await api.post(
         `/bookings`,
         { carId: id },
-        {
-          headers: { Authorization: `Bearer ${token}` },
-        }
+        { headers: { Authorization: `Bearer ${token}` } }
       );
-
-      console.log("Booking success:", res.data);
       setShowSuccess(true);
     } catch (err) {
       console.error("Booking failed:", err.response?.data || err);
@@ -206,22 +216,19 @@ export default function CarDetails() {
             </button>
 
             <div className="flex gap-4 mt-6">
-              <Link href="/garage/swapcar">
-                <button className="flex-1 border border-blue-600 text-blue-600 rounded-lg px-9 py-2 font-medium hover:bg-blue-50">
-                  Swap
-                </button>
-              </Link>
+              <button
+                onClick={handleSwapClick}
+                className="flex-1 border border-blue-600 text-blue-600 rounded-lg px-9 py-2 font-medium hover:bg-blue-50"
+              >
+                Swap
+              </button>
 
-              <Link href="/garage/ordersummary">
-                <button
-                  onClick={() => {
-                    sessionStorage.setItem("selectedCar", JSON.stringify(car));
-                  }}
-                  className="flex-1 bg-blue-600 text-white rounded-lg px-9 py-2 font-medium hover:bg-blue-700"
-                >
-                  Buy
-                </button>
-              </Link>
+              <button
+                onClick={handleBuyClick}
+                className="flex-1 bg-blue-600 text-white rounded-lg px-9 py-2 font-medium hover:bg-blue-700"
+              >
+                Buy
+              </button>
             </div>
 
             {/* Offer / Question Tabs */}
@@ -318,13 +325,20 @@ export default function CarDetails() {
           onSubmit={submitBooking}
         />
       )}
-
       <BookSuccessModal
         isOpen={showSuccess}
         onClose={() => setShowSuccess(false)}
       />
 
+      {/* Related cars */}
       <RelatedCars />
+
+      {/* Not Registered Overlay */}
+      {showNotRegistered && (
+        <NotRegisteredOverlay
+          onRegisterClick={() => router.push("/auth/register")}
+        />
+      )}
     </>
   );
 }
