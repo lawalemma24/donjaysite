@@ -47,7 +47,7 @@ export default function AdminLogin() {
 
       toast.success("Admin login successful!");
       login(data);
-      window.location.href = "/Admin/Dashboard/Home";
+      window.location.href = "/Admin/Dashboard/Overview";
     } catch (error) {
       console.error("Server error:", error);
       toast.error("Server error");
@@ -55,7 +55,7 @@ export default function AdminLogin() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue to-indigo-900 flex items-center justify-center p-4">
+    <div className="min-h-screen bg-gradient-to-br from-blue/30 to-indigo-200 flex items-center justify-center p-4">
       <div className="bg-white rounded-3xl shadow-2xl w-full max-w-md overflow-hidden">
         {/* Logo */}
         <div className="py-4 md:py-6 px-4 flex justify-center">

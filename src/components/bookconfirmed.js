@@ -1,9 +1,17 @@
 "use client";
 
 import { FaCheckCircle } from "react-icons/fa";
+import { useRouter } from "next/navigation";
 
 const BookSuccessModal = ({ isOpen, onClose }) => {
+  const router = useRouter();
+
   if (!isOpen) return null;
+
+  const handleDone = () => {
+    onClose(); // close the modal
+    router.push("/"); // redirect to home
+  };
 
   return (
     <div className="fixed inset-0 flex items-center justify-center bg-black/90 z-50">
@@ -21,7 +29,7 @@ const BookSuccessModal = ({ isOpen, onClose }) => {
         </p>
 
         <button
-          onClick={onClose}
+          onClick={handleDone}
           className="bg-blue hover:bg-blue-700 text-white px-6 py-2 rounded-md font-semibold"
         >
           Done
