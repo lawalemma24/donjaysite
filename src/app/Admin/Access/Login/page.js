@@ -127,12 +127,6 @@ export default function AdminLogin() {
                 />
                 Remember me
               </label>
-              <a
-                href="/auth/forgotpassword"
-                className="text-blue-600 hover:text-blue-800 transition-colors"
-              >
-                Forgot Password?
-              </a>
             </div>
 
             {/* Submit */}
