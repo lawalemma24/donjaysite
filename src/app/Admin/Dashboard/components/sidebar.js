@@ -14,11 +14,13 @@ import {
   CreditCard,
   HelpCircle,
   Settings,
+  LogOut,
 } from "lucide-react";
 import { usePathname } from "next/navigation";
+import { useAuth } from "@/app/contexts/AuthContext";
 
 const links = [
-  { name: "Home", href: "/Admin/Dashboard/Home", icon: Home },
+  { name: "Home", href: "/", icon: Home },
   {
     name: "Overview",
     href: "/Admin/Dashboard/Overview",
@@ -48,6 +50,13 @@ const links = [
 export default function Sidebar() {
   const [open, setOpen] = useState(false);
   const pathname = usePathname();
+  const { user, logout } = useAuth();
+
+  const handleLogout = () => {
+    logout();
+    setOpen(false);
+    window.location.href = "/";
+  };
 
   return (
     <>
@@ -116,13 +125,13 @@ export default function Sidebar() {
             })}
 
             <div className="border-t border-gray-300 mt-6 pt-4">
-              <Link
-                href="/logout"
-                className="flex items-center gap-3 px-4 py-2 mt-4 rounded-lg text-red-500 hover:bg-red-50 hover:text-red-600 transition-colors"
+              <button
+                onClick={handleLogout}
+                className="flex items-center gap-3 px-4 py-2 text-xl mt-4 rounded text-red-500 bg-red-50 hover:text-red-600 transition-colors"
               >
-                <X size={18} />
+                <LogOut size={16} />
                 <span>Logout</span>
-              </Link>
+              </button>
             </div>
           </div>
         </nav>

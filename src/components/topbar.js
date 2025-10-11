@@ -134,12 +134,7 @@ export default function TopBar() {
               </button>
             </div>
           </div>
-          <button
-            className={`hover:text-blue ${linkClass("/inspection")}`}
-            onClick={handleProtectedClick}
-          >
-            Book Inspection
-          </button>
+
           <Link
             href="/about"
             className={`hover:text-blue ${linkClass("/about")}`}
@@ -240,12 +235,6 @@ export default function TopBar() {
             </div>
           )}
 
-          <button
-            className={`block hover:text-blue ${linkClass("/inspection")}`}
-            onClick={handleProtectedClick}
-          >
-            Book Inspection
-          </button>
           <Link
             href="/about"
             className={`block hover:text-blue ${linkClass("/about")}`}

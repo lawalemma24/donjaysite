@@ -19,6 +19,7 @@ export default function CarDetails() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [modalImage, setModalImage] = useState(null);
   const [activeTab, setActiveTab] = useState("offer");
+  const [showOverlay, setShowOverlay] = useState(false);
 
   // Booking & overlays
   const [showConfirm, setShowConfirm] = useState(false);
@@ -66,6 +67,7 @@ export default function CarDetails() {
     const token = localStorage.getItem("token");
     if (!token) {
       setShowNotRegistered(true);
+
       return;
     }
     sessionStorage.setItem("selectedCar", JSON.stringify(car));
@@ -76,6 +78,7 @@ export default function CarDetails() {
     const token = localStorage.getItem("token");
     if (!token) {
       setShowNotRegistered(true);
+
       return;
     }
     router.push("/garage/swapcar");
@@ -233,66 +236,6 @@ export default function CarDetails() {
 
             {/* Offer / Question Tabs */}
             <hr className="my-4 border-0 h-[1px] bg-lightgrey" />
-            <div className="mb-6 mt-6">
-              <h1 className="text-xl text-black font-semibold">
-                Offer/Request
-              </h1>
-              <p className="text-lightgrey mb-2 text-sm">
-                Only make an offer if you don't agree with the price
-              </p>
-
-              <div className="flex border-b border-lightgrey mb-4">
-                <button
-                  className={`px-4 py-2 font-medium ${
-                    activeTab === "offer"
-                      ? "border-b-2 border-blue-600 text-blue-600"
-                      : "text-gray-600"
-                  }`}
-                  onClick={() => setActiveTab("offer")}
-                >
-                  Make an Offer
-                </button>
-                <button
-                  className={`px-4 py-2 font-medium ${
-                    activeTab === "question"
-                      ? "border-b-2 border-blue-600 text-blue-600"
-                      : "text-gray-600"
-                  }`}
-                  onClick={() => setActiveTab("question")}
-                >
-                  Ask a Question
-                </button>
-              </div>
-
-              {activeTab === "offer" && (
-                <div>
-                  <p className="text-lightgrey mb-2 text-sm">
-                    Your Binding offer for this vehicle
-                  </p>
-                  <input
-                    type="number"
-                    placeholder="Enter your offer amount"
-                    className="w-full border border-lightgrey rounded-lg px-4 py-2 mb-3"
-                  />
-                  <button className="w-full bg-blue-600 text-white rounded-lg px-4 py-2 font-medium hover:bg-blue-700">
-                    Submit Offer
-                  </button>
-                </div>
-              )}
-
-              {activeTab === "question" && (
-                <div>
-                  <textarea
-                    placeholder="Type your question"
-                    rows={3}
-                    className="w-full border border-lightgrey rounded-lg px-4 py-2 mb-3"
-                  />
-                  <button className="w-full bg-blue-600 text-white rounded-lg px-4 py-2 font-medium hover:bg-blue-700">
-                    Submit Question
-                  </button>
-                </div>
-              )}
-            </div>
           </div>
         </div>
       </div>
@@ -337,6 +280,7 @@ export default function CarDetails() {
       {showNotRegistered && (
         <NotRegisteredOverlay
           onRegisterClick={() => router.push("/auth/register")}
+          onClose={() => setShowNotRegistered(false)}
         />
       )}
     </>
