@@ -1,26 +1,27 @@
 "use client";
-
+import { useEffect, useState } from "react";
 import Link from "next/link";
 
 export default function PaymentSummaryCard() {
+  const [orderInfo, setOrderInfo] = useState(null);
+
+  useEffect(() => {
+    const stored = sessionStorage.getItem("orderInfo");
+    if (stored) setOrderInfo(JSON.parse(stored));
+  }, []);
+
+  if (!orderInfo) return <div className="text-center mt-20">Loading...</div>;
+
   return (
     <div className="min-h-screen bg-white pt-16">
       {/* Breadcrumbs */}
       <div className="max-w-7xl mx-auto px-8 pt-4 mt-5 mb-5">
         <nav className="text-sm text-gray-500">
-          Home <span className="mx-1">/</span> Garage{" "}
-          <span className="mx-1">/</span>
-          <span className="text-gray-500 font-medium">Buy or Swap</span>
-          <span className="mx-1">/</span>
-          <span className="text-gray-500 font-medium">Car Details</span>
-          <span className="mx-1">/</span>
-          <span className="text-gray-500 font-medium">Summary</span>
-          <span className="mx-1">/</span>
-          <span className="text-gray-500 font-medium">Info</span>
-          <span className="mx-1">/</span>
+          Home / Garage / Buy or Swap / Car Details / Summary / Info /{" "}
           <span className="text-blue font-medium">Buy</span>
         </nav>
       </div>
+
       <div className="max-w-md mx-auto bg-white rounded-xl shadow-md border border-lightgrey p-6 mt-7">
         <h2 className="text-xl font-bold text-center mb-6">Payment Summary</h2>
 
@@ -28,29 +29,29 @@ export default function PaymentSummaryCard() {
         <div className="mb-4">
           <div className="flex justify-between items-center mb-2">
             <h3 className="font-semibold">Delivery Address</h3>
-            <button className="text-blue-600 text-sm font-medium">
+            <Link
+              href="/garage/orderinfo"
+              className="text-blue-600 text-sm font-medium"
+            >
               Change ›
-            </button>
+            </Link>
           </div>
-          <div className="text-sm">
-            <p className="flex justify-between">
-              <span className="text-gray-500">Name:</span> <span>Don Jay</span>
+          <div className="text-sm space-y-1">
+            <p>
+              <span className="text-gray-500">Name:</span> {orderInfo.name}
             </p>
-            <p className="flex justify-between">
+            <p>
               <span className="text-gray-500">Address:</span>{" "}
-              <span>Akin Adesola Street</span>
+              {orderInfo.address}
             </p>
-            <p className="flex justify-between">
-              <span className="text-gray-500">City:</span>{" "}
-              <span>Victoria Island</span>
+            <p>
+              <span className="text-gray-500">City:</span> {orderInfo.city}
             </p>
-            <p className="flex justify-between">
-              <span className="text-gray-500">State:</span>{" "}
-              <span>Lagos State</span>
+            <p>
+              <span className="text-gray-500">State:</span> {orderInfo.state}
             </p>
-            <p className="flex justify-between">
-              <span className="text-gray-500">Phone No:</span>{" "}
-              <span>08123456789</span>
+            <p>
+              <span className="text-gray-500">Phone:</span> {orderInfo.phone}
             </p>
           </div>
         </div>
@@ -66,11 +67,11 @@ export default function PaymentSummaryCard() {
           </p>
           <p className="flex justify-between text-sm">
             <span className="text-gray-500">Price:</span>
-            <span className="font-semibold text-blue-600">N70,000,000</span>
+            <span className="font-semibold text-blue-600">₦70,000,000</span>
           </p>
           <p className="flex justify-between text-sm">
-            <span className="text-gray-500">Delivery fee:</span>
-            <span>N50,000</span>
+            <span className="text-gray-500">Delivery Fee:</span>
+            <span>₦50,000</span>
           </p>
         </div>
 
@@ -78,10 +79,8 @@ export default function PaymentSummaryCard() {
 
         {/* Total */}
         <div className="text-center font-semibold text-lg mb-4">
-          Total Payable: <span className="text-blue-600">N70,050,000</span>
+          Total Payable: <span className="text-blue-600">₦70,050,000</span>
         </div>
-
-        {/* Button */}
 
         <Link href="/garage/paymentdetails">
           <button
