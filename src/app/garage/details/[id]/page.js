@@ -213,7 +213,12 @@ export default function CarDetails() {
               </Link>
 
               <Link href="/garage/ordersummary">
-                <button className="flex-1 bg-blue-600 text-white rounded-lg px-9 py-2 font-medium hover:bg-blue-700">
+                <button
+                  onClick={() => {
+                    sessionStorage.setItem("selectedCar", JSON.stringify(car));
+                  }}
+                  className="flex-1 bg-blue-600 text-white rounded-lg px-9 py-2 font-medium hover:bg-blue-700"
+                >
                   Buy
                 </button>
               </Link>
