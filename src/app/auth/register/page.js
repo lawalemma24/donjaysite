@@ -11,6 +11,7 @@ export default function Register() {
     name: "",
     email: "",
     phone: "",
+    address: "",
     password: "",
     confirmPassword: "",
   });
@@ -19,19 +20,36 @@ export default function Register() {
 
   const validate = () => {
     const newErrors = {};
-    if (!form.name.trim()) newErrors.name = "Name is required.";
+
+    // Name validation
+    if (!form.name.trim()) {
+      newErrors.name = "Name is required.";
+    } else if (form.name.length < 5) {
+      newErrors.name = "Name must be at least 5 characters.";
+    } else if (/\S+@\S+\.\S+/.test(form.name)) {
+      newErrors.name = "Name cannot be an email.";
+    }
+
+    // Email validation
     if (!form.email.trim()) {
       newErrors.email = "Email is required.";
     } else if (!/\S+@\S+\.\S+/.test(form.email)) {
       newErrors.email = "Enter a valid email.";
     }
-    if (!form.phone.trim()) newErrors.phone = "Phone number is required.";
+
+    // Phone validation
+    if (!form.phone.trim()) {
+      newErrors.phone = "Phone number is required.";
+    }
+
+    // Password validation
     if (!form.password.trim()) {
       newErrors.password = "Password is required.";
-    } else if (form.password.length < 8 || !/[A-Z]/.test(form.password)) {
-      newErrors.password =
-        "Password must be at least 8 characters and include an uppercase letter.";
+    } else if (form.password.length < 6) {
+      newErrors.password = "Password must be at least 6 characters.";
     }
+
+    // Confirm password validation
     if (!form.confirmPassword.trim()) {
       newErrors.confirmPassword = "Confirm your password.";
     } else if (form.password !== form.confirmPassword) {
@@ -47,20 +65,44 @@ export default function Register() {
     setErrors({ ...errors, [e.target.id]: "" });
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    if (!validate()) {
-      toast.error("Wrong details. Please check the form.");
-      return;
-    }
 
-    if (form.email === "test@example.com") {
-      toast.error("Already registered. Please sign in.");
-      return;
-    }
+    if (!validate()) return;
 
-    toast.success("Registered successfully!");
-    router.push("/auth/otp"); // ✅ redirect
+    const payload = {
+      name: form.name,
+      email: form.email,
+      password: form.password,
+      confirmPassword: form.confirmPassword,
+      phoneNumber: form.phone,
+      address: form.address,
+    };
+    console.log("Sending signup payload:", payload);
+
+    try {
+      const response = await fetch("http://localhost:5000/api/auth/signup", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(payload),
+      });
+
+      const data = await response.json().catch(() => null);
+
+      if (response.ok) {
+        toast.success(data?.message || "Signup successful");
+        localStorage.setItem("signupEmail", form.email);
+        router.push("/auth/otp");
+      } else {
+        console.error("Signup failed:", data);
+        toast.error(data?.error || "Something went wrong");
+      }
+    } catch (error) {
+      console.error("Network error:", error);
+      toast.error("Network error, please try again");
+    }
   };
 
   return (
@@ -83,7 +125,7 @@ export default function Register() {
           </p>
 
           <form className="space-y-4 md:space-y-5" onSubmit={handleSubmit}>
-            {["name", "email", "phone"].map((field) => (
+            {["name", "email", "phone", "address"].map((field) => (
               <div key={field}>
                 <label
                   className="block text-sm font-medium mb-2 text-black"
@@ -93,6 +135,8 @@ export default function Register() {
                     ? "Email Address"
                     : field === "phone"
                     ? "Phone Number"
+                    : field === "address"
+                    ? "Address"
                     : "Name"}
                 </label>
                 <input

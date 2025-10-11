@@ -1,5 +1,6 @@
 "use client";
 import Image from "next/image";
+import Link from "next/link";
 
 const Trusted = () => {
   return (
@@ -38,9 +39,11 @@ const Trusted = () => {
               process so you can focus on what matters most, getting behind the
               wheel with confidence
             </p>
-            <button className="bg-blue hover:bg-blue-800 text-white font-semibold px-6 py-3 rounded-lg w-fit shadow-md">
-              Get Started
-            </button>
+            <Link href="/auth/register">
+              <button className="bg-blue hover:bg-blue-800 text-white font-semibold px-6 py-3 rounded-lg w-fit shadow-md">
+                Get Started
+              </button>
+            </Link>
           </div>
         </div>
       </div>

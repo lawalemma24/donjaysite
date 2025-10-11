@@ -1,20 +1,31 @@
 "use client";
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
+import { useRouter } from "next/navigation";
 import toast from "react-hot-toast";
+import { useAuth } from "@/app/contexts/AuthContext";
 
 export default function Otp() {
-  const [code, setCode] = useState(["", "", "", ""]);
+  const [code, setCode] = useState(["", "", "", "", "", ""]);
+  const [loading, setLoading] = useState(false);
   const inputs = useRef([]);
+  const router = useRouter();
+  const { login } = useAuth();
+
+  const email =
+    typeof window !== "undefined"
+      ? (localStorage.getItem("signupEmail") || "").trim()
+      : "";
+
+  useEffect(() => {
+    inputs.current[0]?.focus();
+  }, []);
 
   const handleChange = (value, index) => {
     if (/^[0-9]?$/.test(value)) {
       const newCode = [...code];
       newCode[index] = value;
       setCode(newCode);
-
-      if (value && index < 3) {
-        inputs.current[index + 1].focus();
-      }
+      if (value && index < 5) inputs.current[index + 1].focus();
     }
   };
 
@@ -24,17 +35,91 @@ export default function Otp() {
     }
   };
 
-  const handleVerify = (e) => {
+  const handleVerify = async (e) => {
     e.preventDefault();
-    if (code.join("").length === 4) {
-      toast.success("Code verified: " + code.join(""));
-    } else {
-      toast.error("Enter all 4 digits");
+    const otp = code.join("").trim();
+
+    if (otp.length !== 6) {
+      toast.error("Enter all 6 digits");
+      return;
+    }
+
+    if (!email) {
+      toast.error("Email not found");
+      return;
+    }
+
+    setLoading(true);
+
+    try {
+      const payload = { email, otp };
+      console.log("VERIFY OTP PAYLOAD:", payload);
+
+      const res = await fetch("http://localhost:5000/api/auth/verify-otp", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload),
+      });
+
+      const data = await res.json();
+      console.log("VERIFY OTP RESPONSE:", data);
+
+      if (!res.ok) {
+        toast.error(data.message || "OTP verification failed");
+        return;
+      }
+
+      // Backend returns token + user
+      if (data.token && data.user) {
+        login({ token: data.token, ...data.user });
+        toast.success(data.message || "OTP verified");
+        localStorage.removeItem("signupEmail");
+        router.push("/dashboard/profile");
+        return;
+      }
+
+      // Backend returns only message
+      if (data.message) {
+        toast.success(data.message);
+        localStorage.removeItem("signupEmail");
+        router.push("/auth/login");
+        return;
+      }
+
+      toast.error("Invalid token or user data");
+    } catch (error) {
+      console.error("OTP verification error:", error);
+      toast.error("Something went wrong");
+    } finally {
+      setLoading(false);
     }
   };
 
-  const handleResend = () => {
-    toast("New code sent to your email", { icon: "✉️" });
+  const handleResend = async () => {
+    if (!email) return toast.error("Email not found");
+
+    try {
+      const payload = { email };
+      console.log("RESEND OTP PAYLOAD:", payload);
+
+      const res = await fetch("http://localhost:5000/api/auth/resend-otp", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload),
+      });
+
+      const data = await res.json();
+      console.log("RESEND OTP RESPONSE:", data);
+
+      if (res.ok) {
+        toast.success(data.message || "New OTP sent");
+      } else {
+        toast.error(data.message || "Failed to resend OTP");
+      }
+    } catch (error) {
+      console.error("Resend OTP error:", error);
+      toast.error("Network error, try again");
+    }
   };
 
   return (
@@ -48,7 +133,7 @@ export default function Otp() {
           Enter Verification Code
         </h1>
         <p className="text-gray-500 mb-6">
-          We sent a code to <span className="text-blue">jayauto@gmail.com</span>
+          We sent a code to <span className="text-blue-600">{email}</span>
         </p>
 
         <form onSubmit={handleVerify} className="space-y-6">
@@ -82,16 +167,17 @@ export default function Otp() {
           <div className="flex justify-between mt-6">
             <button
               type="button"
-              className="px-6 py-2 border border-blue text-blue rounded-lg hover:bg-blue-50 transition"
-              onClick={() => toast("Cancelled")}
+              className="px-6 py-2 border border-blue-600 text-blue-600 rounded-lg hover:bg-blue-50 transition"
+              onClick={() => router.push("/auth/register")}
             >
               Cancel
             </button>
             <button
               type="submit"
-              className="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition"
+              disabled={loading}
+              className="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition disabled:opacity-50"
             >
-              Verify
+              {loading ? "Verifying..." : "Verify"}
             </button>
           </div>
         </form>

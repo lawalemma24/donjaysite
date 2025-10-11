@@ -1,45 +1,43 @@
-import CarCard from "./carcard";
+"use client";
 
-const cars = [
-  {
-    name: "2025 Mercedes Benz GLE",
-    price: 70000000,
-    image: "/images/gle.png",
-    logo: "/images/mercedes.png",
-  },
-  {
-    name: "2025 Honda Accord",
-    price: 30000000,
-    image: "/images/accord.png",
-    logo: "/images/honda.png",
-  },
-  {
-    name: "2025 Toyota Camry",
-    price: 40000000,
-    image: "/images/toyota-camry.png",
-    logo: "/images/toyota.png",
-  },
-  {
-    name: "2025 Lexus RX 350",
-    price: 60000000,
-    image: "/images/lexus-rx.png",
-    logo: "/images/lexus.png",
-  },
-  {
-    name: "2023 Nissan Maxima",
-    price: 60000000,
-    image: "/images/nissan-maxima.png",
-    logo: "/images/nissan.png",
-  },
-  {
-    name: "2021 Volkswagen Golf",
-    price: 20000000,
-    image: "/images/vw-golf.png",
-    logo: "/images/vw.png",
-  },
-];
+import { useState, useEffect } from "react";
+import CarCard from "./carcard";
+import api from "@/utils/api";
+
+const FEATURED_COUNT = 6;
 
 export default function FeaturedCars() {
+  const [cars, setCars] = useState([]);
+  const [loading, setLoading] = useState(false);
+
+  // Utility to shuffle an array
+  const shuffleArray = (arr) => {
+    return arr
+      .map((value) => ({ value, sort: Math.random() }))
+      .sort((a, b) => a.sort - b.sort)
+      .map(({ value }) => value);
+  };
+
+  const fetchCars = async () => {
+    setLoading(true);
+    try {
+      const res = await api.get("/approved", {
+        params: { page: 1, limit: 100 }, // fetch more so we can shuffle
+      });
+      const allCars = res.data.cars || [];
+      const shuffledCars = shuffleArray(allCars).slice(0, FEATURED_COUNT);
+      setCars(shuffledCars);
+    } catch (err) {
+      console.error("Error fetching cars:", err);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchCars();
+  }, []);
+
   return (
     <section className="py-12 bg-accent">
       <div className="max-w-7xl mx-auto px-6">
@@ -54,11 +52,18 @@ export default function FeaturedCars() {
           From luxury SUVs to everyday favorites, these featured cars are ready
           to deliver performance, comfort, and reliability you can trust.
         </p>
-        <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
-          {cars.map((car, idx) => (
-            <CarCard key={idx} car={car} />
-          ))}
-        </div>
+
+        {loading ? (
+          <div className="text-center text-gray-500">Loading cars...</div>
+        ) : cars.length === 0 ? (
+          <div className="text-center text-gray-500">No cars found.</div>
+        ) : (
+          <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
+            {cars.map((car) => (
+              <CarCard key={car.id} car={car} />
+            ))}
+          </div>
+        )}
       </div>
     </section>
   );

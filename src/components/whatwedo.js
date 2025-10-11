@@ -3,14 +3,18 @@ import Link from "next/link";
 import { ShoppingCart, Tag, Shuffle, CalendarCheck } from "lucide-react";
 
 const brands = [
-  "/images/honda.png",
-  "/images/toyota.png",
-  "/images/mercedes.png",
-  "/images/nissan.png",
-  "/images/volkswagon.png",
-  "/images/ford.png",
-  "/images/hyundai.png",
-  "/images/lexus.png",
+  "/images/hondalogo.svg",
+  "/images/toyotalogo.jpg",
+  "/images/mercedeslogo.jpg",
+  "/images/nissanlogo.svg",
+  "/images/volkslogo.png",
+  "/images/volvologo.webp",
+  "/images/mitsubishilogo.svg",
+  "/images/mazdalogo.png",
+  "/images/landlogo.png",
+  "/images/audilogo.svg",
+  "/images/bmwlogo.svg",
+  "/images/fordlogo.svg",
 ];
 
 const services = [
@@ -26,14 +30,14 @@ const services = [
     desc: "Looking for your next ride? Browse our cars for sale and drive home a vehicle that suits your needs and budget.",
     icon: <Tag size={32} className="text-yellow-500" />,
     bg: "bg-yellow-100",
-    link: "/services/buy",
+    link: "/garage/buy-swap",
   },
   {
     title: "Swap Car",
     desc: "Exchange your current car for another from our collection. Upgrade with ease and enjoy a smarter way to switch rides.",
     icon: <Shuffle size={32} className="text-green-500" />,
     bg: "bg-green-100",
-    link: "/services/swap",
+    link: "/garage/buy-swap",
   },
   {
     title: "Book Inspection",
@@ -46,21 +50,25 @@ const services = [
 
 export default function WhatWeDo() {
   return (
-    <section className="text-center bg-black w-full">
-      <div className="flex flex-wrap items-center bg-white justify-center md:gap-14 gap-8 pb-8 pt-5 w-[90%] max-w-[1000px] mx-auto">
+    <section className="text-center w-full relative pt-20 ">
+      <div
+        className="flex flex-wrap items-center bg-white justify-center md:gap-10 gap-8 py-6 px-5 
+                  w-[90%] max-w-[1000px] mx-auto absolute -top-15 left-1/2 -translate-x-1/2 rounded-lg mb-16 shadow-lg"
+      >
         {brands.map((src, i) => (
           <Image
             key={i}
             src={src}
             alt="Car brand logo"
-            width={40}
-            height={40}
-            className="object-contain"
+            width={80} // base width for optimization
+            height={80}
+            sizes="(max-width: 768px) 40px, 60px"
+            className="object-contain w-10 h-10 md:w-16 md:h-16"
           />
         ))}
       </div>
 
-      <div className="py-10 bg-white md:px-12 w-full px-6">
+      <div className="py-20 bg-white md:px-12 w-full px-6 md:mt-10 mt-10">
         <h2 className="text-3xl font-semibold text-black mb-2">What We Do</h2>
         <div className="w-20 h-1 bg-orange mx-auto mb-6"></div>
         <p className="max-w-2xl mx-auto text-gray-600 mb-12">
@@ -88,7 +96,7 @@ export default function WhatWeDo() {
         </div>
 
         <div className="mt-10">
-          <Link href="/services">
+          <Link href="/auth/register">
             <button className="bg-blue text-white px-6 py-2 rounded-lg shadow hover:bg-blue-700 transition">
               Get Started
             </button>

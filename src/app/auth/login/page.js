@@ -3,14 +3,45 @@ import { useState } from "react";
 import { FcGoogle } from "react-icons/fc";
 import { FaApple, FaEye, FaEyeSlash } from "react-icons/fa";
 import toast from "react-hot-toast";
+import { useAuth } from "@/app/contexts/AuthContext";
 
 export default function Login() {
   const [showPassword, setShowPassword] = useState(false);
 
-  const handleSubmit = (e) => {
+  const { login } = useAuth();
+
+  const handleSubmit = async (e) => {
     e.preventDefault();
 
-    toast.error("Wrong email or password");
+    const email = e.target.email.value;
+    const password = e.target.password.value;
+
+    try {
+      const res = await fetch("http://localhost:5000/api/auth/login", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email, password }),
+      });
+
+      if (!res.ok) {
+        toast.error(
+          res.status === 400
+            ? "Invalid email or password"
+            : "Something went wrong"
+        );
+        return;
+      }
+
+      const data = await res.json();
+      console.log("LOGIN RESPONSE:", data); // <-- log here
+
+      toast.success("Login successful");
+      login(data); // update AuthContext
+      window.location.href = "/";
+    } catch (error) {
+      console.error("Server error:", error);
+      toast.error("Server error");
+    }
   };
 
   return (
@@ -82,7 +113,7 @@ export default function Login() {
                 <label htmlFor="rememberMe">Remember me</label>
               </div>
               <a
-                href="/auth/forgot-password"
+                href="/auth/forgotpassword"
                 className="text-sm text-blue-600 hover:text-blue-800 transition-colors xs:self-center"
               >
                 Forgot Password?

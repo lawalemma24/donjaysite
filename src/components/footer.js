@@ -72,7 +72,7 @@ const links = [
     items: [
       { label: "Home", url: "/" },
       { label: "About Us", url: "/about" },
-      { label: "Featured Cars", url: "/cars" },
+      { label: "Featured Cars", url: "/garage/buy-swap" },
       { label: "What We Do", url: "/services" },
       { label: "Testimonials", url: "/testimonials" },
       { label: "Contact Us", url: "/contact" },
@@ -81,9 +81,9 @@ const links = [
   {
     title: "Services",
     items: [
-      { label: "Buy Car", url: "/services/buy" },
-      { label: "Sell Car", url: "/services/sell" },
-      { label: "Swap Cars", url: "/services/swap" },
+      { label: "Buy Car", url: "/garage/buy-swap" },
+      { label: "Sell Car", url: "/garage/sell" },
+      { label: "Swap Cars", url: "/garage/buy-swap" },
       { label: "Book Inspection", url: "/services/inspection" },
     ],
   },
@@ -109,13 +109,13 @@ const links = [
 
 const Footer = () => {
   return (
-    <footer className="bg-black text-white py-16 px-4 sm:px-6 lg:px-8 font-['Inter']">
+    <footer className="bg-black text-white py-16 px-4 sm:px-6 lg:px-8 text-xs md:text-sm">
       <div className="max-w-7xl mx-auto">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-y-12 md:gap-y-16 lg:gap-8">
+        <div className="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-5 gap-y-12 md:gap-y-16 lg:gap-8">
           {/* Main Links */}
           {links.slice(0, 3).map((section, index) => (
             <div key={index}>
-              <h4 className="text-lg font-bold mb-4">{section.title}</h4>
+              <h4 className=" font-bold mb-4">{section.title}</h4>
               <ul className="space-y-2">
                 {section.items.map((item, i) => (
                   <li key={i}>
@@ -179,7 +179,7 @@ const Footer = () => {
         <hr className="border-gray-700 my-10" />
 
         {/* Bottom Section */}
-        <div className="flex flex-col sm:flex-row justify-between items-center text-sm text-white space-y-4 sm:space-y-0">
+        <div className="flex flex-col sm:flex-row justify-between items-center text-xs  text-white space-y-1 sm:space-y-0">
           <p>Driven by trust. Powered by innovation</p>
           <p>&copy; 2025 Don-Jay Autos Limited. All rights reserved</p>
         </div>
