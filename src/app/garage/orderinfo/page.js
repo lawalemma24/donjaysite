@@ -1,5 +1,5 @@
 "use client";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 
 export default function OrderInfo() {
@@ -13,13 +13,22 @@ export default function OrderInfo() {
     address: "",
   });
 
+  useEffect(() => {
+    const savedForm = sessionStorage.getItem("orderInfo");
+    if (savedForm) {
+      setForm(JSON.parse(savedForm));
+    }
+  }, []);
+
   const handleChange = (e) => {
-    setForm({ ...form, [e.target.name]: e.target.value });
+    const updatedForm = { ...form, [e.target.name]: e.target.value };
+    setForm(updatedForm);
+
+    sessionStorage.setItem("orderInfo", JSON.stringify(updatedForm));
   };
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    sessionStorage.setItem("orderInfo", JSON.stringify(form));
     router.push("/garage/paymentsummary");
   };
 

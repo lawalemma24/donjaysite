@@ -71,11 +71,11 @@ const AccountMenu = () => {
             onClick={handleClose}
             className="flex items-center gap-2 px-4 py-3 hover:bg-blue-50 mb-1"
           >
-            <FaCar className="text-blue-600" /> My Listing
+            <FaCar className="text-blue-600" /> My Deals
           </Link>
 
           <Link
-            href="/"
+            href="/dashboard/booking"
             onClick={handleClose}
             className="flex items-center gap-2 px-4 py-3 hover:bg-blue-50 mb-1"
           >

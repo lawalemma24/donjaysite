@@ -10,21 +10,14 @@ export default function ChangePassword() {
     newPassword: "",
     confirmPassword: "",
   });
-  const [show, setShow] = useState({
-    old: false,
-    new: false,
-    confirm: false,
-  });
+  const [show, setShow] = useState({ old: false, new: false, confirm: false });
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState("");
 
-  const toggleShow = (key) => {
+  const toggleShow = (key) =>
     setShow((prev) => ({ ...prev, [key]: !prev[key] }));
-  };
-
-  const handleChange = (e) => {
+  const handleChange = (e) =>
     setForm({ ...form, [e.target.name]: e.target.value });
-  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -45,20 +38,17 @@ export default function ChangePassword() {
         return;
       }
 
-      const res = await fetch(
-        "http://localhost:5000/api/users/update-password",
-        {
-          method: "PUT",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`,
-          },
-          body: JSON.stringify({
-            oldPassword: form.oldPassword,
-            newPassword: form.newPassword,
-          }),
-        }
-      );
+      const res = await fetch("http://localhost:5000/api/auth/changePass", {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({
+          oldPassword: form.oldPassword,
+          newPassword: form.newPassword,
+        }),
+      });
 
       const data = await res.json();
 
@@ -79,14 +69,14 @@ export default function ChangePassword() {
 
   return (
     <form
-      onSubmit={handleSubmit}
       className="max-w-md mx-auto bg-white p-6 rounded-lg shadow"
+      onSubmit={handleSubmit}
     >
       <h2 className="text-xl font-semibold mb-7 text-center">
         Change Password
       </h2>
 
-      {/* Old Password */}
+      {/** Old Password */}
       <div className="mb-4">
         <label className="block mb-1 text-sm text-black">
           Current Password
@@ -97,9 +87,9 @@ export default function ChangePassword() {
             name="oldPassword"
             value={form.oldPassword}
             onChange={handleChange}
-            className="w-full border rounded-lg px-3 py-2 pr-10 border-gray-300"
             placeholder="******"
             required
+            className="w-full border rounded-lg px-3 py-2 pr-10 border-gray-300"
           />
           <button
             type="button"
@@ -111,7 +101,7 @@ export default function ChangePassword() {
         </div>
       </div>
 
-      {/* New Password */}
+      {/** New Password */}
       <div className="mb-4">
         <label className="block mb-1 text-sm text-black">New Password</label>
         <div className="relative">
@@ -120,9 +110,9 @@ export default function ChangePassword() {
             name="newPassword"
             value={form.newPassword}
             onChange={handleChange}
-            className="w-full border rounded-lg px-3 py-2 pr-10 border-gray-300"
             placeholder="******"
             required
+            className="w-full border rounded-lg px-3 py-2 pr-10 border-gray-300"
           />
           <button
             type="button"
@@ -134,7 +124,7 @@ export default function ChangePassword() {
         </div>
       </div>
 
-      {/* Confirm Password */}
+      {/** Confirm Password */}
       <div className="mb-6">
         <label className="block mb-1 text-sm text-black">
           Confirm New Password
@@ -145,9 +135,9 @@ export default function ChangePassword() {
             name="confirmPassword"
             value={form.confirmPassword}
             onChange={handleChange}
-            className="w-full border rounded-lg px-3 py-2 pr-10 border-gray-300"
             placeholder="******"
             required
+            className="w-full border rounded-lg px-3 py-2 pr-10 border-gray-300"
           />
           <button
             type="button"
@@ -159,7 +149,7 @@ export default function ChangePassword() {
         </div>
       </div>
 
-      {/* Buttons */}
+      {/** Buttons */}
       <div className="flex justify-between">
         <button
           type="button"
