@@ -1,8 +1,26 @@
 "use client";
+import { useEffect, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 
 export default function OrderSummary() {
+  const [car, setCar] = useState(null);
+
+  useEffect(() => {
+    const savedCar = sessionStorage.getItem("selectedCar");
+    if (savedCar) {
+      setCar(JSON.parse(savedCar));
+    }
+  }, []);
+
+  if (!car) {
+    return (
+      <p className="text-center py-12 text-gray-500">
+        No car selected. Please go back and choose a car.
+      </p>
+    );
+  }
+
   return (
     <div className="min-h-screen bg-white pt-16">
       {/* Breadcrumbs */}
@@ -25,15 +43,17 @@ export default function OrderSummary() {
         <div className="flex items-center gap-4 mb-4">
           <div className="relative w-30 h-16 rounded overflow-hidden">
             <Image
-              src="/images/viewcar.png"
-              alt="Mercedes Benz GLE"
+              src={car.images?.[0] || "/images/placeholder.png"}
+              alt={car.carName || "Car"}
               fill
               className="object-cover"
             />
           </div>
           <div>
-            <h3 className="font-semibold">2025 Mercedes Benz GLE</h3>
-            <p className="text-blue-600 font-bold">₦70,000,000</p>
+            <h3 className="font-semibold">{car.carName}</h3>
+            <p className="text-blue-600 font-bold">
+              ₦{car.price?.toLocaleString() || "N/A"}
+            </p>
           </div>
         </div>
 
@@ -44,43 +64,25 @@ export default function OrderSummary() {
           <h3 className="font-semibold mb-2">Specifications</h3>
           <div className="grid grid-cols-2 text-sm gap-y-2">
             <span className="text-gray-500">Condition:</span>
-            <span className="text-gray-800">Brand New</span>
-
-            <span className="text-gray-500">Make:</span>
-            <span className="text-gray-800">Mercedes Benz</span>
-
-            <span className="text-gray-500">Year:</span>
-            <span className="text-gray-800">2025</span>
+            <span className="text-gray-800">{car.condition || "N/A"}</span>
 
             <span className="text-gray-500">Transmission:</span>
-            <span className="text-gray-800">Automatic</span>
+            <span className="text-gray-800">{car.transmission || "N/A"}</span>
 
             <span className="text-gray-500">Fuel Type:</span>
-            <span className="text-gray-800">Hybrid</span>
+            <span className="text-gray-800">{car.fuelType || "N/A"}</span>
 
-            <span className="text-gray-500">Engine Size:</span>
-            <span className="text-gray-800">3.0L V6</span>
+            <span className="text-gray-500">Engine:</span>
+            <span className="text-gray-800">{car.engine || "N/A"}</span>
 
-            <span className="text-gray-500">Body Type:</span>
-            <span className="text-gray-800">SUV</span>
-
-            <span className="text-gray-500">Color:</span>
-            <span className="text-gray-800">Black</span>
-
-            <span className="text-gray-500">GVM:</span>
-            <span className="text-gray-800">3200 kg</span>
-
-            <span className="text-gray-500">Status:</span>
-            <span className="text-gray-800">Available</span>
-
-            <span className="text-gray-500">Seating Capacity:</span>
-            <span className="text-gray-800">7</span>
+            <span className="text-gray-500">Mileage:</span>
+            <span className="text-gray-800">{car.mileage || "N/A"}</span>
           </div>
         </div>
 
         <hr className="my-4 border-lightgrey" />
 
-        {/* Button */}
+        {/* Continue Button */}
         <Link href="/garage/orderinfo">
           <button className="w-full bg-blue text-white font-medium rounded-lg px-4 py-2 hover:bg-blue-700">
             Continue
