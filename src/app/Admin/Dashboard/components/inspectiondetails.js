@@ -1,13 +1,13 @@
 "use client";
 import Image from "next/image";
 
-export default function InspectionDetails({ deal, onClose }) {
+export default function InspectionDetails({ deal, onClose, onMarkCompleted }) {
   if (!deal) return null;
 
   const statusColors = {
-    Pending: "bg-yellow-100 text-yellow-700",
-    Completed: "bg-green-100 text-green-700",
-    Cancelled: "bg-red-100 text-red-700",
+    pending: "bg-yellow-100 text-yellow-700",
+    completed: "bg-green-100 text-green-700",
+    cancelled: "bg-red-100 text-red-700",
   };
 
   return (
@@ -20,11 +20,11 @@ export default function InspectionDetails({ deal, onClose }) {
         onClick={(e) => e.stopPropagation()}
       >
         <h2 className="text-xl font-bold mb-3">Inspection Details</h2>
-        <h2 className="text-md font-semibold mb-3">{deal.name}</h2>
+
         <div className="flex justify-between mb-4">
           <Image
-            src={deal.avatar}
-            alt={deal.name}
+            src={deal.car?.images?.[0] || "/images/default-car.jpg"}
+            alt={deal.car?.carName || "Car"}
             width={90}
             height={90}
             className="rounded-md mb-4"
@@ -41,80 +41,42 @@ export default function InspectionDetails({ deal, onClose }) {
           </p>
         </div>
 
-        <div className="mb-4">
-          <h3 className="font-semibold mb-1">Specifications</h3>
-          <p className="flex justify-between">
-            <span className="text-lightgrey">Condition:</span>
-            <span className="text-black">{deal.condition}</span>
+        <div className="space-y-2 text-sm">
+          <h3 className="font-semibold mb-1">Car Info</h3>
+          <p>
+            <strong>Name:</strong> {deal.car?.carName || "—"}
           </p>
-          <p className="flex justify-between">
-            <span className="text-lightgrey">Make:</span>
-            <span className="text-black">{deal.name || "Motor"}</span>
+          <p>
+            <strong>Condition:</strong> {deal.car?.condition || "—"}
           </p>
-          <p className="flex justify-between">
-            <span className="text-lightgrey">Year:</span>
-            <span className="text-black">{deal.year}</span>
+          <p>
+            <strong>Year:</strong> {deal.car?.year || "—"}
           </p>
-          <p className="flex justify-between">
-            <span className="text-lightgrey">Transmission:</span>
-            <span className="text-black">
-              {deal.transmission || "Automatic"}
-            </span>
+          <p>
+            <strong>Fuel:</strong> {deal.car?.fuelType || "—"}
           </p>
-          <p className="flex justify-between">
-            <span className="text-lightgrey">Fuel type:</span>
-            <span className="text-black">{deal.fuel || "petrol"}</span>
-          </p>
-          <p className="flex justify-between">
-            <span className="text-lightgrey">Mileage:</span>
-            <span className="text-black">{deal.mileage || "2,433"}</span>
-          </p>
-          <p className="flex justify-between">
-            <span className="text-lightgrey">Engine:</span>
-            <span className="text-black">{deal.engine || "V8"}</span>
-          </p>
-          {/* delivery info */}
-          <h3 className="font-semibold mb-1">User Details</h3>
-          <p className="flex justify-between">
-            <span className="text-lightgrey">Name:</span>
-            <span className="text-black">{deal.usersname || "Don Jay"}</span>
-          </p>
-          <p className="flex justify-between">
-            <span className="text-lightgrey">Email Address:</span>
-            <span className="text-black">
-              {deal.usersname || "donjay234@gmail.com"}
-            </span>
-          </p>
-          <p className="flex justify-between">
-            <span className="text-lightgrey">Address:</span>
-            <span className="text-black">
-              {deal.address || "Akin adenola, street"}
-            </span>
-          </p>
-          <p className="flex justify-between">
-            <span className="text-lightgrey">Phone:</span>
-            <span className="text-black">{deal.phone || "0856765644"}</span>
-          </p>
-          {/* payment info */}
-          <h3 className="font-semibold mb-1">Inspection Info</h3>
 
-          <p className="flex justify-between">
-            <span className="text-lightgrey">Preferred Date:</span>
-            <span className="text-black">Sept. 10, 2025 2:00PM to 2:40PM</span>
+          <h3 className="font-semibold mt-4">User Info</h3>
+          <p>
+            <strong>Name:</strong> {deal.customer?.name || "—"}
           </p>
-          <p className="flex justify-between">
-            <span className="text-lightgrey">Email Address:</span>
-            <span className="text-black">{deal.usersname || "Don Jay"}</span>
+          <p>
+            <strong>Email:</strong> {deal.customer?.email || "—"}
           </p>
-          <p className="flex justify-between">
-            <span className="text-lightgrey">Address:</span>
-            <span className="text-black">
-              {deal.address || "Akin adenola, street"}
-            </span>
+          <p>
+            <strong>Phone:</strong> {deal.customer?.phone || "—"}
           </p>
-          <p className="flex justify-between">
-            <span className="text-lightgrey">Phone:</span>
-            <span className="text-black">{deal.phone || "0856765644"}</span>
+
+          <h3 className="font-semibold mt-4">Inspection Info</h3>
+          <p>
+            <strong>Date:</strong>{" "}
+            {new Date(deal.inspectionDate).toLocaleDateString()}
+          </p>
+          <p>
+            <strong>Time:</strong>{" "}
+            {deal.timeSlot?.startTime
+              ? `${deal.timeSlot.startTime} - ${deal.timeSlot.endTime}`
+              : "—"}
           </p>
         </div>
 
@@ -125,9 +87,28 @@ export default function InspectionDetails({ deal, onClose }) {
           >
             Close
           </button>
-          <button className="px-4 py-2 bg-blue text-white rounded-lg">
-            Mark as Completed
-          </button>
+
+          {deal.status !== "completed" && (
+            <button
+              onClick={() =>
+                onMarkCompleted(deal._id, {
+                  inspectionReport: {
+                    overallCondition: "good",
+                    exteriorCondition: "good",
+                    interiorCondition: "excellent",
+                    engineCondition: "good",
+                    issues: [],
+                    recommendations: [],
+                    estimatedValue: 25000,
+                  },
+                  inspectorNotes: "Inspection completed successfully.",
+                })
+              }
+              className="px-4 py-2 bg-blue text-white rounded-lg"
+            >
+              Mark as Completed
+            </button>
+          )}
         </div>
       </div>
     </div>
