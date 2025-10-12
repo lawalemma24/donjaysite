@@ -8,6 +8,7 @@ import { useAuth } from "@/app/contexts/AuthContext";
 
 export default function AdminLogin() {
   const [showPassword, setShowPassword] = useState(false);
+  const [showSecond, setShowSecond] = useState(false);
   const { login } = useAuth();
 
   const handleSubmit = async (e) => {
@@ -15,8 +16,9 @@ export default function AdminLogin() {
 
     const email = e.target.email.value.trim();
     const password = e.target.password.value.trim();
+    const secondPassword = e.target.secondPassword.value.trim();
 
-    if (!email || !password) {
+    if (!email || !password || !secondPassword) {
       toast.error("Please fill in all fields");
       return;
     }
@@ -41,13 +43,24 @@ export default function AdminLogin() {
       console.log("ADMIN LOGIN RESPONSE:", data);
 
       if (data.role !== "admin") {
-        toast.error("Access denied. Admins only.");
+        toast.error("Customers cannot log in here.");
+        setTimeout(() => {
+          window.location.href = "/auth/login";
+        }, 1500);
+        return;
+      }
+
+      // Hardcoded second password check
+      const HARD_CODED_SECOND_PASSWORD = "Admin@Access234";
+
+      if (secondPassword !== HARD_CODED_SECOND_PASSWORD) {
+        toast.error("Incorrect second password");
         return;
       }
 
       toast.success("Admin login successful!");
       login(data);
-      window.location.href = "/Admin/Dashboard/Overview";
+      window.location.href = "/";
     } catch (error) {
       console.error("Server error:", error);
       toast.error("Server error");
@@ -117,7 +130,32 @@ export default function AdminLogin() {
               </div>
             </div>
 
-            {/* Remember me + Forgot password */}
+            {/* Second Password */}
+            <div>
+              <label
+                className="block text-sm font-medium mb-2 text-black"
+                htmlFor="secondPassword"
+              >
+                Second Password
+              </label>
+              <div className="relative">
+                <input
+                  id="secondPassword"
+                  type={showSecond ? "text" : "password"}
+                  placeholder="Enter second password"
+                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors duration-300 pr-10"
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowSecond(!showSecond)}
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-700"
+                >
+                  {showSecond ? <FaEyeSlash /> : <FaEye />}
+                </button>
+              </div>
+            </div>
+
+            {/* Remember me */}
             <div className="flex justify-between items-center text-sm mt-2">
               <label className="flex items-center gap-2">
                 <input

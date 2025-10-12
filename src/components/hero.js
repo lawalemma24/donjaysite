@@ -12,8 +12,8 @@ export default function Hero() {
   const [showOverlay, setShowOverlay] = useState(false);
 
   const handleSellClick = (e) => {
-    if (!user) {
-      e.preventDefault(); // prevent navigation
+    if (!user || user.role !== "customer") {
+      e.preventDefault();
       setShowOverlay(true);
     }
   };

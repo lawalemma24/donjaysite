@@ -25,8 +25,8 @@ export default function NotRegisteredOverlay({ onClose }) {
           Access Restricted!
         </h2>
         <p className="text-gray-600 mb-6">
-          You need to be a registered user to access this feature. Register or
-          login to continue and enjoy full access to our services.
+          You need to be registered as a customer to access this feature.
+          Register or login to continue and enjoy full access to this service.
         </p>
 
         <div className="flex flex-col sm:flex-row gap-3 justify-center">

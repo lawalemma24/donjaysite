@@ -13,8 +13,13 @@ export default function Login() {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    const email = e.target.email.value;
-    const password = e.target.password.value;
+    const email = e.target.email.value.trim();
+    const password = e.target.password.value.trim();
+
+    if (!email || !password) {
+      toast.error("Please fill in all fields");
+      return;
+    }
 
     try {
       const res = await fetch("http://localhost:5000/api/auth/login", {
@@ -33,10 +38,19 @@ export default function Login() {
       }
 
       const data = await res.json();
-      console.log("LOGIN RESPONSE:", data); // <-- log here
+      console.log("LOGIN RESPONSE:", data);
+
+      // Check role
+      if (data.role === "admin") {
+        toast.error("Admins must log in through the admin Login Page.");
+        setTimeout(() => {
+          window.location.href = "/Admin/Access/Login";
+        }, 1500);
+        return;
+      }
 
       toast.success("Login successful");
-      login(data); // update AuthContext
+      login(data);
       window.location.href = "/";
     } catch (error) {
       console.error("Server error:", error);
@@ -57,7 +71,7 @@ export default function Login() {
 
         <div className="px-5 md:px-8 py-4">
           <h1 className="text-2xl md:text-3xl font-semibold text-center text-black mb-2">
-            Sign In
+            Customer Log In
           </h1>
           <p className="text-gray-500 text-center text-sm md:text-base mb-4 md:mb-6">
             Please enter your details to log in

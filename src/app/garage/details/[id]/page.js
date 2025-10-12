@@ -2,17 +2,19 @@
 import { useState, useEffect } from "react";
 import { useParams, useRouter } from "next/navigation";
 import Image from "next/image";
-import Link from "next/link";
 import { Eye } from "lucide-react";
 import RelatedCars from "@/components/relatedcars";
 import api from "@/utils/api";
 import ConfirmBookOverlay from "@/components/confirmbooking";
 import BookSuccessModal from "@/components/bookconfirmed";
 import NotRegisteredOverlay from "@/components/notuser";
+import { useAuth } from "@/app/contexts/AuthContext";
 
 export default function CarDetails() {
   const { id } = useParams();
   const router = useRouter();
+  const { user } = useAuth(); // use user instead of token
+
   const [car, setCar] = useState(null);
   const [loading, setLoading] = useState(true);
   const [mainImage, setMainImage] = useState("/images/placeholder.png");
@@ -20,8 +22,6 @@ export default function CarDetails() {
   const [modalImage, setModalImage] = useState(null);
   const [activeTab, setActiveTab] = useState("offer");
   const [showOverlay, setShowOverlay] = useState(false);
-
-  // Booking & overlays
   const [showConfirm, setShowConfirm] = useState(false);
   const [showSuccess, setShowSuccess] = useState(false);
   const [submitting, setSubmitting] = useState(false);
@@ -51,10 +51,9 @@ export default function CarDetails() {
   };
   const handleModalClose = () => setIsModalOpen(false);
 
-  // Booking & actions with not-registered overlay
+  // Booking & actions using user
   const handleBookInspection = () => {
-    const token = localStorage.getItem("token");
-    if (!token) {
+    if (!user || user.role !== "customer") {
       setShowNotRegistered(true);
       return;
     }
@@ -64,10 +63,8 @@ export default function CarDetails() {
   };
 
   const handleBuyClick = () => {
-    const token = localStorage.getItem("token");
-    if (!token) {
+    if (!user || user.role !== "customer") {
       setShowNotRegistered(true);
-
       return;
     }
     sessionStorage.setItem("selectedCar", JSON.stringify(car));
@@ -75,10 +72,8 @@ export default function CarDetails() {
   };
 
   const handleSwapClick = () => {
-    const token = localStorage.getItem("token");
-    if (!token) {
+    if (!user || user.role !== "customer") {
       setShowNotRegistered(true);
-
       return;
     }
     router.push("/garage/swapcar");
@@ -87,16 +82,11 @@ export default function CarDetails() {
   const submitBooking = async () => {
     try {
       setSubmitting(true);
-      const token = localStorage.getItem("token");
-      if (!token) {
+      if (!user || user.role !== "customer") {
         setShowNotRegistered(true);
         return;
       }
-      const res = await api.post(
-        `/bookings`,
-        { carId: id },
-        { headers: { Authorization: `Bearer ${token}` } }
-      );
+      await api.post(`/bookings`, { carId: id });
       setShowSuccess(true);
     } catch (err) {
       console.error("Booking failed:", err.response?.data || err);
@@ -177,32 +167,30 @@ export default function CarDetails() {
               <Eye className="w-5 h-5" />
               <span>{car.views || 0} people viewed this car</span>
             </div>
+
             <div className="my-4 ">
               <h3 className="text-xl font-bold ">Car Description</h3>
               <p className="text-sm text-text-muted">{car.note}</p>
             </div>
+
             <div className="my-4 space-y-2 ">
               <h3 className="text-xl font-bold ">Specifications</h3>
               <p className="flex justify-between text-sm">
                 <span>Condition:</span>
                 <span className="text-text-muted">{car.condition}</span>
               </p>
-
               <p className="flex justify-between text-sm">
                 <span>Transmission:</span>
                 <span className="text-text-muted">{car.transmission}</span>
               </p>
-
               <p className="flex justify-between text-sm">
                 <span>Fuel Type:</span>
                 <span className="text-text-muted">{car.fuelType}</span>
               </p>
-
               <p className="flex justify-between text-sm">
                 <span>Engine:</span>
                 <span className="text-text-muted">{car.engine}</span>
               </p>
-
               <p className="flex justify-between text-sm">
                 <span>Mileage:</span>
                 <span className="text-text-muted">{car.mileage}</span>
@@ -233,8 +221,6 @@ export default function CarDetails() {
                 Buy
               </button>
             </div>
-
-            {/* Offer / Question Tabs */}
             <hr className="my-4 border-0 h-[1px] bg-lightgrey" />
           </div>
         </div>
