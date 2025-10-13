@@ -120,6 +120,7 @@ export default function Login() {
             <div className="flex flex-row justify-between items-start xs:items-center gap-2 mt-3 text-xs">
               <div className="flex items-center gap-2">
                 <input
+                  required
                   id="rememberMe"
                   type="checkbox"
                   className="h-4 w-4 border border-gray-400 rounded focus:ring-0"

@@ -12,6 +12,8 @@ import {
   ChevronsRight,
   Trash2,
   Edit,
+  CheckCircle,
+  XCircle,
 } from "lucide-react";
 import FilterCard from "../components/FilterCard";
 import AddUserModal from "../components/adduser";
@@ -262,20 +264,11 @@ export default function CarListingPage() {
                           <button
                             className="w-full flex items-center gap-2 px-3 py-2 hover:bg-gray-100"
                             onClick={() => {
-                              setSelectedForView(car);
-                              setActionMenuOpenFor(null);
-                            }}
-                          >
-                            <Edit size={16} className="text-gray-600" />
-                            Edit Car
-                          </button>
-                          <button
-                            className="w-full flex items-center gap-2 px-3 py-2 hover:bg-gray-100"
-                            onClick={() => {
                               handleApprove(car._id);
                               setActionMenuOpenFor(null);
                             }}
                           >
+                            <CheckCircle className="text-green-500 w-5 h-5" />
                             Approve Car
                           </button>
                           <button
@@ -285,6 +278,7 @@ export default function CarListingPage() {
                               setActionMenuOpenFor(null);
                             }}
                           >
+                            <XCircle className="text-orange w-5 h-5" />
                             Reject Car
                           </button>
                           <button
