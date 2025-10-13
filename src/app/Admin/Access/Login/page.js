@@ -159,6 +159,7 @@ export default function AdminLogin() {
             <div className="flex justify-between items-center text-sm mt-2">
               <label className="flex items-center gap-2">
                 <input
+                  required
                   id="rememberMe"
                   type="checkbox"
                   className="h-4 w-4 border border-gray-400 rounded focus:ring-0"

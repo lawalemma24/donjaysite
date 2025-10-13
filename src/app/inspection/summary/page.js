@@ -7,7 +7,7 @@ import React, { useState } from "react";
 export default function InspectionOfferReview({
   car,
   date,
-  time,
+  time, // this now contains the full slot object { period, startTime, endTime }
   note,
   onBack,
 }) {
@@ -18,33 +18,22 @@ export default function InspectionOfferReview({
   const token =
     typeof window !== "undefined" ? localStorage.getItem("token") : null;
 
-  // helper: convert to expected time slot label
-  const getTimeSlot = (time) => {
-    const hour = parseInt(time.split(":")[0]);
-    if (hour >= 9 && hour < 12) return "morning";
-    if (hour >= 12 && hour < 17) return "afternoon";
-    if (hour >= 17 && hour < 20) return "evening";
-    return "morning";
-  };
   const handleSubmit = async () => {
+    if (!time || !time.startTime) {
+      alert("Missing time slot. Please select again.");
+      return;
+    }
+
     setLoading(true);
     try {
-      // Map your time input to backend slot periods
-      const getTimeSlot = (time) => {
-        const hour = parseInt(time.split(":")[0]);
-        if (hour >= 9 && hour < 12)
-          return { period: "morning", startTime: "09:00", endTime: "09:30" };
-        if (hour >= 12 && hour < 17)
-          return { period: "afternoon", startTime: "13:00", endTime: "13:30" };
-        return { period: "night", startTime: "18:00", endTime: "18:30" };
-      };
-
-      const timeSlot = getTimeSlot(time);
-
       const payload = {
-        carId: car.id,
+        carId: car._id || car.id,
         inspectionDate: date,
-        timeSlot,
+        timeSlot: {
+          period: time.period || "custom",
+          startTime: time.startTime,
+          endTime: time.endTime,
+        },
         customerNotes: note || "",
       };
 
@@ -64,9 +53,7 @@ export default function InspectionOfferReview({
       console.log("🔁 Response status:", res.status);
       console.log("🧾 Response body:", data);
 
-      if (!res.ok) {
-        throw new Error(data.error || `Failed: ${res.statusText}`);
-      }
+      if (!res.ok) throw new Error(data.error || `Failed: ${res.statusText}`);
 
       setSuccessOpen(true);
     } catch (err) {
@@ -110,7 +97,7 @@ export default function InspectionOfferReview({
           <p>
             Preferred Date:{" "}
             <span className="float-right text-black">
-              {date} at {time}
+              {date} • {time?.startTime} - {time?.endTime}
             </span>
           </p>
           <p>
