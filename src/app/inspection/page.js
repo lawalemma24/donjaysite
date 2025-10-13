@@ -1,11 +1,13 @@
 "use client";
 import React, { useState, useEffect } from "react";
-import { useSearchParams } from "next/navigation";
+import { useSearchParams, useRouter } from "next/navigation";
 import InspectionOfferReview from "./summary/page";
 import api from "@/utils/api";
+import NotRegisteredOverlay from "@/components/notuser";
 
 export default function InspectionPage() {
   const params = useSearchParams();
+  const router = useRouter();
   const carId = params.get("carId");
 
   const [allCars, setAllCars] = useState([]); // all cars fetched once
@@ -21,8 +23,17 @@ export default function InspectionPage() {
   const [totalPages, setTotalPages] = useState(1);
   const [search, setSearch] = useState("");
   const [view, setView] = useState("gallery");
+  const [showNotRegistered, setShowNotRegistered] = useState(false);
 
   const PAGE_LIMIT = 9;
+
+  useEffect(() => {
+    const savedCar = sessionStorage.getItem("selectedCar");
+    if (savedCar) {
+      setCar(JSON.parse(savedCar));
+      setView("booking");
+    }
+  }, []);
 
   // Fetch all cars once
   const fetchAllCars = async () => {
@@ -225,11 +236,26 @@ export default function InspectionPage() {
               )}
             </>
           ) : (
-            // Booking form (unchanged)
+            // Booking form (unchanged except auth check)
             <form
               className="space-y-6"
               onSubmit={(e) => {
                 e.preventDefault();
+                // stronger check: token + user role 'customer'
+                const token = localStorage.getItem("token");
+                const userStr = localStorage.getItem("user");
+                let user = null;
+                try {
+                  user = userStr ? JSON.parse(userStr) : null;
+                } catch (err) {
+                  user = null;
+                }
+
+                if (!token || !user || user.role !== "customer") {
+                  setShowNotRegistered(true);
+                  return;
+                }
+
                 if (selectedSlot) setShowReview(true);
                 else alert("Please select a slot.");
               }}
@@ -349,6 +375,17 @@ export default function InspectionPage() {
                 </button>
               </div>
             </form>
+          )}
+
+          {/* Render overlay as an overlay inside the same page */}
+          {showNotRegistered && (
+            <NotRegisteredOverlay
+              onRegisterClick={() => {
+                setShowNotRegistered(false);
+                router.push("/auth/register");
+              }}
+              onClose={() => setShowNotRegistered(false)}
+            />
           )}
         </div>
       </div>
