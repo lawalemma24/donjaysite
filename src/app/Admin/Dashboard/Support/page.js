@@ -13,6 +13,7 @@ import {
 import ProtectedRoute from "@/app/protectedroutes/protected";
 import { useAuth } from "@/app/contexts/AuthContext";
 import useMessaging from "@/hooks/useMessaging";
+import toast from "react-hot-toast";
 
 /**
  * SupportCenter component
@@ -87,10 +88,18 @@ export default function SupportCenter() {
     if (!messageText.trim() || !activeConv) return;
     const recipientId = activeConv.otherParticipant?._id;
     if (!recipientId) return;
-    sendMessage({ recipientId, content: messageText.trim() }).finally(() => {
-      setMessageText("");
-      getMessages(recipientId).catch(() => {});
-    });
+    const toastId = toast.loading("Sending...");
+    sendMessage({ recipientId, content: messageText.trim() })
+      .then(() => {
+        toast.success("Sent", { id: toastId });
+      })
+      .catch((e) => {
+        toast.error(typeof e?.message === "string" ? e.message : "Failed to send");
+      })
+      .finally(() => {
+        setMessageText("");
+        getMessages(recipientId).catch(() => {});
+      });
   }
 
   function openProfile(conversationId) {
@@ -312,7 +321,25 @@ export default function SupportCenter() {
                               : "bg-gray-100 text-gray-800"
                           }`}
                         >
-                          <div className="whitespace-pre-wrap">{m.content}</div>
+                          <div className="whitespace-pre-wrap flex items-start gap-2">
+                            <div className="flex-1">{m.content}</div>
+                            {m.sender?._id === user?._id && (
+                              <button
+                                onClick={async () => {
+                                  try {
+                                    await deleteMessage(m._id);
+                                    toast.success("Message deleted");
+                                  } catch (e) {
+                                    toast.error("Failed to delete message");
+                                  }
+                                }}
+                                className={`text-[10px] ${m.sender?._id === user?._id ? "text-white/80 hover:text-white" : "text-gray-500 hover:text-gray-700"}`}
+                                title="Delete"
+                              >
+                                ×
+                              </button>
+                            )}
+                          </div>
                           <div
                             className={`text-xs mt-2 ${
                               m.sender?._id === user?._id
@@ -325,6 +352,11 @@ export default function SupportCenter() {
                               minute: "2-digit",
                             })}
                           </div>
+                          {m.sender?._id === user?._id && (
+                            <div className={`text-[10px] mt-0.5 ${m.sender?._id === user?._id ? "text-white/80" : "text-gray-500"}`}>
+                              {m.isRead ? "Read" : "Sent"}
+                            </div>
+                          )}
                         </div>
                       </div>
                     ))}

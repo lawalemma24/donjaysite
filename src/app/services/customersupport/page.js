@@ -4,6 +4,7 @@ import { Paperclip, Send } from "lucide-react";
 import ProtectedRoute from "@/app/protectedroutes/protected";
 import { useAuth } from "@/app/contexts/AuthContext";
 import useMessaging from "@/hooks/useMessaging";
+import toast from "react-hot-toast";
 
 const ChatSupport = () => {
   const { user } = useAuth();
@@ -56,12 +57,15 @@ const ChatSupport = () => {
     }
     try {
       setSending(true);
+      const toastId = toast.loading("Sending...");
       setActiveUserId(targetId);
       await sendMessage({ recipientId: targetId, content: input.trim() });
       setInput("");
       getMessages(targetId).catch(() => {});
+      toast.success("Sent", { id: toastId });
     } catch (err) {
       setSendError("Failed to send message. Please try again.");
+      toast.error(typeof err?.message === "string" ? err.message : "Failed to send");
     } finally {
       setSending(false);
     }
@@ -93,13 +97,36 @@ const ChatSupport = () => {
                       : "bg-gray-100 text-black"
                   }`}
                 >
-                  <p>{msg.content}</p>
+                  <div className="flex items-start gap-2">
+                    <p className="flex-1">{msg.content}</p>
+                    {msg.sender?._id === user?._id && (
+                      <button
+                        onClick={async () => {
+                          try {
+                            await deleteMessage(msg._id);
+                            toast.success("Message deleted");
+                          } catch (e) {
+                            toast.error("Failed to delete message");
+                          }
+                        }}
+                        className="text-[10px] text-gray-500 hover:text-gray-700"
+                        title="Delete"
+                      >
+                        ×
+                      </button>
+                    )}
+                  </div>
                   <p className="text-[10px] text-gray-500 text-right mt-1">
                     {new Date(msg.createdAt).toLocaleTimeString([], {
                       hour: "numeric",
                       minute: "2-digit",
                     })}
                   </p>
+                  {msg.sender?._id === user?._id && (
+                    <p className="text-[10px] text-gray-500 text-right mt-0.5">
+                      {msg.isRead ? "Read" : "Sent"}
+                    </p>
+                  )}
                 </div>
               </div>
             ))}
@@ -130,6 +157,9 @@ const ChatSupport = () => {
           </form>
         {sendError && (
           <div className="px-4 pb-4 text-xs text-red-600">{sendError}</div>
+        )}
+        {sending && (
+          <div className="px-4 pb-4 text-xs text-gray-500">Sending...</div>
         )}
         {!messages?.length && !recipientId && !DEFAULT_ADMIN_ID && (
           <div className="px-4 pb-6">
