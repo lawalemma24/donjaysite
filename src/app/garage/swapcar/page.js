@@ -3,41 +3,95 @@
 import Link from "next/link";
 import React, { useState, useEffect } from "react";
 import Image from "next/image";
+import { useRouter, useSearchParams } from "next/navigation";
+import { uploadToCloudinary } from "@/utils/uploadToCloudinary";
 
 export default function SwapPage() {
-  const [car, setCar] = useState(null);
-  const [images, setImages] = useState([]);
+  const params = useSearchParams();
+  const router = useRouter();
+  const carId = params.get("carId");
 
+  const [selectedCar, setSelectedCar] = useState(null);
+  const [images, setImages] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const [car, setCar] = useState(null);
+
+  // Load selected car
   useEffect(() => {
     const savedCar = sessionStorage.getItem("selectedCar");
     if (savedCar) setCar(JSON.parse(savedCar));
   }, []);
 
-  const [formData, setFormData] = useState({
-    make: "",
-    year: "",
-    condition: "Used",
-    transmission: "Automatic",
-    value: "",
-    fuel: "Petrol",
-    note: "",
-  });
+  // Listen for changes in selectedSwapCar
+  useEffect(() => {
+    const saved =
+      sessionStorage.getItem("selectedCar") ||
+      sessionStorage.getItem("selectedSwapCar");
+    if (saved) {
+      try {
+        setSelectedCar(JSON.parse(saved));
+      } catch {
+        console.error("Invalid JSON in selectedCar");
+      }
+    }
+  }, []);
 
-  const handleChange = (e) => {
-    const { id, value } = e.target;
-    setFormData((prev) => ({ ...prev, [id]: value }));
-  };
+  // Load saved images
+  useEffect(() => {
+    const savedImages = sessionStorage.getItem("swapImages");
+    if (savedImages) {
+      try {
+        setImages(JSON.parse(savedImages));
+      } catch {
+        console.error("Invalid JSON in swapImages");
+      }
+    }
+  }, []);
+
+  useEffect(() => {
+    sessionStorage.setItem("swapImages", JSON.stringify(images));
+  }, [images]);
 
   const handleImageChange = (e) => {
     const files = Array.from(e.target.files);
-    const urls = files.map((f) => URL.createObjectURL(f));
-    setImages((prev) => [...prev, ...urls]);
+    const imageUrls = files.map((file) => URL.createObjectURL(file));
+    setImages((prev) => [...prev, ...imageUrls]);
   };
 
-  const handleContinue = () => {
-    const tradeCar = { ...formData, images };
-    sessionStorage.setItem("tradeCar", JSON.stringify(tradeCar));
-    window.location.href = "/garage/reviewswap";
+  // Submit handler with Cloudinary upload
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setLoading(true);
+
+    try {
+      const fileInputs = Array.from(document.getElementById("fileInput").files);
+
+      // Upload all files to Cloudinary
+      const uploadedUrls = await Promise.all(
+        fileInputs.map((file) => uploadToCloudinary(file))
+      );
+
+      // Collect form data
+      const userCar = {
+        make: document.getElementById("make").value,
+        year: document.getElementById("year").value,
+        condition: document.getElementById("condition").value,
+        transmission: document.getElementById("transmission").value,
+        value: document.getElementById("value").value,
+        fuel: document.getElementById("fuel").value,
+        note: document.getElementById("note").value,
+        images: uploadedUrls,
+      };
+
+      sessionStorage.setItem("userCar", JSON.stringify(userCar));
+
+      router.push("/garage/reviewswap");
+    } catch (err) {
+      console.error("Swap submission failed:", err);
+      alert("Image upload failed. Try again.");
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -57,23 +111,23 @@ export default function SwapPage() {
       <div className="flex justify-center mb-16">
         <div className="w-full max-w-2xl bg-white rounded-2xl shadow-lg p-8">
           <div className="flex flex-col items-center text-center mb-6">
-            {car ? (
+            {selectedCar ? (
               <>
-                {car.images?.length > 0 && (
+                {selectedCar.images?.length > 0 && (
                   <div className="relative w-40 h-28 mb-3">
                     <Image
-                      src={car.images[0]}
-                      alt={car.carName}
+                      src={selectedCar.images[0]}
+                      alt={selectedCar?.carName || "Selected car"}
                       fill
                       className="object-cover rounded-lg border border-gray-300"
                     />
                   </div>
                 )}
                 <h1 className="text-2xl font-semibold text-black mb-1">
-                  Swap for {car.carName}
+                  Swap for {selectedCar?.carName}
                 </h1>
                 <p className="text-sm text-gray-500">
-                  Price: ₦{car.price?.toLocaleString()}
+                  ₦{selectedCar?.price?.toLocaleString() || "N/A"}
                 </p>
               </>
             ) : (
@@ -85,28 +139,36 @@ export default function SwapPage() {
             Tell us about the car you want to trade in
           </p>
 
-          <form className="space-y-6">
+          <form className="space-y-6" onSubmit={handleSubmit}>
+            {/* Make & Year */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div>
-                <label className="block text-sm font-medium text-gray-700">
+                <label
+                  htmlFor="make"
+                  className="block text-sm font-medium text-gray-700"
+                >
                   Make/Name of car
                 </label>
-                <input
+                <select
                   id="make"
-                  value={formData.make}
-                  onChange={handleChange}
-                  className="mt-1 block w-full rounded-md border-gray-300 shadow-sm h-10 px-3 border"
-                />
+                  className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue sm:text-sm h-10 px-3 border"
+                >
+                  <option>Toyota Camry</option>
+                  <option>Honda Accord</option>
+                  <option>Nissan Altima</option>
+                </select>
               </div>
+
               <div>
-                <label className="block text-sm font-medium text-gray-700">
+                <label
+                  htmlFor="year"
+                  className="block text-sm font-medium text-gray-700"
+                >
                   Year
                 </label>
                 <select
                   id="year"
-                  value={formData.year}
-                  onChange={handleChange}
-                  className="mt-1 block w-full rounded-md border-gray-300 shadow-sm h-10 px-3 border"
+                  className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue sm:text-sm h-10 px-3 border"
                 >
                   {Array.from({ length: 10 }).map((_, i) => {
                     const year = 2025 - i;
@@ -116,16 +178,18 @@ export default function SwapPage() {
               </div>
             </div>
 
+            {/* Condition & Transmission */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div>
-                <label className="block text-sm font-medium text-gray-700">
+                <label
+                  htmlFor="condition"
+                  className="block text-sm font-medium text-gray-700"
+                >
                   Condition
                 </label>
                 <select
                   id="condition"
-                  value={formData.condition}
-                  onChange={handleChange}
-                  className="mt-1 block w-full rounded-md border-gray-300 shadow-sm h-10 px-3 border"
+                  className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue sm:text-sm h-10 px-3 border"
                 >
                   <option>Used</option>
                   <option>New</option>
@@ -133,14 +197,15 @@ export default function SwapPage() {
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700">
+                <label
+                  htmlFor="transmission"
+                  className="block text-sm font-medium text-gray-700"
+                >
                   Transmission
                 </label>
                 <select
                   id="transmission"
-                  value={formData.transmission}
-                  onChange={handleChange}
-                  className="mt-1 block w-full rounded-md border-gray-300 shadow-sm h-10 px-3 border"
+                  className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue sm:text-sm h-10 px-3 border"
                 >
                   <option>Automatic</option>
                   <option>Manual</option>
@@ -148,28 +213,33 @@ export default function SwapPage() {
               </div>
             </div>
 
+            {/* Value & Fuel */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div>
-                <label className="block text-sm font-medium text-gray-700">
+                <label
+                  htmlFor="value"
+                  className="block text-sm font-medium text-gray-700"
+                >
                   Estimated Value
                 </label>
                 <input
+                  type="text"
                   id="value"
-                  value={formData.value}
-                  onChange={handleChange}
                   placeholder="Final decision after inspection"
-                  className="mt-1 block w-full rounded-md border-gray-300 shadow-sm h-10 px-3 border"
+                  className="mt-1 block w-full rounded-md border-text-muted shadow-sm focus:border-blue sm:text-sm h-10 px-3 border placeholder:text-gray-400"
                 />
               </div>
+
               <div>
-                <label className="block text-sm font-medium text-gray-700">
+                <label
+                  htmlFor="fuel"
+                  className="block text-sm font-medium text-gray-700"
+                >
                   Fuel type
                 </label>
                 <select
                   id="fuel"
-                  value={formData.fuel}
-                  onChange={handleChange}
-                  className="mt-1 block w-full rounded-md border-gray-300 shadow-sm h-10 px-3 border"
+                  className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue sm:text-sm h-10 px-3 border"
                 >
                   <option>Petrol</option>
                   <option>Diesel</option>
@@ -178,19 +248,23 @@ export default function SwapPage() {
               </div>
             </div>
 
+            {/* Additional Note */}
             <div>
-              <label className="block text-sm font-medium text-gray-700">
+              <label
+                htmlFor="note"
+                className="block text-sm font-medium text-gray-700"
+              >
                 Additional Note
               </label>
               <textarea
                 id="note"
                 rows="3"
-                value={formData.note}
-                onChange={handleChange}
-                className="mt-1 block w-full rounded-md border-gray-300 shadow-sm p-3 border resize-none"
+                placeholder="Any specific note about damage, modifications, or service history?"
+                className="mt-1 block w-full rounded-md border-text-muted shadow-sm focus:border-blue sm:text-sm p-3 border resize-none"
               ></textarea>
             </div>
 
+            {/* Image Upload */}
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">
                 Images
@@ -206,18 +280,39 @@ export default function SwapPage() {
                 />
                 <label
                   htmlFor="fileInput"
-                  className="text-blue font-medium cursor-pointer"
+                  className="flex justify-center items-center cursor-pointer mb-2 text-blue font-medium"
                 >
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    className="h-6 w-6 mr-2"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                    strokeWidth={2}
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"
+                    />
+                  </svg>
                   Upload Images
                 </label>
+                <p className="text-xs text-gray-500">
+                  Choose images or drag and drop them here
+                </p>
+                <p className="text-xs text-gray-500">
+                  JPG, JPEG, PNG, and HEIC files. Max size 10MB
+                </p>
               </div>
 
+              {/* Image previews */}
               <div className="flex flex-wrap mt-4 gap-4">
-                {images.map((img, i) => (
+                {images.map((img, idx) => (
                   <img
-                    key={i}
+                    key={idx}
                     src={img}
-                    alt={`Preview ${i + 1}`}
+                    alt={`Preview ${idx + 1}`}
                     className="rounded-lg border border-gray-300 w-24 h-16 object-cover"
                   />
                 ))}
@@ -226,11 +321,11 @@ export default function SwapPage() {
 
             <div className="pt-4">
               <button
-                type="button"
-                onClick={handleContinue}
-                className="w-full bg-blue text-white font-medium py-3 rounded-xl shadow-lg hover:bg-blue-700 transition"
+                type="submit"
+                disabled={loading}
+                className="w-full bg-blue text-white font-medium py-3 rounded-xl shadow-lg hover:bg-blue-700 transition duration-300"
               >
-                Continue
+                {loading ? "Uploading..." : "Continue"}
               </button>
             </div>
           </form>
