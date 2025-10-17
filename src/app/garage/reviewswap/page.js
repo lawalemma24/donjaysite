@@ -3,6 +3,7 @@
 import ConfirmOverlay from "@/components/confirmswap";
 import RelatedCars from "@/components/relatedcars";
 import RequestSubmitted from "@/components/requestsubmitted";
+import dealsApi from "@/utils/dealsapi";
 import Link from "next/link";
 import React, { useState, useEffect } from "react";
 import { AiOutlineSwap } from "react-icons/ai";
@@ -12,6 +13,7 @@ export default function ReviewSwapPage() {
   const [showSubmitted, setShowSubmitted] = useState(false);
   const [userCar, setUserCar] = useState(null);
   const [selectedCar, setSelectedCar] = useState(null);
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     const storedUserCar = sessionStorage.getItem("userCar");
@@ -33,6 +35,37 @@ export default function ReviewSwapPage() {
       }
     }
   }, []);
+
+  const handleSubmitSwap = async () => {
+    if (!userCar || !selectedCar) {
+      console.error("Missing car details.");
+      return;
+    }
+
+    const payload = {
+      dealType: "swap",
+      secondaryCarId: selectedCar._id || selectedCar.id,
+      offerPrice: selectedCar.price || 0,
+      additionalAmount: 0,
+      customerNote: "User submitted a car swap request.",
+      customerContact: {
+        phone: userCar?.ownerContact || "0000000000",
+        email: userCar?.ownerEmail || "user@example.com",
+        preferredContactMethod: "both",
+      },
+      priority: "medium",
+      tags: [],
+    };
+
+    try {
+      console.log("Submitting deal payload:", payload);
+      const res = await dealsApi.post("/", payload);
+      console.log("Deal created successfully:", res.data);
+      setShowSubmitted(true);
+    } catch (err) {
+      console.error("Error creating swap deal:", err.response?.data || err);
+    }
+  };
 
   return (
     <div>
@@ -179,9 +212,10 @@ export default function ReviewSwapPage() {
           <div className="mt-8">
             <button
               onClick={() => setShowConfirm(true)}
+              disabled={loading}
               className="w-full bg-blue text-white font-medium py-3 rounded-xl shadow-lg hover:bg-blue-700 transition"
             >
-              Confirm & Submit Swap Request
+              {loading ? "Submitting..." : "Confirm & Submit Swap Request"}
             </button>
           </div>
 
@@ -190,7 +224,7 @@ export default function ReviewSwapPage() {
               onClose={() => setShowConfirm(false)}
               onSubmit={() => {
                 setShowConfirm(false);
-                setShowSubmitted(true);
+                handleSubmitSwap();
               }}
             />
           )}
