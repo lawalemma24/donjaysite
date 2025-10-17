@@ -23,7 +23,6 @@ const ChatSupport = () => {
   const [sendError, setSendError] = useState("");
   const [manualRecipient, setManualRecipient] = useState("");
 
-  // For customer, pick or create conversation with any admin. Here we will pick the most recent conversation if exists; otherwise, messages list stays empty until user sends a message to default admin (server decides recipient based on business rules or requires a recipientId). If API requires explicit recipientId, we need an admin list. We'll attempt to load conversations to get other participant.
   const activeAdminId = useMemo(() => {
     const conv = conversations?.[0];
     return conv?.otherParticipant?._id || null;
@@ -31,7 +30,10 @@ const ChatSupport = () => {
 
   useEffect(() => {
     if (!recipientId) {
-      const stored = typeof window !== "undefined" ? localStorage.getItem("defaultAdminId") : null;
+      const stored =
+        typeof window !== "undefined"
+          ? localStorage.getItem("defaultAdminId")
+          : null;
       if (stored) setRecipientId(stored);
     }
     getConversations()
@@ -65,7 +67,9 @@ const ChatSupport = () => {
       toast.success("Sent", { id: toastId });
     } catch (err) {
       setSendError("Failed to send message. Please try again.");
-      toast.error(typeof err?.message === "string" ? err.message : "Failed to send");
+      toast.error(
+        typeof err?.message === "string" ? err.message : "Failed to send"
+      );
     } finally {
       setSending(false);
     }
@@ -132,7 +136,8 @@ const ChatSupport = () => {
             ))}
             {!messages?.length && !recipientId && !DEFAULT_ADMIN_ID && (
               <div className="text-center text-xs text-gray-400">
-                No active conversation. Please wait for an admin to reach out first, or configure NEXT_PUBLIC_DEFAULT_ADMIN_ID.
+                No active conversation. Please wait for an admin to reach out
+                first, or configure NEXT_PUBLIC_DEFAULT_ADMIN_ID.
               </div>
             )}
           </div>
@@ -151,42 +156,52 @@ const ChatSupport = () => {
               placeholder="Write your message here..."
               className="flex-1 border-none outline-none text-sm text-gray-700"
             />
-          <button type="submit" className="text-blue" disabled={sending || !input.trim()}>
+            <button
+              type="submit"
+              className="text-blue"
+              disabled={sending || !input.trim()}
+            >
               <Send size={20} />
             </button>
           </form>
-        {sendError && (
-          <div className="px-4 pb-4 text-xs text-red-600">{sendError}</div>
-        )}
-        {sending && (
-          <div className="px-4 pb-4 text-xs text-gray-500">Sending...</div>
-        )}
-        {!messages?.length && !recipientId && !DEFAULT_ADMIN_ID && (
-          <div className="px-4 pb-6">
-            <div className="text-xs text-gray-500 mb-2">
-              No admin recipient configured. Paste an Admin User ID to start a chat.
+          {sendError && (
+            <div className="px-4 pb-4 text-xs text-red-600">{sendError}</div>
+          )}
+          {sending && (
+            <div className="px-4 pb-4 text-xs text-gray-500">Sending...</div>
+          )}
+          {!messages?.length && !recipientId && !DEFAULT_ADMIN_ID && (
+            <div className="px-4 pb-6">
+              <div className="text-xs text-gray-500 mb-2">
+                No admin recipient configured. Paste an Admin User ID to start a
+                chat.
+              </div>
+              <div className="flex items-center gap-2">
+                <input
+                  type="text"
+                  value={manualRecipient}
+                  onChange={(e) => setManualRecipient(e.target.value)}
+                  placeholder="Admin User ID"
+                  className="flex-1 border border-gray-200 rounded px-2 py-1 text-sm"
+                />
+                <button
+                  onClick={() => {
+                    if (!manualRecipient.trim()) return;
+                    setRecipientId(manualRecipient.trim());
+                    try {
+                      localStorage.setItem(
+                        "defaultAdminId",
+                        manualRecipient.trim()
+                      );
+                    } catch (_) {}
+                  }}
+                  className="text-xs px-3 py-1 rounded bg-blue text-white"
+                >
+                  Save
+                </button>
+              </div>
             </div>
-            <div className="flex items-center gap-2">
-              <input
-                type="text"
-                value={manualRecipient}
-                onChange={(e) => setManualRecipient(e.target.value)}
-                placeholder="Admin User ID"
-                className="flex-1 border border-gray-200 rounded px-2 py-1 text-sm"
-              />
-              <button
-                onClick={() => {
-                  if (!manualRecipient.trim()) return;
-                  setRecipientId(manualRecipient.trim());
-                  try { localStorage.setItem("defaultAdminId", manualRecipient.trim()); } catch (_) {}
-                }}
-                className="text-xs px-3 py-1 rounded bg-blue text-white"
-              >
-                Save
-              </button>
-            </div>
-          </div>
-        )}
+          )}
         </div>
       </div>
     </ProtectedRoute>
