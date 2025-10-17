@@ -207,6 +207,7 @@ export default function Buydeals() {
               <tr className="text-left text-gray-500 border-b border-text-muted">
                 <th className="py-3 w-[40px]">S/N</th>
                 <th>Full Name</th>
+                <th>Car Name</th>
                 <th>Year</th>
                 <th>Condition</th>
                 <th>Price</th>
@@ -231,6 +232,9 @@ export default function Buydeals() {
                       className="w-10 h-10 rounded-full border border-text-muted/70 object-cover"
                     />
                     {deal.customer?.name || "-"}
+                  </td>
+                  <td className="py-4 text-black text-sm">
+                    {deal.primaryCar?.carName || "-"}
                   </td>
                   <td className="py-4 text-text-muted">
                     {deal.primaryCar?.year || "-"}

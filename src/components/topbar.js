@@ -297,9 +297,20 @@ export default function TopBar() {
           )}
 
           <div className="border-t border-lightgrey/40 pt-4">
-            <button className="text-red-600 mb-2 font-bold flex flex-row gap-2">
-              <LogOut size={18} /> Log Out
-            </button>
+            {user ? (
+              <button className="text-red-600 mb-2 font-bold flex flex-row gap-2">
+                <LogOut size={18} /> Log Out
+              </button>
+            ) : (
+              <Link
+                href="/auth/login"
+                className={` 3xl:block bg-blue text-white px-5 py-2 rounded hover:bg-blue-700 ${
+                  pathname === "/auth/login" ? "bg-blue-700" : ""
+                }`}
+              >
+                Login/Register
+              </Link>
+            )}
           </div>
         </div>
       )}
