@@ -1,15 +1,43 @@
 "use client";
 
 import Link from "next/link";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import Image from "next/image";
 
-const SwapPage = () => {
+export default function SwapPage() {
+  const [car, setCar] = useState(null);
   const [images, setImages] = useState([]);
+
+  useEffect(() => {
+    const savedCar = sessionStorage.getItem("selectedCar");
+    if (savedCar) setCar(JSON.parse(savedCar));
+  }, []);
+
+  const [formData, setFormData] = useState({
+    make: "",
+    year: "",
+    condition: "Used",
+    transmission: "Automatic",
+    value: "",
+    fuel: "Petrol",
+    note: "",
+  });
+
+  const handleChange = (e) => {
+    const { id, value } = e.target;
+    setFormData((prev) => ({ ...prev, [id]: value }));
+  };
 
   const handleImageChange = (e) => {
     const files = Array.from(e.target.files);
-    const imageUrls = files.map((file) => URL.createObjectURL(file));
-    setImages((prev) => [...prev, ...imageUrls]);
+    const urls = files.map((f) => URL.createObjectURL(f));
+    setImages((prev) => [...prev, ...urls]);
+  };
+
+  const handleContinue = () => {
+    const tradeCar = { ...formData, images };
+    sessionStorage.setItem("tradeCar", JSON.stringify(tradeCar));
+    window.location.href = "/garage/reviewswap";
   };
 
   return (
@@ -28,9 +56,31 @@ const SwapPage = () => {
 
       <div className="flex justify-center mb-16">
         <div className="w-full max-w-2xl bg-white rounded-2xl shadow-lg p-8">
-          <h1 className="text-2xl font-semibold text-center text-black mb-2">
-            Swap for 2025 Mercedes Benz GLE
-          </h1>
+          <div className="flex flex-col items-center text-center mb-6">
+            {car ? (
+              <>
+                {car.images?.length > 0 && (
+                  <div className="relative w-40 h-28 mb-3">
+                    <Image
+                      src={car.images[0]}
+                      alt={car.carName}
+                      fill
+                      className="object-cover rounded-lg border border-gray-300"
+                    />
+                  </div>
+                )}
+                <h1 className="text-2xl font-semibold text-black mb-1">
+                  Swap for {car.carName}
+                </h1>
+                <p className="text-sm text-gray-500">
+                  Price: ₦{car.price?.toLocaleString()}
+                </p>
+              </>
+            ) : (
+              <p className="text-gray-500">No car selected</p>
+            )}
+          </div>
+
           <p className="text-black/80 text-center text-sm mb-8">
             Tell us about the car you want to trade in
           </p>
@@ -38,112 +88,106 @@ const SwapPage = () => {
           <form className="space-y-6">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div>
-                <label
-                  htmlFor="make"
-                  className="block text-sm font-medium text-gray-700"
-                >
+                <label className="block text-sm font-medium text-gray-700">
                   Make/Name of car
                 </label>
-                <select
+                <input
                   id="make"
-                  className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue  focus:outline-none focus:ring-none sm:text-sm h-10 px-3 border"
-                >
-                  <option>Toyota Camry</option>
-                </select>
+                  value={formData.make}
+                  onChange={handleChange}
+                  className="mt-1 block w-full rounded-md border-gray-300 shadow-sm h-10 px-3 border"
+                />
               </div>
-
               <div>
-                <label
-                  htmlFor="year"
-                  className="block text-sm font-medium text-gray-700"
-                >
+                <label className="block text-sm font-medium text-gray-700">
                   Year
                 </label>
                 <select
                   id="year"
-                  className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue focus:outline-none focus:ring-none sm:text-sm h-10 px-3 border"
+                  value={formData.year}
+                  onChange={handleChange}
+                  className="mt-1 block w-full rounded-md border-gray-300 shadow-sm h-10 px-3 border"
                 >
-                  <option>2023</option>
+                  {Array.from({ length: 10 }).map((_, i) => {
+                    const year = 2025 - i;
+                    return <option key={year}>{year}</option>;
+                  })}
                 </select>
               </div>
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div>
-                <label
-                  htmlFor="condition"
-                  className="block text-sm font-medium text-gray-700"
-                >
+                <label className="block text-sm font-medium text-gray-700">
                   Condition
                 </label>
                 <select
                   id="condition"
-                  className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue focus:outline-none focus:ring-none sm:text-sm h-10 px-3 border"
+                  value={formData.condition}
+                  onChange={handleChange}
+                  className="mt-1 block w-full rounded-md border-gray-300 shadow-sm h-10 px-3 border"
                 >
                   <option>Used</option>
+                  <option>New</option>
                 </select>
               </div>
 
               <div>
-                <label
-                  htmlFor="transmission"
-                  className="block text-sm font-medium text-gray-700"
-                >
+                <label className="block text-sm font-medium text-gray-700">
                   Transmission
                 </label>
                 <select
                   id="transmission"
-                  className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue focus:outline-none focus:ring-none sm:text-sm h-10 px-3 border"
+                  value={formData.transmission}
+                  onChange={handleChange}
+                  className="mt-1 block w-full rounded-md border-gray-300 shadow-sm h-10 px-3 border"
                 >
                   <option>Automatic</option>
+                  <option>Manual</option>
                 </select>
               </div>
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div>
-                <label
-                  htmlFor="value"
-                  className="block text-sm font-medium text-gray-700"
-                >
+                <label className="block text-sm font-medium text-gray-700">
                   Estimated Value
                 </label>
                 <input
-                  type="text"
                   id="value"
+                  value={formData.value}
+                  onChange={handleChange}
                   placeholder="Final decision after inspection"
-                  className="mt-1 block w-full rounded-md border-text-muted shadow-sm focus:border-blue focus:outline-none focus:outline-none focus:ring-none sm:text-sm h-10 px-3 border placeholder:text-gray-400"
+                  className="mt-1 block w-full rounded-md border-gray-300 shadow-sm h-10 px-3 border"
                 />
               </div>
-
               <div>
-                <label
-                  htmlFor="fuel"
-                  className="block text-sm font-medium text-gray-700"
-                >
+                <label className="block text-sm font-medium text-gray-700">
                   Fuel type
                 </label>
                 <select
                   id="fuel"
-                  className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue focus:outline-none focus:ring-none sm:text-sm h-10 px-3 border"
+                  value={formData.fuel}
+                  onChange={handleChange}
+                  className="mt-1 block w-full rounded-md border-gray-300 shadow-sm h-10 px-3 border"
                 >
                   <option>Petrol</option>
+                  <option>Diesel</option>
+                  <option>Hybrid</option>
                 </select>
               </div>
             </div>
 
             <div>
-              <label
-                htmlFor="note"
-                className="block text-sm font-medium text-gray-700"
-              >
+              <label className="block text-sm font-medium text-gray-700">
                 Additional Note
               </label>
               <textarea
                 id="note"
                 rows="3"
-                placeholder="Any specific note about damage, modifications, or service history?"
-                className="mt-1 block w-full rounded-md border-text-muted shadow-sm focus:border-blue focus:outline-none focus:ring-none focus:outline-none sm:text-sm p-3 border resize-none"
+                value={formData.note}
+                onChange={handleChange}
+                className="mt-1 block w-full rounded-md border-gray-300 shadow-sm p-3 border resize-none"
               ></textarea>
             </div>
 
@@ -162,37 +206,18 @@ const SwapPage = () => {
                 />
                 <label
                   htmlFor="fileInput"
-                  className="flex justify-center items-center cursor-pointer mb-2 text-blue font-medium"
+                  className="text-blue font-medium cursor-pointer"
                 >
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    className="h-6 w-6 mr-2"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    stroke="currentColor"
-                    strokeWidth={2}
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"
-                    />
-                  </svg>
                   Upload Images
                 </label>
-                <p className="text-xs text-gray-500">
-                  Choose images or drag and drop it here
-                </p>
-                <p className="text-xs text-gray-500">
-                  JPG, JPEG, PNG, and HEIC files. Max size 10MB
-                </p>
               </div>
+
               <div className="flex flex-wrap mt-4 gap-4">
-                {images.map((img, idx) => (
+                {images.map((img, i) => (
                   <img
-                    key={idx}
+                    key={i}
                     src={img}
-                    alt={`Preview ${idx + 1}`}
+                    alt={`Preview ${i + 1}`}
                     className="rounded-lg border border-gray-300 w-24 h-16 object-cover"
                   />
                 ))}
@@ -200,20 +225,17 @@ const SwapPage = () => {
             </div>
 
             <div className="pt-4">
-              <Link href="/garage/reviewswap">
-                <button
-                  type="submit"
-                  className="w-full bg-blue text-white font-medium py-3 rounded-xl shadow-lg hover:bg-blue-700 transition duration-300"
-                >
-                  Continue
-                </button>
-              </Link>
+              <button
+                type="button"
+                onClick={handleContinue}
+                className="w-full bg-blue text-white font-medium py-3 rounded-xl shadow-lg hover:bg-blue-700 transition"
+              >
+                Continue
+              </button>
             </div>
           </form>
         </div>
       </div>
     </div>
   );
-};
-
-export default SwapPage;
+}

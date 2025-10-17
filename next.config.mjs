@@ -4,7 +4,8 @@ const nextConfig = {
     domains: [
       "avatar.iran.liara.run",
       "example.com",
-      "images.unsplash.com", // add this
+      "images.unsplash.com",
+      "res.cloudinary.com",
     ],
   },
 };

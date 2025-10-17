@@ -10,8 +10,8 @@ export default function InspectionPage() {
   const router = useRouter();
   const carId = params.get("carId");
 
-  const [allCars, setAllCars] = useState([]); // all cars fetched once
-  const [cars, setCars] = useState([]); // filtered & paginated
+  const [allCars, setAllCars] = useState([]);
+  const [cars, setCars] = useState([]);
   const [loading, setLoading] = useState(false);
   const [car, setCar] = useState(null);
   const [date, setDate] = useState("");
@@ -39,7 +39,7 @@ export default function InspectionPage() {
   const fetchAllCars = async () => {
     setLoading(true);
     try {
-      const res = await api.get("/approved?limit=1000"); // fetch all approved cars
+      const res = await api.get("/approved?limit=1000");
       const list = res.data.cars || [];
       setAllCars(list);
     } catch (err) {

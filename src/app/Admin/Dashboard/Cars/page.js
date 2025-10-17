@@ -194,7 +194,7 @@ export default function CarListingPage() {
               onClick={() => setShowAddUser(true)}
               className="inline-flex items-center gap-2 bg-blue text-white px-4 py-2 rounded-lg shadow"
             >
-              <Plus size={16} /> Add User
+              <Plus size={16} /> Add Car
             </button>
           </div>
         </div>

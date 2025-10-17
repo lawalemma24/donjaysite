@@ -3,7 +3,6 @@
 import { useState, useEffect } from "react";
 import {
   MoreVertical,
-  Filter,
   Search,
   ChevronLeft,
   ChevronRight,
@@ -14,9 +13,8 @@ import {
   CheckCircle,
   Trash2,
 } from "lucide-react";
-import FilterCard from "../components/FilterCard";
 import AddCarForm from "../components/addcar";
-import BuyDealDetails from "./buydealdetails";
+import SellDealDetails from "./selldealdetails";
 
 export default function Buydeals() {
   const [deals, setDeals] = useState([]);
@@ -42,7 +40,7 @@ export default function Buydeals() {
 
     try {
       const token = localStorage.getItem("token");
-      let url = `http://localhost:5000/api/deals/admin/all?type=buy&page=${page}&limit=${pageSize}`;
+      let url = `http://localhost:5000/api/deals/admin/all?dealType=buy&page=${page}&limit=${pageSize}`;
       if (searchQuery) url += `&search=${encodeURIComponent(searchQuery)}`;
       if (statusFilter) url += `&status=${encodeURIComponent(statusFilter)}`;
 
@@ -373,7 +371,7 @@ export default function Buydeals() {
 
       {showAddDeal && <AddCarForm onClose={() => setShowAddDeal(false)} />}
       {selectedForView && (
-        <BuyDealDetails
+        <SellDealDetails
           deal={selectedForView}
           onClose={() => setSelectedForView(null)}
         />

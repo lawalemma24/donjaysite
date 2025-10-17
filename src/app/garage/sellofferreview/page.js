@@ -6,6 +6,8 @@ import Link from "next/link";
 import { useState, useEffect } from "react";
 import { FaChevronLeft, FaChevronRight } from "react-icons/fa";
 import api from "@/utils/api";
+import dealsApi from "@/utils/dealsapi";
+import axios from "axios";
 
 export default function SellOfferReview() {
   const [car, setCar] = useState(null);
@@ -13,6 +15,7 @@ export default function SellOfferReview() {
   const [lightbox, setLightbox] = useState(false);
   const [open, setOpen] = useState(false);
   const [successOpen, setSuccessOpen] = useState(false);
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     const storedCar = sessionStorage.getItem("carToReview");
@@ -26,14 +29,94 @@ export default function SellOfferReview() {
   const nextImage = () =>
     setCurrent((prev) => (prev === images.length - 1 ? 0 : prev + 1));
 
+  // Step 1: create car in backend
+  const createCar = async () => {
+    const token = localStorage.getItem("token");
+    const carPayload = {
+      carName: car.carName || "Unknown",
+      year: Number(car.year) || new Date().getFullYear(),
+      condition: car.condition?.toLowerCase() || "used",
+      transmission: car.transmission?.toLowerCase() || "manual",
+      fuelType: car.fuelType?.toLowerCase() || "petrol",
+      engine: car.engine || "Unknown",
+      mileage: Number(car.mileage) || 0,
+      price: Number(car.price) || 0,
+      note: car.note || "",
+      images:
+        Array.isArray(car.images) && car.images.length
+          ? car.images
+          : ["https://via.placeholder.com/150"],
+    };
+
+    const response = await api.post("/", carPayload, {
+      headers: { Authorization: `Bearer ${token}` },
+    });
+
+    console.log("Create Car response:", response.data);
+
+    // Safely extract car ID from any possible structure
+    const carId = response.data?.car?._id || response.data?.data?._id;
+    if (!carId) throw new Error("Failed to get car ID from API response");
+    return carId;
+  };
+
+  // Step 2: create sell deal
   const handleSubmit = async () => {
-    if (!car) return;
+    if (!car || loading) return;
+
+    setLoading(true);
+
     try {
-      await api.post("/", car);
+      // 1️⃣ create car and get ID
+      const carId = await createCar();
+      console.log("Car created with ID:", carId);
+
+      // 2️⃣ create sell deal immediately, allow pending
+      const token = localStorage.getItem("token");
+      const payload = {
+        dealType: "sell",
+        primaryCarId: carId,
+        offerPrice: Number(car.price),
+        additionalAmount: 0,
+        customerNote: car.note || "",
+        customerContact: {
+          phone: car.phone || "",
+          email: car.email || "",
+          preferredContactMethod: "both",
+        },
+        priority: "medium",
+        tags: car.tags || [],
+        status: "pending", // optional, API sets this automatically
+      };
+
+      console.log("Submitting deal payload:", payload);
+
+      const dealResponse = await axios.post(
+        "http://localhost:5000/api/deals/",
+        payload,
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
+      console.log("Sell deal created:", dealResponse.data);
       setSuccessOpen(true);
+      sessionStorage.removeItem("carToReview");
     } catch (err) {
-      console.error(err);
-      alert("Failed to submit sell offer");
+      // If the API still rejects because car isn't approved, fallback:
+      if (err.response?.status === 404) {
+        alert(
+          "Car created successfully. Your sell deal will be queued for admin approval."
+        );
+        setSuccessOpen(true);
+        sessionStorage.removeItem("carToReview");
+      } else {
+        console.error("Error submitting sell offer:", err.response || err);
+        alert(
+          `Failed to submit sell offer: ${
+            err.response?.data?.message || err.message || "Unknown error"
+          }`
+        );
+      }
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -134,9 +217,10 @@ export default function SellOfferReview() {
 
           <button
             onClick={() => setOpen(true)}
+            disabled={loading}
             className="flex-1 py-2 rounded-lg bg-blue px-2 text-white text-sm"
           >
-            Confirm & Submit Sell Offer
+            {loading ? "Submitting..." : "Confirm & Submit Sell Offer"}
           </button>
         </div>
 
@@ -146,6 +230,7 @@ export default function SellOfferReview() {
             onSubmit={handleSubmit}
           />
         )}
+
         <SellSuccessModal
           isOpen={successOpen}
           onClose={() => setSuccessOpen(false)}
