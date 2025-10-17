@@ -1,16 +1,28 @@
 "use client";
-import { useState } from "react";
-import { useRouter } from "next/navigation";
+
+import { useState, useEffect } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
 import toast, { Toaster } from "react-hot-toast";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
 
 export default function ResetPassword() {
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const token = searchParams.get("token");
+
   const [showPassword, setShowPassword] = useState(false);
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
+  const [loading, setLoading] = useState(false);
 
-  const handleSubmit = (e) => {
+  useEffect(() => {
+    if (!token) {
+      toast.error("Invalid or missing reset token");
+      router.push("/auth/forgotpassword");
+    }
+  }, [token, router]);
+
+  const handleSubmit = async (e) => {
     e.preventDefault();
 
     if (!password || !confirmPassword) {
@@ -23,13 +35,37 @@ export default function ResetPassword() {
       return;
     }
 
-    // Show success toast
-    toast.success("Password changed successfully!");
+    setLoading(true);
+    try {
+      const res = await fetch(
+        `http://localhost:5000/api/auth/reset-password?token=${token}`,
+        {
+          method: "PUT",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            newPassword: password,
+            confirmPassword,
+          }),
+        }
+      );
 
-    // Redirect after short delay
-    setTimeout(() => {
-      router.push("/auth/login");
-    }, 1500);
+      const data = await res.json();
+      console.log("RESET PASSWORD RESPONSE:", data);
+
+      if (!res.ok) {
+        toast.error(data.error || "Something went wrong");
+        setLoading(false);
+        return;
+      }
+
+      toast.success(data.message || "Password changed successfully!");
+      setTimeout(() => router.push("/auth/login"), 2000);
+    } catch (error) {
+      console.error("Server error:", error);
+      toast.error("Server error");
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -50,11 +86,10 @@ export default function ResetPassword() {
           </h1>
 
           <form onSubmit={handleSubmit} className="space-y-4 md:space-y-5">
-            {/* New Password */}
             <div>
               <label
-                className="block text-sm font-medium mb-2 text-black"
                 htmlFor="password"
+                className="block text-sm font-medium mb-2 text-black"
               >
                 New Password
               </label>
@@ -77,11 +112,10 @@ export default function ResetPassword() {
               </div>
             </div>
 
-            {/* Confirm Password */}
             <div>
               <label
-                className="block text-sm font-medium mb-2 text-black"
                 htmlFor="confirmPassword"
+                className="block text-sm font-medium mb-2 text-black"
               >
                 Confirm Password
               </label>
@@ -106,9 +140,12 @@ export default function ResetPassword() {
 
             <button
               type="submit"
-              className="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-4 rounded-lg transition-colors duration-300 mt-2"
+              disabled={loading}
+              className={`w-full ${
+                loading ? "bg-blue-400" : "bg-blue-600 hover:bg-blue-700"
+              } text-white font-bold py-3 px-4 rounded-lg transition-colors duration-300 mt-2`}
             >
-              Change Password
+              {loading ? "Updating..." : "Change Password"}
             </button>
           </form>
         </div>

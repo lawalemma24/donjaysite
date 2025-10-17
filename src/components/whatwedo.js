@@ -1,6 +1,8 @@
+"use client";
 import Image from "next/image";
 import Link from "next/link";
 import { ShoppingCart, Tag, Shuffle, CalendarCheck } from "lucide-react";
+import { useAuth } from "@/app/contexts/AuthContext";
 
 const brands = [
   "/images/hondalogo.svg",
@@ -49,6 +51,7 @@ const services = [
 ];
 
 export default function WhatWeDo() {
+  const { user } = useAuth();
   return (
     <section className="text-center w-full relative pt-20 ">
       <div
@@ -96,11 +99,19 @@ export default function WhatWeDo() {
         </div>
 
         <div className="mt-10">
-          <Link href="/auth/register">
-            <button className="bg-blue text-white px-6 py-2 rounded-lg shadow hover:bg-blue-700 transition">
-              Get Started
-            </button>
-          </Link>
+          {user ? (
+            <Link href="/about">
+              <button className="bg-blue text-white px-6 py-2 rounded-lg shadow hover:bg-blue-700 transition">
+                Explore Services
+              </button>
+            </Link>
+          ) : (
+            <Link href="/auth/register">
+              <button className="bg-blue text-white px-6 py-2 rounded-lg shadow hover:bg-blue-700 transition">
+                Get Started
+              </button>
+            </Link>
+          )}
         </div>
       </div>
     </section>

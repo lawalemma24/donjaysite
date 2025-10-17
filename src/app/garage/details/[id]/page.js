@@ -1,41 +1,38 @@
 "use client";
 import { useState, useEffect } from "react";
-import { useParams } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
 import Image from "next/image";
-import Link from "next/link";
 import { Eye } from "lucide-react";
 import RelatedCars from "@/components/relatedcars";
 import api from "@/utils/api";
 import ConfirmBookOverlay from "@/components/confirmbooking";
 import BookSuccessModal from "@/components/bookconfirmed";
-import { useRouter } from "next/navigation";
+import NotRegisteredOverlay from "@/components/notuser";
+import { useAuth } from "@/app/contexts/AuthContext";
 
 export default function CarDetails() {
   const { id } = useParams();
   const router = useRouter();
+  const { user } = useAuth(); // use user instead of token
+
   const [car, setCar] = useState(null);
   const [loading, setLoading] = useState(true);
   const [mainImage, setMainImage] = useState("/images/placeholder.png");
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [modalImage, setModalImage] = useState(null);
   const [activeTab, setActiveTab] = useState("offer");
-
-  // new states
+  const [showOverlay, setShowOverlay] = useState(false);
   const [showConfirm, setShowConfirm] = useState(false);
   const [showSuccess, setShowSuccess] = useState(false);
   const [submitting, setSubmitting] = useState(false);
+  const [showNotRegistered, setShowNotRegistered] = useState(false);
 
-  console.log("🟦 useParams ID:", id);
   // Fetch car data
   useEffect(() => {
     const fetchCar = async () => {
-      console.log("Fetching car with ID:", id);
       try {
         const res = await api.get(`/${id}`);
-
-        console.log("API response:", res.data);
         const fetchedCar = res.data?.car || null;
-
         setCar(fetchedCar);
         setMainImage(fetchedCar?.images?.[0] || "/images/placeholder.png");
       } catch (err) {
@@ -54,36 +51,42 @@ export default function CarDetails() {
   };
   const handleModalClose = () => setIsModalOpen(false);
 
-  // 🟦 BOOKING HANDLER
-
+  // Booking & actions using user
   const handleBookInspection = () => {
+    if (!user || user.role !== "customer") {
+      setShowNotRegistered(true);
+      return;
+    }
     if (!car || !car.id) return;
-
-    // Save the selected car details temporarily
     sessionStorage.setItem("selectedCar", JSON.stringify(car));
-
-    // Redirect to inspection page with carId in the query
     router.push(`/inspection?carId=${car.id}`);
+  };
+
+  const handleBuyClick = () => {
+    if (!user || user.role !== "customer") {
+      setShowNotRegistered(true);
+      return;
+    }
+    sessionStorage.setItem("selectedCar", JSON.stringify(car));
+    router.push("/garage/ordersummary");
+  };
+
+  const handleSwapClick = () => {
+    if (!user || user.role !== "customer") {
+      setShowNotRegistered(true);
+      return;
+    }
+    router.push("/garage/swapcar");
   };
 
   const submitBooking = async () => {
     try {
       setSubmitting(true);
-      const token = localStorage.getItem("token");
-      if (!token) {
-        alert("You must be logged in to book an inspection.");
+      if (!user || user.role !== "customer") {
+        setShowNotRegistered(true);
         return;
       }
-
-      const res = await api.post(
-        `/bookings`,
-        { carId: id },
-        {
-          headers: { Authorization: `Bearer ${token}` },
-        }
-      );
-
-      console.log("Booking success:", res.data);
+      await api.post(`/bookings`, { carId: id });
       setShowSuccess(true);
     } catch (err) {
       console.error("Booking failed:", err.response?.data || err);
@@ -164,32 +167,30 @@ export default function CarDetails() {
               <Eye className="w-5 h-5" />
               <span>{car.views || 0} people viewed this car</span>
             </div>
+
             <div className="my-4 ">
               <h3 className="text-xl font-bold ">Car Description</h3>
               <p className="text-sm text-text-muted">{car.note}</p>
             </div>
+
             <div className="my-4 space-y-2 ">
               <h3 className="text-xl font-bold ">Specifications</h3>
               <p className="flex justify-between text-sm">
                 <span>Condition:</span>
                 <span className="text-text-muted">{car.condition}</span>
               </p>
-
               <p className="flex justify-between text-sm">
                 <span>Transmission:</span>
                 <span className="text-text-muted">{car.transmission}</span>
               </p>
-
               <p className="flex justify-between text-sm">
                 <span>Fuel Type:</span>
                 <span className="text-text-muted">{car.fuelType}</span>
               </p>
-
               <p className="flex justify-between text-sm">
                 <span>Engine:</span>
                 <span className="text-text-muted">{car.engine}</span>
               </p>
-
               <p className="flex justify-between text-sm">
                 <span>Mileage:</span>
                 <span className="text-text-muted">{car.mileage}</span>
@@ -206,86 +207,21 @@ export default function CarDetails() {
             </button>
 
             <div className="flex gap-4 mt-6">
-              <Link href="/garage/swapcar">
-                <button className="flex-1 border border-blue-600 text-blue-600 rounded-lg px-9 py-2 font-medium hover:bg-blue-50">
-                  Swap
-                </button>
-              </Link>
+              <button
+                onClick={handleSwapClick}
+                className="flex-1 border border-blue-600 text-blue-600 rounded-lg px-9 py-2 font-medium hover:bg-blue-50"
+              >
+                Swap
+              </button>
 
-              <Link href="/garage/ordersummary">
-                <button
-                  onClick={() => {
-                    sessionStorage.setItem("selectedCar", JSON.stringify(car));
-                  }}
-                  className="flex-1 bg-blue-600 text-white rounded-lg px-9 py-2 font-medium hover:bg-blue-700"
-                >
-                  Buy
-                </button>
-              </Link>
+              <button
+                onClick={handleBuyClick}
+                className="flex-1 bg-blue-600 text-white rounded-lg px-9 py-2 font-medium hover:bg-blue-700"
+              >
+                Buy
+              </button>
             </div>
-
-            {/* Offer / Question Tabs */}
             <hr className="my-4 border-0 h-[1px] bg-lightgrey" />
-            <div className="mb-6 mt-6">
-              <h1 className="text-xl text-black font-semibold">
-                Offer/Request
-              </h1>
-              <p className="text-lightgrey mb-2 text-sm">
-                Only make an offer if you don't agree with the price
-              </p>
-
-              <div className="flex border-b border-lightgrey mb-4">
-                <button
-                  className={`px-4 py-2 font-medium ${
-                    activeTab === "offer"
-                      ? "border-b-2 border-blue-600 text-blue-600"
-                      : "text-gray-600"
-                  }`}
-                  onClick={() => setActiveTab("offer")}
-                >
-                  Make an Offer
-                </button>
-                <button
-                  className={`px-4 py-2 font-medium ${
-                    activeTab === "question"
-                      ? "border-b-2 border-blue-600 text-blue-600"
-                      : "text-gray-600"
-                  }`}
-                  onClick={() => setActiveTab("question")}
-                >
-                  Ask a Question
-                </button>
-              </div>
-
-              {activeTab === "offer" && (
-                <div>
-                  <p className="text-lightgrey mb-2 text-sm">
-                    Your Binding offer for this vehicle
-                  </p>
-                  <input
-                    type="number"
-                    placeholder="Enter your offer amount"
-                    className="w-full border border-lightgrey rounded-lg px-4 py-2 mb-3"
-                  />
-                  <button className="w-full bg-blue-600 text-white rounded-lg px-4 py-2 font-medium hover:bg-blue-700">
-                    Submit Offer
-                  </button>
-                </div>
-              )}
-
-              {activeTab === "question" && (
-                <div>
-                  <textarea
-                    placeholder="Type your question"
-                    rows={3}
-                    className="w-full border border-lightgrey rounded-lg px-4 py-2 mb-3"
-                  />
-                  <button className="w-full bg-blue-600 text-white rounded-lg px-4 py-2 font-medium hover:bg-blue-700">
-                    Submit Question
-                  </button>
-                </div>
-              )}
-            </div>
           </div>
         </div>
       </div>
@@ -318,13 +254,21 @@ export default function CarDetails() {
           onSubmit={submitBooking}
         />
       )}
-
       <BookSuccessModal
         isOpen={showSuccess}
         onClose={() => setShowSuccess(false)}
       />
 
+      {/* Related cars */}
       <RelatedCars />
+
+      {/* Not Registered Overlay */}
+      {showNotRegistered && (
+        <NotRegisteredOverlay
+          onRegisterClick={() => router.push("/auth/register")}
+          onClose={() => setShowNotRegistered(false)}
+        />
+      )}
     </>
   );
 }

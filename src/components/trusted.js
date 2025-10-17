@@ -1,8 +1,10 @@
 "use client";
+import { useAuth } from "@/app/contexts/AuthContext";
 import Image from "next/image";
 import Link from "next/link";
 
 const Trusted = () => {
+  const { user } = useAuth();
   return (
     <section className="flex justify-center items-center py-10 px-6 bg-white">
       <div className="flex flex-col md:flex-row items-center max-w-4xl w-full">
@@ -39,11 +41,19 @@ const Trusted = () => {
               process so you can focus on what matters most, getting behind the
               wheel with confidence
             </p>
-            <Link href="/auth/register">
-              <button className="bg-blue hover:bg-blue-800 text-white font-semibold px-6 py-3 rounded-lg w-fit shadow-md">
-                Get Started
-              </button>
-            </Link>
+            {user ? (
+              <Link href="/garage/buy-swap">
+                <button className="bg-blue hover:bg-blue-800 text-white font-semibold px-6 py-3 rounded-lg w-fit shadow-md">
+                  View Deals
+                </button>
+              </Link>
+            ) : (
+              <Link href="/auth/register">
+                <button className="bg-blue hover:bg-blue-800 text-white font-semibold px-6 py-3 rounded-lg w-fit shadow-md">
+                  Get Started
+                </button>
+              </Link>
+            )}
           </div>
         </div>
       </div>

@@ -11,6 +11,9 @@ import {
   Slash,
 } from "lucide-react";
 import ProtectedRoute from "@/app/protectedroutes/protected";
+import { useAuth } from "@/app/contexts/AuthContext";
+import useMessaging from "@/hooks/useMessaging";
+import toast from "react-hot-toast";
 
 /**
  * SupportCenter component
@@ -23,250 +26,80 @@ import ProtectedRoute from "@/app/protectedroutes/protected";
  * Tailwind CSS required in project.
  */
 
-const initialConversations = [
-  {
-    id: "conv-1",
-    name: "Don Jay",
-    avatar:
-      "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=200&q=80&auto=format&fit=crop",
-    online: true,
-    lastMessage: "Hi, I’m interested in swapping my 2022 Toyota Corolla...",
-    lastAt: "2m",
-    unreadCount: 0,
-    blocked: false,
-    messages: [
-      {
-        id: "m1",
-        sender: "user",
-        text: "Hi, I'm interested in swapping my 2022 Toyota Corolla for a 2025 Honda Accord. How do I start?",
-        time: "2:00 PM",
-      },
-      {
-        id: "m2",
-        sender: "me",
-        text: "Thanks for reaching out. You can begin by filling in your car details under the Swap Cars section. Would you like me to send the direct link?",
-        time: "3:00 PM",
-      },
-      {
-        id: "m3",
-        sender: "user",
-        text: "Yes, please. Also, will my car need an inspection before the swap?",
-        time: "4:00 PM",
-      },
-    ],
-  },
-  {
-    id: "conv-2",
-    name: "Mira David",
-    avatar:
-      "https://images.unsplash.com/photo-1547425260-76bcadfb4f2c?w=200&q=80&auto=format&fit=crop",
-    online: false,
-    lastMessage: "Can I schedule for my car inspection?",
-    lastAt: "15m",
-    unreadCount: 5,
-    blocked: false,
-    messages: [
-      {
-        id: "m1",
-        sender: "user",
-        text: "Can I schedule for my car inspection?",
-        time: "10:10 AM",
-      },
-    ],
-  },
-  {
-    id: "conv-3",
-    name: "John Walter",
-    avatar:
-      "https://images.unsplash.com/photo-1547425260-76bcadfb4f2c?w=200&q=80&auto=format&fit=crop",
-    online: false,
-    lastMessage: "Thank you for your quick service.",
-    lastAt: "1hr",
-    unreadCount: 2,
-    blocked: false,
-    messages: [
-      {
-        id: "m1",
-        sender: "user",
-        text: "Thank you for your quick service.",
-        time: "9:30 AM",
-      },
-    ],
-  },
-  {
-    id: "conv-4",
-    name: "Sandra John",
-    avatar:
-      "https://images.unsplash.com/photo-1547425260-76bcadfb4f2c?w=200&q=80&auto=format&fit=crop",
-    online: false,
-    lastMessage: "What document do i need for...",
-    lastAt: "2hr",
-    unreadCount: 1,
-    blocked: false,
-    messages: [
-      {
-        id: "m1",
-        sender: "user",
-        text: "What document do i need for...",
-        time: "7:30 AM",
-      },
-    ],
-  },
-  {
-    id: "conv-4",
-    name: "Sandra John",
-    avatar:
-      "https://images.unsplash.com/photo-1547425260-76bcadfb4f2c?w=200&q=80&auto=format&fit=crop",
-    online: false,
-    lastMessage: "What document do i need for...",
-    lastAt: "2hr",
-    unreadCount: 1,
-    blocked: false,
-    messages: [
-      {
-        id: "m1",
-        sender: "user",
-        text: "What document do i need for...",
-        time: "7:30 AM",
-      },
-    ],
-  },
-  {
-    id: "conv-4",
-    name: "Sandra John",
-    avatar:
-      "https://images.unsplash.com/photo-1547425260-76bcadfb4f2c?w=200&q=80&auto=format&fit=crop",
-    online: false,
-    lastMessage: "What document do i need for...",
-    lastAt: "2hr",
-    unreadCount: 1,
-    blocked: false,
-    messages: [
-      {
-        id: "m1",
-        sender: "user",
-        text: "What document do i need for...",
-        time: "7:30 AM",
-      },
-    ],
-  },
-  {
-    id: "conv-4",
-    name: "Sandra John",
-    avatar:
-      "https://images.unsplash.com/photo-1547425260-76bcadfb4f2c?w=200&q=80&auto=format&fit=crop",
-    online: false,
-    lastMessage: "What document do i need for...",
-    lastAt: "2hr",
-    unreadCount: 1,
-    blocked: false,
-    messages: [
-      {
-        id: "m1",
-        sender: "user",
-        text: "What document do i need for...",
-        time: "7:30 AM",
-      },
-    ],
-  },
-  {
-    id: "conv-4",
-    name: "Sandra John",
-    avatar:
-      "https://images.unsplash.com/photo-1547425260-76bcadfb4f2c?w=200&q=80&auto=format&fit=crop",
-    online: false,
-    lastMessage: "What document do i need for...",
-    lastAt: "2hr",
-    unreadCount: 1,
-    blocked: false,
-    messages: [
-      {
-        id: "m1",
-        sender: "user",
-        text: "What document do i need for...",
-        time: "7:30 AM",
-      },
-    ],
-  },
-  {
-    id: "conv-4",
-    name: "Sandra John",
-    avatar:
-      "https://images.unsplash.com/photo-1547425260-76bcadfb4f2c?w=200&q=80&auto=format&fit=crop",
-    online: false,
-    lastMessage: "What document do i need for...",
-    lastAt: "2hr",
-    unreadCount: 1,
-    blocked: false,
-    messages: [
-      {
-        id: "m1",
-        sender: "user",
-        text: "What document do i need for...",
-        time: "7:30 AM",
-      },
-    ],
-  },
-];
+const initialConversations = [];
 
 export default function SupportCenter() {
-  const [conversations, setConversations] = useState(initialConversations);
-  const [activeConvId, setActiveConvId] = useState(conversations[0].id);
+  const { user } = useAuth();
+  const {
+    conversations,
+    conversationsPagination,
+    messages,
+    messagesPagination,
+    getConversations,
+    getMessages,
+    sendMessage,
+    markAsRead,
+    deleteMessage,
+  } = useMessaging();
+  const [activeConvId, setActiveConvId] = useState(null);
   const [tab, setTab] = useState("all"); // "all" or "unread"
   const [profileOpenFor, setProfileOpenFor] = useState(null);
   const [messageText, setMessageText] = useState("");
   const messagesEndRef = useRef(null);
 
-  // ensure active conv exists after actions
   useEffect(() => {
-    if (
-      !conversations.find((c) => c.id === activeConvId) &&
-      conversations.length
-    ) {
-      setActiveConvId(conversations[0].id);
-    }
-  }, [conversations, activeConvId]);
+    getConversations()
+      .then((data) => {
+        if (data?.conversations?.length) {
+          setActiveConvId(data.conversations[0].conversationId);
+          const firstOther = data.conversations[0].otherParticipant?._id;
+          if (firstOther) getMessages(firstOther);
+        }
+      })
+      .catch(() => {});
+  }, [getConversations, getMessages]);
 
-  const activeConv = conversations.find((c) => c.id === activeConvId);
+  const activeConv = conversations.find(
+    (c) => c.conversationId === activeConvId
+  );
 
   useEffect(() => {
     // scroll to bottom when messages change
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [activeConv?.messages?.length]);
 
-  function selectConversation(id) {
-    setActiveConvId(id);
-    // mark as read (clear unreadCount)
-    setConversations((prev) =>
-      prev.map((c) => (c.id === id ? { ...c, unreadCount: 0 } : c))
-    );
+  function selectConversation(conversationId) {
+    setActiveConvId(conversationId);
+    const conv = conversations.find((c) => c.conversationId === conversationId);
+    if (conv?.otherParticipant?._id) {
+      getMessages(conv.otherParticipant._id)
+        .then(() => {
+          // mark last message as read if needed
+          const last = conv.lastMessage;
+          if (last && !last.isRead && last.recipient?._id === user?._id) {
+            markAsRead(last._id).catch(() => {});
+          }
+        })
+        .catch(() => {});
+    }
   }
 
-  function sendMessage() {
+  function handleSend() {
     if (!messageText.trim() || !activeConv) return;
-    const newMsg = {
-      id: `m-${Date.now()}`,
-      sender: "me",
-      text: messageText.trim(),
-      time: new Date().toLocaleTimeString([], {
-        hour: "numeric",
-        minute: "2-digit",
-      }),
-    };
-
-    setConversations((prev) =>
-      prev.map((c) =>
-        c.id === activeConv.id
-          ? {
-              ...c,
-              messages: [...c.messages, newMsg],
-              lastMessage: newMsg.text,
-              lastAt: "now",
-            }
-          : c
-      )
-    );
-    setMessageText("");
+    const recipientId = activeConv.otherParticipant?._id;
+    if (!recipientId) return;
+    const toastId = toast.loading("Sending...");
+    sendMessage({ recipientId, content: messageText.trim() })
+      .then(() => {
+        toast.success("Sent", { id: toastId });
+      })
+      .catch((e) => {
+        toast.error(typeof e?.message === "string" ? e.message : "Failed to send");
+      })
+      .finally(() => {
+        setMessageText("");
+        getMessages(recipientId).catch(() => {});
+      });
   }
 
   function openProfile(conversationId) {
@@ -349,11 +182,11 @@ export default function SupportCenter() {
               {/* conversation list */}
               <div className="space-y-2 overflow-y-auto max-h-[64vh] pr-2">
                 {filteredConversations.map((c) => {
-                  const active = c.id === activeConvId;
+                  const active = c.conversationId === activeConvId;
                   return (
                     <div
-                      key={c.id}
-                      onClick={() => selectConversation(c.id)}
+                      key={c.conversationId}
+                      onClick={() => selectConversation(c.conversationId)}
                       className={`flex items-center gap-3 p-3 rounded-md cursor-pointer border-l-4 ${
                         active
                           ? "bg-blue/50 border-blue/50"
@@ -362,12 +195,15 @@ export default function SupportCenter() {
                     >
                       <div className="relative">
                         <img
-                          src={c.avatar}
-                          alt={c.name}
+                          src={
+                            c.otherParticipant?.profilePic ||
+                            "https://placehold.co/80x80"
+                          }
+                          alt={c.otherParticipant?.name || "User"}
                           className="w-10 h-10 rounded-full object-cover"
                           onClick={(e) => {
                             e.stopPropagation();
-                            openProfile(c.id);
+                            openProfile(c.conversationId);
                           }}
                         />
                         {c.unreadCount > 0 && (
@@ -381,21 +217,21 @@ export default function SupportCenter() {
                         <div className="flex items-center justify-between">
                           <div className="flex items-center gap-2">
                             <div className="text-sm font-semibold truncate">
-                              {c.name}
+                              {c.otherParticipant?.name || "Conversation"}
                             </div>
-                            {c.online && (
-                              <div className="text-[10px] text-green-600">
-                                ●
-                              </div>
-                            )}
                           </div>
                           <div className="text-xs text-gray-400">
-                            {c.lastAt}
+                            {new Date(
+                              c.lastMessage?.createdAt || Date.now()
+                            ).toLocaleTimeString([], {
+                              hour: "numeric",
+                              minute: "2-digit",
+                            })}
                           </div>
                         </div>
 
                         <div className="text-sm text-gray-600 truncate">
-                          {c.lastMessage}
+                          {c.lastMessage?.content || ""}
                         </div>
                       </div>
                     </div>
@@ -420,15 +256,20 @@ export default function SupportCenter() {
                   {activeConv ? (
                     <>
                       <img
-                        src={activeConv.avatar}
-                        alt={activeConv.name}
+                        src={
+                          activeConv.otherParticipant?.profilePic ||
+                          "https://placehold.co/80x80"
+                        }
+                        alt={activeConv.otherParticipant?.name || "User"}
                         className="w-10 h-10 rounded-full object-cover"
-                        onClick={() => openProfile(activeConv.id)}
+                        onClick={() => openProfile(activeConv.conversationId)}
                       />
                       <div>
-                        <div className="font-semibold">{activeConv.name}</div>
+                        <div className="font-semibold">
+                          {activeConv.otherParticipant?.name || "Conversation"}
+                        </div>
                         <div className="text-xs text-gray-500">
-                          {activeConv.online ? "Online" : "Offline"}
+                          {activeConv.otherParticipant?.email || ""}
                         </div>
                       </div>
                     </>
@@ -464,30 +305,58 @@ export default function SupportCenter() {
 
                 {activeConv && (
                   <div className="space-y-6 max-w-3xl">
-                    {activeConv.messages.map((m) => (
+                    {messages.map((m) => (
                       <div
-                        key={m.id}
+                        key={m._id}
                         className={`flex ${
-                          m.sender === "me" ? "justify-end" : "justify-start"
+                          m.sender?._id === user?._id
+                            ? "justify-end"
+                            : "justify-start"
                         }`}
                       >
                         <div
                           className={`max-w-[70%] rounded-2xl px-4 py-3 text-sm shadow-sm ${
-                            m.sender === "me"
+                            m.sender?._id === user?._id
                               ? "bg-blue text-white"
                               : "bg-gray-100 text-gray-800"
                           }`}
                         >
-                          <div className="whitespace-pre-wrap">{m.text}</div>
+                          <div className="whitespace-pre-wrap flex items-start gap-2">
+                            <div className="flex-1">{m.content}</div>
+                            {m.sender?._id === user?._id && (
+                              <button
+                                onClick={async () => {
+                                  try {
+                                    await deleteMessage(m._id);
+                                    toast.success("Message deleted");
+                                  } catch (e) {
+                                    toast.error("Failed to delete message");
+                                  }
+                                }}
+                                className={`text-[10px] ${m.sender?._id === user?._id ? "text-white/80 hover:text-white" : "text-gray-500 hover:text-gray-700"}`}
+                                title="Delete"
+                              >
+                                ×
+                              </button>
+                            )}
+                          </div>
                           <div
                             className={`text-xs mt-2 ${
-                              m.sender === "me"
+                              m.sender?._id === user?._id
                                 ? "text-white/80"
                                 : "text-gray-500"
                             }`}
                           >
-                            {m.time}
+                            {new Date(m.createdAt).toLocaleTimeString([], {
+                              hour: "numeric",
+                              minute: "2-digit",
+                            })}
                           </div>
+                          {m.sender?._id === user?._id && (
+                            <div className={`text-[10px] mt-0.5 ${m.sender?._id === user?._id ? "text-white/80" : "text-gray-500"}`}>
+                              {m.isRead ? "Read" : "Sent"}
+                            </div>
+                          )}
                         </div>
                       </div>
                     ))}
@@ -509,14 +378,14 @@ export default function SupportCenter() {
                     onKeyDown={(e) => {
                       if (e.key === "Enter" && !e.shiftKey) {
                         e.preventDefault();
-                        sendMessage();
+                        handleSend();
                       }
                     }}
                     placeholder="Write your message here..."
                     className="flex-1 text-sm placeholder:text-gray-400 outline-none"
                   />
                   <button
-                    onClick={sendMessage}
+                    onClick={handleSend}
                     className="p-2 rounded bg-blue text-white hover:bg-blue"
                   >
                     <Send size={16} />
@@ -546,20 +415,24 @@ export default function SupportCenter() {
                 <>
                   <img
                     src={
-                      conversations.find((c) => c.id === profileOpenFor)?.avatar
+                      conversations.find(
+                        (c) => c.conversationId === profileOpenFor
+                      )?.otherParticipant?.profilePic ||
+                      "https://placehold.co/80x80"
                     }
                     alt="avatar"
                     className="w-12 h-12 rounded-full object-cover"
                   />
                   <div>
                     <div className="font-semibold">
-                      {conversations.find((c) => c.id === profileOpenFor)?.name}
+                      {conversations.find(
+                        (c) => c.conversationId === profileOpenFor
+                      )?.otherParticipant?.name || "User"}
                     </div>
                     <div className="text-xs text-gray-500">
-                      {conversations.find((c) => c.id === profileOpenFor)
-                        ?.online
-                        ? "Online"
-                        : "Offline"}
+                      {conversations.find(
+                        (c) => c.conversationId === profileOpenFor
+                      )?.otherParticipant?.email || ""}
                     </div>
                   </div>
                 </>
@@ -595,19 +468,14 @@ export default function SupportCenter() {
                   </div>
                   <div className="space-y-2">
                     <button
-                      onClick={() => toggleBlock(profileOpenFor)}
+                      onClick={() => {}}
                       className="w-full flex items-center justify-between gap-2 px-4 py-2 rounded border hover:bg-gray-50"
                     >
                       <div className="flex items-center gap-2">
                         <Slash size={16} />
                         <span>Block user</span>
                       </div>
-                      <span className="text-xs text-gray-500">
-                        {conversations.find((c) => c.id === profileOpenFor)
-                          ?.blocked
-                          ? "Blocked"
-                          : "Block"}
-                      </span>
+                      <span className="text-xs text-gray-500">—</span>
                     </button>
                   </div>
                 </div>

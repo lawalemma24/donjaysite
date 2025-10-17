@@ -2,32 +2,41 @@
 import { useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
-import { Tags, Shuffle } from "lucide-react";
-import { usePathname } from "next/navigation";
+import { Tags, Shuffle, LogOut, ArrowRight } from "lucide-react";
+import { usePathname, useRouter } from "next/navigation";
 import AccountMenu from "./accountmenu";
-import { LogOut } from "lucide-react";
-import { ArrowRight } from "lucide-react";
+import AdminAccountMenu from "./adminaccountmenu";
 import { useAuth } from "@/app/contexts/AuthContext";
+import NotRegisteredOverlay from "./notuser";
 
 export default function TopBar() {
   const { user, logout } = useAuth();
   const [menuOpen, setMenuOpen] = useState(false);
   const [garageOpen, setGarageOpen] = useState(false);
+  const [showOverlay, setShowOverlay] = useState(false);
   const pathname = usePathname();
+  const router = useRouter();
 
   const handleLinkClick = () => {
     setMenuOpen(false);
     setGarageOpen(false);
   };
 
-  // ✅ Only change: make active page blue + underline on big screen
+  const handleProtectedClick = (path) => {
+    if (!user || user.role !== "customer") {
+      setShowOverlay(true);
+      return;
+    }
+    handleLinkClick();
+    router.push(path);
+  };
+
   const linkClass = (href) =>
     pathname === href ? "text-blue font-semibold 3xl:underline" : "";
 
   return (
     <div className="fixed top-0 left-0 w-full z-50 bg-transparent md:pt-4">
-      <div className="max-w-[900px] mx-auto bg-secondary flex items-center shadow  justify-between px-6 py-3 md:rounded-lg ">
-        {/* Logo */}
+      <div className="max-w-[900px] mx-auto bg-secondary flex items-center shadow justify-between px-6 py-3 md:rounded-lg ">
         <Link
           href="/"
           className="flex items-center gap-2"
@@ -42,7 +51,6 @@ export default function TopBar() {
           />
         </Link>
 
-        {/* Hamburger for mobile */}
         <button
           className="3xl:hidden text-gray-700 focus:outline-none"
           onClick={() => setMenuOpen(!menuOpen)}
@@ -80,7 +88,6 @@ export default function TopBar() {
           )}
         </button>
 
-        {/* Desktop navigation */}
         <nav className="hidden 3xl:flex items-center gap-8 text-sm">
           <Link href="/" className={`hover:text-blue ${linkClass("/")}`}>
             Home
@@ -112,16 +119,17 @@ export default function TopBar() {
               >
                 <Shuffle size={16} className="text-blue" /> Buy or Swap
               </Link>
-              <Link
-                href="/garage/sell"
+              <button
                 className={`flex items-center gap-2 px-4 py-2 text-blue hover:bg-gray-100 ${linkClass(
                   "/garage/sell"
                 )}`}
+                onClick={() => handleProtectedClick("/garage/sell")}
               >
                 <Tags size={16} className="text-blue" /> Sell
-              </Link>
+              </button>
             </div>
           </div>
+
           <Link
             href="/inspection"
             className={`hover:text-blue ${linkClass("/inspection")}`}
@@ -142,10 +150,13 @@ export default function TopBar() {
           </Link>
         </nav>
 
-        {/* Desktop button */}
         <div className="hidden 3xl:flex items-center gap-4">
           {user ? (
-            <AccountMenu />
+            user.role === "admin" ? (
+              <AdminAccountMenu />
+            ) : (
+              <AccountMenu />
+            )
           ) : (
             <Link
               href="/auth/login"
@@ -159,23 +170,51 @@ export default function TopBar() {
         </div>
       </div>
 
-      {/* Mobile dropdown menu */}
       {menuOpen && (
         <div className="3xl:hidden px-6 py-4 space-y-3 bg-white border-b border-lightgrey shadow-md">
-          <Link
-            onClick={handleLinkClick}
-            href="/dashboard/profile"
-            className="block"
-          >
-            <div className="flex flex-col p-2 w-[98%] mx-auto border border-lightgrey/50 rounded-lg cursor-pointer hover:bg-gray-50">
-              <p className="text-black font-bold hover:text-blue">
-                {user.name}
-              </p>
-              <p className="text-xs text-text-muted flex flex-row gap-1 hover:text-black">
-                View Profile <ArrowRight size={18} />
-              </p>
-            </div>
-          </Link>
+          {user ? (
+            user.role === "admin" ? (
+              <Link
+                onClick={handleLinkClick}
+                href="/Admin/Dashboard/Overview"
+                className="block"
+              >
+                <div className="flex flex-col p-2 w-[98%] mx-auto border border-lightgrey/50 rounded shadow cursor-pointer ">
+                  <p className="text-blue/70 text-lg font-bold hover:text-blue">
+                    Admin
+                  </p>
+                  <p className="text-xs text-orange flex flex-row gap-1 hover:text-black">
+                    Open Dashboard <ArrowRight size={18} />
+                  </p>
+                </div>
+              </Link>
+            ) : (
+              <Link
+                onClick={handleLinkClick}
+                href="/dashboard/profile"
+                className="block"
+              >
+                <div className="flex flex-col p-2 w-[98%] mx-auto border border-lightgrey/50 rounded shadow cursor-pointer ">
+                  <p className="text-blue/70 text-lg font-bold hover:text-blue">
+                    {user.name}
+                  </p>
+                  <p className="text-xs text-orange flex flex-row gap-1 hover:text-black">
+                    View Profile <ArrowRight size={18} />
+                  </p>
+                </div>
+              </Link>
+            )
+          ) : (
+            <Link
+              href="/auth/login"
+              className={`hidden 3xl:block bg-blue text-white px-4 py-2 rounded-lg hover:bg-blue-700 ${
+                pathname === "/auth/login" ? "bg-blue-700" : ""
+              }`}
+            >
+              Login/Register
+            </Link>
+          )}
+
           <Link
             href="/"
             className={`block hover:text-blue ${linkClass("/")}`}
@@ -215,19 +254,18 @@ export default function TopBar() {
               >
                 Buy or Swap
               </Link>
-              <Link
-                href="/garage/sell"
+              <button
                 className={`block hover:text-blue ${linkClass("/garage/sell")}`}
-                onClick={handleLinkClick}
+                onClick={() => handleProtectedClick("/garage/sell")}
               >
                 Sell
-              </Link>
+              </button>
             </div>
           )}
 
           <Link
             href="/inspection"
-            className={`block hover:text-blue ${linkClass("/inspectionn")}`}
+            className={`block hover:text-blue ${linkClass("/inspection")}`}
             onClick={handleLinkClick}
           >
             Book Inspection
@@ -247,12 +285,38 @@ export default function TopBar() {
             Contact Us
           </Link>
 
-          <div className="border-t border-lightgrey/40 pt-4">
-            <button className="text-red-600 mb-2  font-bold flex flex-row gap-2">
-              <LogOut size={18} /> Log Out
+          {user && user.role === "customer" && (
+            <button
+              className={`block hover:text-blue ${linkClass(
+                "/services/customersupport"
+              )}`}
+              onClick={() => handleProtectedClick("/services/customersupport")}
+            >
+              Customer Support
             </button>
+          )}
+
+          <div className="border-t border-lightgrey/40 pt-4">
+            {user ? (
+              <button className="text-red-600 mb-2 font-bold flex flex-row gap-2">
+                <LogOut size={18} /> Log Out
+              </button>
+            ) : (
+              <Link
+                href="/auth/login"
+                className={` 3xl:block bg-blue text-white px-5 py-2 rounded hover:bg-blue-700 ${
+                  pathname === "/auth/login" ? "bg-blue-700" : ""
+                }`}
+              >
+                Login/Register
+              </Link>
+            )}
           </div>
         </div>
+      )}
+
+      {showOverlay && (
+        <NotRegisteredOverlay onClose={() => setShowOverlay(false)} />
       )}
     </div>
   );

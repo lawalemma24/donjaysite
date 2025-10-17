@@ -11,7 +11,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { useAuth } from "@/app/contexts/AuthContext";
 
-const AccountMenu = () => {
+const AdminAccountMenu = () => {
   const [open, setOpen] = useState(false);
   const { user, logout } = useAuth();
 
@@ -37,7 +37,7 @@ const AccountMenu = () => {
           height={32}
           className="rounded-full"
         />
-        <span className="font-medium hidden lg:block">{user.name}</span>
+        <span className="font-medium hidden lg:block">Admin</span>
         <svg
           className={`w-4 h-4 transform transition-transform ${
             open ? "rotate-180" : ""
@@ -59,35 +59,11 @@ const AccountMenu = () => {
       {open && (
         <div className="absolute right-0 mt-2 w-48 md:w-65 bg-white shadow py-2 z-50 rounded-md">
           <Link
-            href="/dashboard/profile"
+            href="/Admin/Dashboard/Overview"
             onClick={handleClose}
             className="flex items-center gap-2 px-4 py-3 hover:bg-blue-50 mb-1"
           >
-            <FaUser className="text-blue-600" /> My Profile
-          </Link>
-
-          <Link
-            href="/dashboard/deals"
-            onClick={handleClose}
-            className="flex items-center gap-2 px-4 py-3 hover:bg-blue-50 mb-1"
-          >
-            <FaCar className="text-blue-600" /> My Deals
-          </Link>
-
-          <Link
-            href="/dashboard/booking"
-            onClick={handleClose}
-            className="flex items-center gap-2 px-4 py-3 hover:bg-blue-50 mb-1"
-          >
-            <FaCalendarAlt className="text-blue-600" /> My Booking
-          </Link>
-
-          <Link
-            href="/services/customersupport"
-            onClick={handleClose}
-            className="flex items-center gap-2 px-4 py-3 hover:bg-blue-50 mb-1"
-          >
-            <FaHeadset className="text-blue-600" /> Customer Support
+            <FaUser className="text-blue-600" /> Dashboard
           </Link>
 
           <button
@@ -102,4 +78,4 @@ const AccountMenu = () => {
   );
 };
 
-export default AccountMenu;
+export default AdminAccountMenu;
