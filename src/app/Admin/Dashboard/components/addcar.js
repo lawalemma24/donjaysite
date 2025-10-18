@@ -3,7 +3,7 @@ import { useState } from "react";
 import Modal from "./modal";
 import api from "@/utils/api";
 import toast from "react-hot-toast";
-import { uploadToCloudinary } from "@/utils/uploadToCloudinary"; // your upload helper
+import { uploadToCloudinary } from "@/utils/uploadToCloudinary"; // updated helper
 
 export default function AddCarForm({
   onClose = () => {},
@@ -24,12 +24,10 @@ export default function AddCarForm({
   const [images, setImages] = useState([]);
   const [loading, setLoading] = useState(false);
 
-  // handle form inputs
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
-  // local previews for UI
   const handleImageUpload = (e) => {
     const files = Array.from(e.target.files);
     const previews = files.map((file) => ({
@@ -53,16 +51,14 @@ export default function AddCarForm({
       setLoading(true);
       console.log("[CREATE CAR] Uploading images to Cloudinary...");
 
-      // 1️⃣ Upload all selected images to Cloudinary
-      const uploadedUrls = [];
-      for (const img of images) {
-        const url = await uploadToCloudinary(img.file);
-        uploadedUrls.push(url);
-      }
+      // Extract file objects
+      const files = images.map((img) => img.file);
 
+      // Upload all images in parallel
+      const uploadedUrls = await uploadToCloudinary(files);
       console.log("Uploaded image URLs:", uploadedUrls);
 
-      // 2️⃣ Prepare final payload
+      // Prepare final payload
       const payload = {
         carName: formData.carName,
         year: Number(formData.year),
@@ -73,16 +69,14 @@ export default function AddCarForm({
         mileage: Number(formData.mileage),
         price: Number(formData.price),
         note: formData.note,
-        images: uploadedUrls,
+        images: uploadedUrls, // flat array of URLs
       };
 
       console.log("[CREATE CAR] Submitting payload:", payload);
 
-      // 3️⃣ Send POST request to API
       const res = await api.post("/", payload);
       console.log("[CREATE CAR] Server response:", res.data);
 
-      // 4️⃣ Handle success
       if (res.status === 201) {
         toast.success(res.data.message || "Car added successfully");
         onSuccess();
@@ -241,7 +235,6 @@ export default function AddCarForm({
   );
 }
 
-// ✅ Simple reusable field components for cleaner code
 function FormField({ label, name, type, placeholder, onChange }) {
   return (
     <div>

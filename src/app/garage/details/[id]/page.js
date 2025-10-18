@@ -137,7 +137,7 @@ export default function CarDetails() {
             </div>
 
             <div className="flex gap-4 mt-4">
-              {allImages.slice(0, 2).map((img, idx) => (
+              {allImages.slice(0, 4).map((img, idx) => (
                 <div
                   key={idx}
                   className="relative w-24 h-20 border border-lightgrey rounded overflow-hidden cursor-pointer"
