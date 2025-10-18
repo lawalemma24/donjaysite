@@ -71,7 +71,9 @@ export default function SellDealDetails({ deal, onClose }) {
           <h3 className="font-semibold mb-1 mt-4">Car Information</h3>
           <p className="flex justify-between">
             <span className="text-lightgrey">Make:</span>
-            <span className="text-black">{deal.primaryCar?.name || "-"}</span>
+            <span className="text-black">
+              {deal.primaryCar?.carName || "-"}
+            </span>
           </p>
           <p className="flex justify-between">
             <span className="text-lightgrey">Year:</span>

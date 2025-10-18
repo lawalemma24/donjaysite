@@ -229,7 +229,11 @@ export default function CarListingPage() {
                     <td className="py-4">{(page - 1) * pageSize + i + 1}</td>
                     <td className="py-4 flex items-center gap-3">
                       <img
-                        src={car.images || "/images/default-car.png"}
+                        src={
+                          Array.isArray(car.images) && car.images.length > 0
+                            ? car.images[0]
+                            : "/images/default-car.png"
+                        }
                         alt={car.carName}
                         className="w-10 h-10 rounded-full border border-text-muted/70 object-cover"
                       />

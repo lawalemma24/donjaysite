@@ -69,7 +69,7 @@ export default function Buydeals() {
         setTotalEntries(0);
       }
     } catch (err) {
-      console.error("❌ Error fetching deals:", err);
+      console.error(" Error fetching deals:", err);
       setError("Failed to load deals. Check console for details.");
     } finally {
       setLoading(false);
@@ -128,7 +128,7 @@ export default function Buydeals() {
         fetchDeals();
       }
     } catch (err) {
-      console.error(`❌ Error performing ${actionType}:`, err);
+      console.error(` Error performing ${actionType}:`, err);
     }
   }
 
@@ -147,7 +147,7 @@ export default function Buydeals() {
         fetchDeals();
       }
     } catch (err) {
-      console.error("❌ Error deleting deal:", err);
+      console.error(" Error deleting deal:", err);
     }
   }
 

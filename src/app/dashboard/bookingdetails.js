@@ -5,9 +5,9 @@ export default function BookingDetailsModal({ deal, onClose }) {
   if (!deal) return null;
 
   const statusColors = {
-    confirmed: "text-green-600",
-    pending: "text-yellow-500",
-    cancelled: "text-red-600",
+    confirmed: "text-green-600 bg-green-100",
+    pending: "text-yellow-500 bg-yellow-100",
+    cancelled: "text-red-600 bg-red-100",
   };
 
   return (
@@ -33,7 +33,11 @@ export default function BookingDetailsModal({ deal, onClose }) {
           />
           <p className="text-black text-xs">
             Status:{" "}
-            <span className={`${statusColors[deal.status]} font-semibold`}>
+            <span
+              className={`${
+                statusColors[deal.status]
+              } font-semibold px-2 py-1 rounded-full`}
+            >
               {deal.status}
             </span>
           </p>
