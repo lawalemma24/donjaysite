@@ -1,5 +1,5 @@
 "use client";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import {
   FaUser,
   FaCar,
@@ -23,9 +23,17 @@ const AccountMenu = () => {
     window.location.href = "/";
   };
 
+  useEffect(() => {
+    const handleScroll = () => {
+      if (open) setOpen(false);
+    };
+
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, [open]);
+
   return (
     <div className="relative">
-      {/* Top Bar Account Button */}
       <button
         onClick={() => setOpen(!open)}
         className="flex items-center gap-2 px-3 py-2 hover:bg-gray-50"

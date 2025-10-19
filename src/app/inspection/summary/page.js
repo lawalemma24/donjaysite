@@ -2,6 +2,7 @@
 
 import BookSuccessModal from "@/components/bookconfirmed";
 import ConfirmBookOverlay from "@/components/confirmbooking";
+import Loader from "@/components/preloader";
 import React, { useState } from "react";
 
 export default function InspectionOfferReview({
@@ -112,6 +113,8 @@ export default function InspectionOfferReview({
           >
             Edit Details
           </button>
+
+          {loading && <Loader write="booking inspection" />}
 
           <button
             onClick={() => setOpen(true)}

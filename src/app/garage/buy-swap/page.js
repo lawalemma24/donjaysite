@@ -8,6 +8,7 @@ import {
 } from "lucide-react";
 import CarCard from "@/components/carcard";
 import api from "@/utils/api";
+import Loader from "@/components/preloader";
 
 const PER_PAGE = 9;
 
@@ -319,7 +320,7 @@ export default function CarMarketplace() {
           </div>
 
           {loading ? (
-            <p className="text-center py-12 text-gray-500">Loading cars...</p>
+            <Loader write="loading cars..." />
           ) : cars.length === 0 ? (
             <p className="text-center py-12 text-gray-500">
               No cars found matching your criteria.

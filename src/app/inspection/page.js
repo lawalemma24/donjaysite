@@ -4,6 +4,7 @@ import { useSearchParams, useRouter } from "next/navigation";
 import InspectionOfferReview from "./summary/page";
 import api from "@/utils/api";
 import NotRegisteredOverlay from "@/components/notuser";
+import Loader from "@/components/preloader";
 
 export default function InspectionPage() {
   const params = useSearchParams();
@@ -172,9 +173,7 @@ export default function InspectionPage() {
 
               {/* Car Grid */}
               {loading ? (
-                <p className="text-gray-500 text-center py-4">
-                  Loading cars...
-                </p>
+                <Loader write="Loading cars..." />
               ) : cars.length === 0 ? (
                 <p className="text-gray-500 text-center py-4">No cars found.</p>
               ) : (
@@ -363,9 +362,9 @@ export default function InspectionPage() {
                 <button
                   type="button"
                   onClick={() => setView("gallery")}
-                  className="px-4 py-2 border text-sm rounded hover:bg-gray-100"
+                  className="px-4 py-2 border border-orange text-sm text-orange font-bold rounded hover:bg-orange-100"
                 >
-                  Back to Car Gallery
+                  Choose From Car Gallery
                 </button>
                 <button
                   type="submit"

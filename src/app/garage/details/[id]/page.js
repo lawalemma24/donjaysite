@@ -9,6 +9,7 @@ import ConfirmBookOverlay from "@/components/confirmbooking";
 import BookSuccessModal from "@/components/bookconfirmed";
 import NotRegisteredOverlay from "@/components/notuser";
 import { useAuth } from "@/app/contexts/AuthContext";
+import Loader from "@/components/preloader";
 
 export default function CarDetails() {
   const { id } = useParams();
@@ -96,10 +97,7 @@ export default function CarDetails() {
     }
   };
 
-  if (loading)
-    return (
-      <p className="text-center py-12 text-gray-500">Loading car details...</p>
-    );
+  if (loading) return <Loader write="Loading car details..." />;
   if (!car)
     return <p className="text-center py-12 text-red-500">Car not found.</p>;
 
