@@ -27,7 +27,7 @@ export default function MyInspectionsTable() {
     setLoading(true);
     try {
       const res = await api.get(
-        "http://localhost:5000/api/inspections/my-inspections",
+        "https://donjay-server.vercel.app/api/inspections/my-inspections",
         {
           params: { page, limit: 10 },
         }

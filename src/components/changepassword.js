@@ -38,17 +38,20 @@ export default function ChangePassword() {
         return;
       }
 
-      const res = await fetch("http://localhost:5000/api/auth/changePass", {
-        method: "PUT",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-        body: JSON.stringify({
-          oldPassword: form.oldPassword,
-          newPassword: form.newPassword,
-        }),
-      });
+      const res = await fetch(
+        "https://donjay-server.vercel.app/api/auth/changePass",
+        {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify({
+            oldPassword: form.oldPassword,
+            newPassword: form.newPassword,
+          }),
+        }
+      );
 
       const data = await res.json();
 

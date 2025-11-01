@@ -55,11 +55,14 @@ export default function Otp() {
       const payload = { email, otp };
       console.log("VERIFY OTP PAYLOAD:", payload);
 
-      const res = await fetch("http://localhost:5000/api/auth/verify-otp", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(payload),
-      });
+      const res = await fetch(
+        "https://donjay-server.vercel.app/api/auth/verify-otp",
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(payload),
+        }
+      );
 
       const data = await res.json();
       console.log("VERIFY OTP RESPONSE:", data);
@@ -102,11 +105,14 @@ export default function Otp() {
       const payload = { email };
       console.log("RESEND OTP PAYLOAD:", payload);
 
-      const res = await fetch("http://localhost:5000/api/auth/resend-otp", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(payload),
-      });
+      const res = await fetch(
+        "https://donjay-server.vercel.app/api/auth/resend-otp",
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(payload),
+        }
+      );
 
       const data = await res.json();
       console.log("RESEND OTP RESPONSE:", data);

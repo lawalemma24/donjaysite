@@ -40,7 +40,7 @@ export default function Buydeals() {
 
     try {
       const token = localStorage.getItem("token");
-      let url = `http://localhost:5000/api/deals/admin/all?dealType=buy&page=${page}&limit=${pageSize}`;
+      let url = `https://donjay-server.vercel.app/api/deals/admin/all?dealType=buy&page=${page}&limit=${pageSize}`;
       if (searchQuery) url += `&search=${encodeURIComponent(searchQuery)}`;
       if (statusFilter) url += `&status=${encodeURIComponent(statusFilter)}`;
 

@@ -42,7 +42,7 @@ export default function Selldeals() {
 
     try {
       const token = localStorage.getItem("token");
-      let url = `http://localhost:5000/api/deals/admin/all?dealType=sell&page=${page}&limit=${pageSize}`;
+      let url = `https://donjay-server.vercel.app/api/deals/admin/all?dealType=sell&page=${page}&limit=${pageSize}`;
       if (searchQuery) url += `&search=${encodeURIComponent(searchQuery)}`;
       if (statusFilter) url += `&status=${encodeURIComponent(statusFilter)}`;
 
@@ -113,7 +113,7 @@ export default function Selldeals() {
       if (actionType === "complete") body.adminNote = "Completed";
 
       const res = await fetch(
-        `http://localhost:5000/api/deals/admin/${dealId}/${actionType}`,
+        `https://donjay-server.vercel.app/api/deals/admin/${dealId}/${actionType}`,
         {
           method: "PUT",
           headers: {
@@ -137,12 +137,15 @@ export default function Selldeals() {
   async function handleDelete(dealId) {
     try {
       const token = localStorage.getItem("token");
-      const res = await fetch(`http://localhost:5000/api/deals/${dealId}`, {
-        method: "DELETE",
-        headers: {
-          Authorization: token ? `Bearer ${token}` : "",
-        },
-      });
+      const res = await fetch(
+        `https://donjay-server.vercel.app/api/deals/${dealId}`,
+        {
+          method: "DELETE",
+          headers: {
+            Authorization: token ? `Bearer ${token}` : "",
+          },
+        }
+      );
 
       const result = await res.json();
       if (result.message) {

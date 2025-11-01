@@ -96,7 +96,7 @@ export default function InspectionPage() {
     (async () => {
       try {
         const res = await fetch(
-          `http://localhost:5000/api/inspections/available-slots?date=${date}`,
+          `https://donjay-server.vercel.app/api/inspections/available-slots?date=${date}`,
           {
             headers: {
               "Content-Type": "application/json",

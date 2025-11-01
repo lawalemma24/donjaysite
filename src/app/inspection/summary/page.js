@@ -40,14 +40,17 @@ export default function InspectionOfferReview({
 
       console.log("📦 Payload being sent:", payload);
 
-      const res = await fetch("http://localhost:5000/api/inspections/book", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-        body: JSON.stringify(payload),
-      });
+      const res = await fetch(
+        "https://donjay-server.vercel.app/api/inspections/book",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify(payload),
+        }
+      );
 
       const data = await res.json().catch(() => ({}));
 

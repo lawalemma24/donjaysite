@@ -92,7 +92,7 @@ export default function SellOfferReview() {
       console.log("Submitting deal payload:", payload);
 
       const dealResponse = await axios.post(
-        "http://localhost:5000/api/deals/",
+        "https://donjay-server.vercel.app/api/deals/",
         payload,
         { headers: { Authorization: `Bearer ${token}` } }
       );

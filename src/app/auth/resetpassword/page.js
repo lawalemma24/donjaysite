@@ -38,7 +38,7 @@ export default function ResetPassword() {
     setLoading(true);
     try {
       const res = await fetch(
-        `http://localhost:5000/api/auth/reset-password?token=${token}`,
+        `https://donjay-server.vercel.app/api/auth/reset-password?token=${token}`,
         {
           method: "PUT",
           headers: { "Content-Type": "application/json" },
