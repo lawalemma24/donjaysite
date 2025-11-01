@@ -30,7 +30,7 @@ export default function Buydeals() {
   const [totalPages, setTotalPages] = useState(1);
   const [totalEntries, setTotalEntries] = useState(0);
   const [searchQuery, setSearchQuery] = useState("");
-  const [statusFilter, setStatusFilter] = useState(""); // new: status filter
+  const [statusFilter, setStatusFilter] = useState("");
   const pageSize = 7;
 
   // Fetch deals from API
