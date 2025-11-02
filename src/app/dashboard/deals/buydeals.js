@@ -139,6 +139,7 @@ export default function BuyDealsTable() {
                 <tr>
                   <td colSpan="6" className="text-center py-4 text-gray-500">
                     No deals found.
+                    <br />Try adjusting your search criteria.
                   </td>
                 </tr>
               )}
