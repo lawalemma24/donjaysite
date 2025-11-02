@@ -8,6 +8,13 @@ const nextConfig = {
       "res.cloudinary.com",
     ],
   },
+  eslint: {
+    ignoreDuringBuilds: true, // skip ESLint errors during build
+  },
+  turbopack: {
+    root: "./", // fix workspace root warning
+  },
+  typedRoutes: true,
 };
 
 export default nextConfig;

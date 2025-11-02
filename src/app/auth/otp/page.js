@@ -160,7 +160,7 @@ export default function Otp() {
           </div>
 
           <p className="text-sm text-gray-500">
-            Didn't get a code?{" "}
+            Didn&apos;t get a code?{" "}
             <button
               type="button"
               className="text-blue-600 hover:underline"

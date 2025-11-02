@@ -1,12 +1,12 @@
 "use client";
 
 import Link from "next/link";
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, Suspense } from "react";
 import Image from "next/image";
 import { useRouter, useSearchParams } from "next/navigation";
 import { uploadToCloudinary } from "@/utils/uploadToCloudinary";
 
-export default function SwapPage() {
+function SwapPageContent() {
   const params = useSearchParams();
   const router = useRouter();
   const carId = params.get("carId");
@@ -332,5 +332,13 @@ export default function SwapPage() {
         </div>
       </div>
     </div>
+  );
+}
+
+export default function SwapPage() {
+  return (
+    <Suspense fallback={<div className="min-h-screen bg-white flex items-center justify-center">Loading...</div>}>
+      <SwapPageContent />
+    </Suspense>
   );
 }

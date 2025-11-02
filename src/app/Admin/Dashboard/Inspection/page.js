@@ -34,7 +34,13 @@ export default function InspectionPage() {
     totalInspections: 0,
   });
   const [page, setPage] = useState(1);
-  const token = localStorage.getItem("token");
+  const [token, setToken] = useState(null);
+
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      setToken(localStorage.getItem("token"));
+    }
+  }, []);
 
   // ✅ Fetch inspections
   const fetchInspections = async (page = 1) => {

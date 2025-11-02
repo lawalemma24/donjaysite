@@ -203,7 +203,7 @@ export default function ReviewSwapPage() {
               <span className="text-green-700 text-sm">Pending review</span>
             </div>
             <p className="text-red-500 text-xs text-center font-medium">
-              We'll review your order promptly. A final offer will be given
+              We&apos;ll review your order promptly. A final offer will be given
               after a physical inspection of your vehicle.
             </p>
           </div>

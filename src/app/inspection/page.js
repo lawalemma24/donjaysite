@@ -1,12 +1,12 @@
 "use client";
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, Suspense } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
 import InspectionOfferReview from "./summary/page";
 import api from "@/utils/api";
 import NotRegisteredOverlay from "@/components/notuser";
 import Loader from "@/components/preloader";
 
-export default function InspectionPage() {
+function InspectionPageContent() {
   const params = useSearchParams();
   const router = useRouter();
   const carId = params.get("carId");
@@ -389,5 +389,13 @@ export default function InspectionPage() {
         </div>
       </div>
     </div>
+  );
+}
+
+export default function InspectionPage() {
+  return (
+    <Suspense fallback={<div className="min-h-screen bg-white flex items-center justify-center">Loading...</div>}>
+      <InspectionPageContent />
+    </Suspense>
   );
 }

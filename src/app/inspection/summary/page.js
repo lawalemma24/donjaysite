@@ -5,6 +5,9 @@ import ConfirmBookOverlay from "@/components/confirmbooking";
 import Loader from "@/components/preloader";
 import React, { useState } from "react";
 
+// Make this route dynamic to prevent prerendering
+export const dynamic = 'force-dynamic';
+
 export default function InspectionOfferReview({
   car,
   date,
@@ -19,16 +22,32 @@ export default function InspectionOfferReview({
   const token =
     typeof window !== "undefined" ? localStorage.getItem("token") : null;
 
+  // Handle build-time rendering when props are undefined
+  if (!car) {
+    return (
+      <div className="min-h-screen bg-white flex items-center justify-center">
+        <div className="text-center">
+          <p className="text-gray-500">Loading...</p>
+        </div>
+      </div>
+    );
+  }
+
   const handleSubmit = async () => {
     if (!time || !time.startTime) {
       alert("Missing time slot. Please select again.");
       return;
     }
 
+    if (!car || (!car._id && !car.id)) {
+      alert("Missing car information. Please go back and select a car.");
+      return;
+    }
+
     setLoading(true);
     try {
       const payload = {
-        carId: car._id || car.id,
+        carId: car?._id || car?.id,
         inspectionDate: date,
         timeSlot: {
           period: time.period || "custom",
@@ -87,16 +106,16 @@ export default function InspectionOfferReview({
           <p>
             Car Name:{" "}
             <span className="float-right text-black">
-              {car.carName} ({car.year})
+              {car?.carName || "N/A"} ({car?.year || "N/A"})
             </span>
           </p>
           <p>
             Condition:{" "}
-            <span className="float-right text-black">{car.condition}</span>
+            <span className="float-right text-black">{car?.condition || "N/A"}</span>
           </p>
           <p>
             Transmission:{" "}
-            <span className="float-right text-black">{car.transmission}</span>
+            <span className="float-right text-black">{car?.transmission || "N/A"}</span>
           </p>
           <p>
             Preferred Date:{" "}
