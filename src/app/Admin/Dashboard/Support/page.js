@@ -15,17 +15,6 @@ import { useAuth } from "@/app/contexts/AuthContext";
 import useMessaging from "@/hooks/useMessaging";
 import toast from "react-hot-toast";
 
-/**
- * SupportCenter component
- *
- * - All / Unread tabs
- * - Conversation list (left)
- * - Chat area (right)
- * - Right-side profile panel (slides in, WhatsApp style)
- *
- * Tailwind CSS required in project.
- */
-
 const initialConversations = [];
 
 export default function SupportCenter() {
@@ -42,7 +31,7 @@ export default function SupportCenter() {
     deleteMessage,
   } = useMessaging();
   const [activeConvId, setActiveConvId] = useState(null);
-  const [tab, setTab] = useState("all"); // "all" or "unread"
+  const [tab, setTab] = useState("all");
   const [profileOpenFor, setProfileOpenFor] = useState(null);
   const [messageText, setMessageText] = useState("");
   const messagesEndRef = useRef(null);
@@ -64,7 +53,6 @@ export default function SupportCenter() {
   );
 
   useEffect(() => {
-    // scroll to bottom when messages change
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [activeConv?.messages?.length]);
 
@@ -74,7 +62,6 @@ export default function SupportCenter() {
     if (conv?.otherParticipant?._id) {
       getMessages(conv.otherParticipant._id)
         .then(() => {
-          // mark last message as read if needed
           const last = conv.lastMessage;
           if (last && !last.isRead && last.recipient?._id === user?._id) {
             markAsRead(last._id).catch(() => {});
@@ -94,7 +81,9 @@ export default function SupportCenter() {
         toast.success("Sent", { id: toastId });
       })
       .catch((e) => {
-        toast.error(typeof e?.message === "string" ? e.message : "Failed to send");
+        toast.error(
+          typeof e?.message === "string" ? e.message : "Failed to send"
+        );
       })
       .finally(() => {
         setMessageText("");
@@ -106,25 +95,6 @@ export default function SupportCenter() {
     setProfileOpenFor(conversationId);
   }
 
-  function toggleBlock(conversationId) {
-    setConversations((prev) =>
-      prev.map((c) =>
-        c.id === conversationId ? { ...c, blocked: !c.blocked } : c
-      )
-    );
-  }
-
-  function clearChat(conversationId) {
-    setConversations((prev) =>
-      prev.map((c) =>
-        c.id === conversationId
-          ? { ...c, messages: [], lastMessage: "", lastAt: "", unreadCount: 0 }
-          : c
-      )
-    );
-    // if clearing active conv, keep it but messages empty
-  }
-
   const filteredConversations =
     tab === "all"
       ? conversations
@@ -132,16 +102,22 @@ export default function SupportCenter() {
 
   return (
     <ProtectedRoute allowedRoles={["admin"]}>
-      <div className="p-6 sticky top-[100px] min-h-[calc(100vh-64px)]">
+      <div className="p-4 sm:p-6 sticky top-[100px] min-h-[calc(100vh-64px)]">
         <div className="max-w-[1100px] mx-auto bg-white rounded-lg shadow-lg">
-          <div className="grid grid-cols-12 grid-rows-1">
+          <div className="grid grid-cols-12 grid-rows-1 md:h-auto h-[calc(100vh-100px)]">
             {/* Left column - list */}
-            <div className="col-span-4 min-h-[80vh] border-r border-gray-100 p-5">
+            <div
+              className={`${
+                activeConvId ? "hidden md:block" : "block"
+              } col-span-12 md:col-span-4 min-h-[80vh] border-r border-gray-100 p-4 sm:p-5`}
+            >
               <div className="flex items-start justify-between mb-4">
                 <div>
-                  <h2 className="text-2xl font-bold">Support Center</h2>
+                  <h2 className="text-xl sm:text-2xl font-bold">
+                    Support Center
+                  </h2>
                   <p className="text-sm text-gray-500">
-                    Manage and respond to customer inquiries in real time
+                    Manage and respond to customer inquiries
                   </p>
                 </div>
                 <div className="flex items-center gap-3">
@@ -151,7 +127,6 @@ export default function SupportCenter() {
                 </div>
               </div>
 
-              {/* search */}
               <div className="mb-4">
                 <input
                   className="w-full rounded-md border border-gray-200 px-3 py-2 text-sm placeholder:text-gray-400"
@@ -159,7 +134,6 @@ export default function SupportCenter() {
                 />
               </div>
 
-              {/* tabs */}
               <div className="flex items-center gap-3 mb-4">
                 <button
                   onClick={() => setTab("all")}
@@ -179,7 +153,6 @@ export default function SupportCenter() {
                 </button>
               </div>
 
-              {/* conversation list */}
               <div className="space-y-2 overflow-y-auto max-h-[64vh] pr-2">
                 {filteredConversations.map((c) => {
                   const active = c.conversationId === activeConvId;
@@ -241,15 +214,16 @@ export default function SupportCenter() {
             </div>
 
             {/* Right column - chat */}
-            <div className="col-span-8 flex flex-col min-h-[80vh] max-h-[80vh]">
-              {/* header */}
-              <div className="flex items-center justify-between px-6 py-4 border-b border-gray-100">
+            <div
+              className={`${
+                activeConvId ? "block" : "hidden md:flex"
+              } col-span-12 md:col-span-8 flex flex-col min-h-[80vh] max-h-[80vh]`}
+            >
+              <div className="flex items-center justify-between px-4 sm:px-6 py-3 sm:py-4 border-b border-gray-100">
                 <div className="flex items-center gap-3">
                   <button
-                    className="hidden md:inline-flex items-center gap-2 p-1 rounded hover:bg-gray-100"
-                    onClick={() => {
-                      /* In a responsive app you could collapse left panel */
-                    }}
+                    className="md:hidden inline-flex items-center gap-1 p-2 rounded hover:bg-gray-100"
+                    onClick={() => setActiveConvId(null)}
                   >
                     <ArrowLeft size={18} />
                   </button>
@@ -295,8 +269,7 @@ export default function SupportCenter() {
                 </div>
               </div>
 
-              {/* messages area */}
-              <div className="flex-1 px-6 py-6 overflow-y-auto">
+              <div className="flex-1 px-4 sm:px-6 py-4 sm:py-6 overflow-y-auto">
                 {!activeConv && (
                   <div className="text-center text-gray-400">
                     No conversation
@@ -329,11 +302,15 @@ export default function SupportCenter() {
                                   try {
                                     await deleteMessage(m._id);
                                     toast.success("Message deleted");
-                                  } catch (e) {
+                                  } catch {
                                     toast.error("Failed to delete message");
                                   }
                                 }}
-                                className={`text-[10px] ${m.sender?._id === user?._id ? "text-white/80 hover:text-white" : "text-gray-500 hover:text-gray-700"}`}
+                                className={`text-[10px] ${
+                                  m.sender?._id === user?._id
+                                    ? "text-white/80 hover:text-white"
+                                    : "text-gray-500 hover:text-gray-700"
+                                }`}
                                 title="Delete"
                               >
                                 ×
@@ -353,21 +330,25 @@ export default function SupportCenter() {
                             })}
                           </div>
                           {m.sender?._id === user?._id && (
-                            <div className={`text-[10px] mt-0.5 ${m.sender?._id === user?._id ? "text-white/80" : "text-gray-500"}`}>
+                            <div
+                              className={`text-[10px] mt-0.5 ${
+                                m.sender?._id === user?._id
+                                  ? "text-white/80"
+                                  : "text-gray-500"
+                              }`}
+                            >
                               {m.isRead ? "Read" : "Sent"}
                             </div>
                           )}
                         </div>
                       </div>
                     ))}
-
                     <div ref={messagesEndRef} />
                   </div>
                 )}
               </div>
 
-              {/* input */}
-              <div className="px-6 pb-6 pt-2">
+              <div className="px-4 sm:px-6 pb-4 sm:pb-6 pt-2">
                 <div className="bg-white border border-gray-200 rounded-lg px-4 py-3 flex items-center gap-3 shadow-sm">
                   <button className="p-2 rounded hover:bg-gray-100">
                     <Paperclip size={18} />
@@ -396,7 +377,7 @@ export default function SupportCenter() {
           </div>
         </div>
 
-        {/* Right-side profile panel (WhatsApp-style slide-in) */}
+        {/* Right-side profile panel */}
         <div
           className={`fixed right-0 top-20 h-full w-[360px] bg-white border-l border-gray-100 shadow-lg transform transition-transform duration-300 ${
             profileOpenFor ? "translate-x-0" : "translate-x-full"

@@ -157,10 +157,10 @@ export default function Selldeals() {
   }
 
   return (
-    <div className="p-6">
+    <div className="p-2 sm:p-6">
       {/* Toolbar */}
-      <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-3">
-        <div className="relative">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+        <div className="relative w-full sm:w-auto">
           <input
             type="text"
             placeholder="Search"
@@ -173,7 +173,7 @@ export default function Selldeals() {
           </div>
         </div>
 
-        <div className="flex gap-2">
+        <div className="flex flex-wrap gap-2">
           {/* Status filter buttons */}
           {["", "pending", "approved", "rejected"].map((status) => (
             <button
@@ -197,7 +197,7 @@ export default function Selldeals() {
       </div>
 
       {/* Table */}
-      <div className="mt-6 bg-white rounded-2xl shadow p-4 overflow-x-auto">
+      <div className="mt-6 bg-white rounded-2xl shadow p-3 sm:p-4 overflow-x-auto">
         {loading ? (
           <div className="text-center py-6 text-gray-500">Loading deals...</div>
         ) : error ? (
@@ -205,7 +205,7 @@ export default function Selldeals() {
         ) : deals.length === 0 ? (
           <div className="text-center py-6 text-gray-500">No deals found</div>
         ) : (
-          <table className="w-full min-w-[900px] text-sm">
+          <table className="w-full min-w-[700px] text-xs sm:text-sm">
             <thead>
               <tr className="text-left text-gray-500 border-b border-text-muted">
                 <th className="py-3 w-[40px]">S/N</th>
@@ -314,7 +314,7 @@ export default function Selldeals() {
         )}
 
         {/* Footer */}
-        <div className="mt-4 flex flex-col md:flex-row md:items-center md:justify-between text-sm text-gray-500 gap-3">
+        <div className="mt-4 flex flex-col sm:flex-row sm:items-center sm:justify-between text-xs sm:text-sm text-gray-500 gap-2 sm:gap-3">
           <div>
             Showing {(page - 1) * pageSize + 1} to{" "}
             {Math.min(page * pageSize, totalEntries)} of {totalEntries} entries
