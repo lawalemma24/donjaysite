@@ -8,10 +8,10 @@ import { use } from "react";
 export default function Topbar() {
   const { user } = useAuth();
   return (
-    <div className="sticky lg:top-5 top-0 z-30 mb-6">
-      <div className="w-full mx-auto lg:w-[80%] xl:w-[70%] bg-white h-16 lg:flex items-center justify-between px-6 py-3 md:py-5 shadow-sm lg:rounded-xl">
+    <div className="sticky xl:top-5 top-0 z-30 mb-6">
+      <div className="w-full mx-auto xl:w-[80%] xl:w-[70%] bg-white h-16 xl:flex items-center justify-between px-6 py-3 md:py-5 shadow-sm xl:rounded-xl">
         {/* Search */}
-        <div className="flex hidden lg:block items-center w-full max-w-md">
+        <div className="flex hidden xl:block items-center w-full max-w-md">
           <input
             type="text"
             placeholder="Search..."

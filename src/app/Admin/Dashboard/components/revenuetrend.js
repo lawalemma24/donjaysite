@@ -12,55 +12,49 @@ import {
 const data = [
   { month: "Jan", revenue: 150 },
   { month: "Feb", revenue: 90 },
-  { month: "March", revenue: 290 },
-  { month: "April", revenue: 170 },
+  { month: "Mar", revenue: 290 },
+  { month: "Apr", revenue: 170 },
   { month: "May", revenue: 320 },
-  { month: "June", revenue: 180 },
+  { month: "Jun", revenue: 180 },
 ];
 
 export default function RevenueTrendChart() {
   return (
-    <div className="bg-white rounded-2xl shadow-sm p-6">
-      <h2 className="text-2xl font-bold mb-6">Revenue Trend</h2>
-      <div className="w-full h-80">
-        <ResponsiveContainer>
+    <div className="bg-white rounded-2xl shadow p-3 sm:p-4 w-full overflow-hidden">
+      <h2 className="text-base sm:text-lg font-semibold mb-3 sm:mb-4 text-center sm:text-left">
+        Revenue Trend
+      </h2>
+
+      {/* Fixed responsive height */}
+      <div className="w-full h-56 sm:h-72">
+        <ResponsiveContainer width="100%" height="100%">
           <LineChart
             data={data}
-            margin={{ top: 10, right: 20, left: 0, bottom: 10 }}
+            margin={{ top: 10, right: 10, left: -10, bottom: 0 }}
           >
             <CartesianGrid strokeDasharray="3 3" vertical={false} />
             <XAxis
               dataKey="month"
-              axisLine={{ stroke: "#000", strokeWidth: 2 }}
               tickLine={false}
-              tick={{ fontSize: 14, fill: "#000" }}
-            />
-            <YAxis
-              label={{
-                value: "Revenue (₦M)",
-                angle: -90,
-                position: "insideLeft",
-                offset: 10,
-                fontSize: 14,
-              }}
-              tick={{ fontSize: 14 }}
               axisLine={false}
-              tickLine={false}
+              tick={{ fontSize: 10 }}
             />
+            <YAxis tick={{ fontSize: 10 }} axisLine={false} tickLine={false} />
             <Tooltip
-              contentStyle={{
+              wrapperStyle={{
+                fontSize: 12,
                 backgroundColor: "white",
-                borderRadius: "8px",
+                borderRadius: "6px",
                 border: "1px solid #ddd",
               }}
             />
             <Line
               type="monotone"
               dataKey="revenue"
-              stroke="#FFA500"
+              stroke="#f97316"
               strokeWidth={3}
-              dot={{ r: 6, fill: "#FFA500" }}
-              activeDot={{ r: 8 }}
+              dot={{ r: 4, fill: "#f97316" }}
+              activeDot={{ r: 6 }}
             />
           </LineChart>
         </ResponsiveContainer>
