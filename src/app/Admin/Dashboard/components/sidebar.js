@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import {
   Menu,
   X,
@@ -50,7 +50,12 @@ const links = [
 export default function Sidebar() {
   const [open, setOpen] = useState(false);
   const pathname = usePathname();
-  const { user, logout } = useAuth();
+  const { logout } = useAuth();
+
+  // Close sidebar on route change (for mobile only)
+  useEffect(() => {
+    if (window.innerWidth < 1280) setOpen(false);
+  }, [pathname]);
 
   const handleLogout = () => {
     logout();
@@ -60,34 +65,29 @@ export default function Sidebar() {
 
   return (
     <>
-      {/* Mobile Menu Toggle */}
+      {/* Mobile toggle */}
       <button
         className="xl:hidden p-3 absolute top-4 left-4 z-50"
         onClick={() => setOpen(!open)}
       >
-        {open ? <X size={1} /> : <Menu size={24} />}
+        {open ? <X size={24} /> : <Menu size={24} />}
       </button>
+
+      {/* Sidebar */}
       <aside
         className={`bg-white shadow-md h-screen w-64 p-6 flex flex-col fixed xl:static z-40 transform transition-transform duration-300
         ${open ? "translate-x-0" : "-translate-x-full xl:translate-x-0"}`}
       >
-        {/* Mobile Menu Toggle */}
-        <button
-          className="xl:hidden p-3 absolute top-4 left-4 z-50"
-          onClick={() => setOpen(!open)}
-        >
-          {open ? <X size={24} /> : <Menu size={24} />}
-        </button>
         {/* Logo */}
-        <div className="text-2xl font-bold text-blue-600 mb-8 flex items-center justify-center border-b pb-4 md:pb-6 border-gray-300">
+        <div className="text-2xl font-bold text-blue-600 mb-8 flex items-center justify-center border-b pb-4 border-gray-300">
           <img
             src="/images/logo.png"
             alt="Logo"
-            className="h-8 md:h-10 lg:h-13 w-auto"
+            className="h-8 md:h-10 w-auto"
           />
         </div>
 
-        {/* Menu Links */}
+        {/* Links */}
         <nav className="flex-1 flex flex-col justify-between">
           <div className="flex flex-col space-y-2">
             {links.slice(0, 7).map((link) => {
@@ -102,6 +102,7 @@ export default function Sidebar() {
                       ? "bg-blue-600 text-white"
                       : "text-gray-700 hover:bg-blue-50 hover:text-blue-600"
                   }`}
+                  onClick={() => window.innerWidth < 1280 && setOpen(false)}
                 >
                   <Icon size={18} />
                   <span>{link.name}</span>
@@ -123,6 +124,7 @@ export default function Sidebar() {
                       ? "bg-blue-600 text-white"
                       : "text-gray-500 hover:bg-gray-100 hover:text-gray-700"
                   }`}
+                  onClick={() => window.innerWidth < 1280 && setOpen(false)}
                 >
                   <Icon size={18} />
                   <span>{link.name}</span>
