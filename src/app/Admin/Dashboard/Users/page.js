@@ -115,7 +115,7 @@ export default function UserManagementPage() {
 
   return (
     <ProtectedRoute allowedRoles={["admin"]}>
-      <div className="p-6">
+      <div className="p-1 md:p-6">
         {/* Header */}
         <div>
           <h1 className="text-3xl font-bold">User Management</h1>
@@ -131,14 +131,13 @@ export default function UserManagementPage() {
               All Users: <span className="text-gray-400">{totalEntries}</span>
             </div>
           </div>
-
-          <div className="flex items-center gap-3">
+          <div className="flex flex-wrap items-center gap-3 sm:gap-4">
             {/* Search */}
-            <div className="relative">
+            <div className="relative w-full sm:w-auto">
               <input
                 type="text"
                 placeholder="Search"
-                className="pl-10 pr-4 py-2 rounded-lg border border-gray-200 bg-white w-64 text-sm focus:outline-none focus:ring-none focus:border-blue"
+                className="pl-10 pr-4 py-2 rounded-lg border border-gray-200 bg-white w-full sm:w-64 text-sm focus:outline-none focus:ring-0 focus:border-blue"
               />
               <div className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400">
                 <Search size={16} />
@@ -146,10 +145,10 @@ export default function UserManagementPage() {
             </div>
 
             {/* Filter */}
-            <div className="relative">
+            <div className="relative w-full sm:w-auto">
               <button
                 onClick={() => setShowFilter((s) => !s)}
-                className="inline-flex items-center gap-2 border border-text-muted/60 px-3 py-2 rounded-lg bg-white hover:bg-gray-50"
+                className="w-full sm:w-auto inline-flex justify-center items-center gap-2 border border-text-muted/60 px-3 py-2 rounded-lg bg-white hover:bg-gray-50"
               >
                 <Filter size={16} /> Filter
               </button>
@@ -163,7 +162,7 @@ export default function UserManagementPage() {
             {/* Add User */}
             <button
               onClick={() => setShowAddUser(true)}
-              className="inline-flex items-center gap-2 bg-blue text-white px-4 py-2 rounded-lg shadow"
+              className="w-full sm:w-auto inline-flex justify-center items-center gap-2 bg-blue text-white px-4 py-2 rounded-lg shadow"
             >
               <Plus size={16} /> Add User
             </button>
@@ -171,7 +170,7 @@ export default function UserManagementPage() {
         </div>
 
         {/* Table */}
-        <div className="mt-6 bg-white rounded-2xl shadow p-4 overflow-x-auto">
+        <div className="mt-6 bg-white rounded shadow p-4 overflow-x-auto">
           <table className="w-full min-w-[900px] text-sm">
             <thead>
               <tr className="text-left text-gray-500 border-b border-text-muted">

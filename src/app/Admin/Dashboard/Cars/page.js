@@ -150,7 +150,7 @@ export default function CarListingPage() {
 
   return (
     <ProtectedRoute allowedRoles={["admin"]}>
-      <div className="p-6">
+      <div className="p-1 md:p-6">
         <div>
           <h1 className="text-3xl font-bold">Car Listing</h1>
           <p className="text-text-muted mt-1">
@@ -165,24 +165,26 @@ export default function CarListingPage() {
             </div>
           </div>
 
-          <div className="flex items-center gap-3">
-            <div className="relative">
+          <div className="flex flex-wrap items-center gap-3 sm:gap-4">
+            {/* Search */}
+            <div className="relative w-full sm:w-auto">
               <input
                 type="text"
                 placeholder="Search"
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
-                className="pl-10 pr-4 py-2 rounded-lg border border-gray-200 bg-white w-64 text-sm focus:outline-none focus:border-blue"
+                className="pl-10 pr-4 py-2 rounded-lg border border-gray-200 bg-white w-full sm:w-64 text-sm focus:outline-none focus:ring-0 focus:border-blue"
               />
               <div className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400">
                 <Search size={16} />
               </div>
             </div>
 
+            {/* Status Filter */}
             <select
               value={statusFilter}
               onChange={(e) => setStatusFilter(e.target.value)}
-              className="border border-gray-300 rounded-lg px-3 py-2 text-sm bg-white focus:outline-none"
+              className="w-full sm:w-auto border border-gray-300 rounded-lg px-3 py-2 text-sm bg-white focus:outline-none"
             >
               <option value="all">All</option>
               <option value="pending">Pending</option>
@@ -190,16 +192,17 @@ export default function CarListingPage() {
               <option value="rejected">Rejected</option>
             </select>
 
+            {/* Add Car */}
             <button
               onClick={() => setShowAddUser(true)}
-              className="inline-flex items-center gap-2 bg-blue text-white px-4 py-2 rounded-lg shadow"
+              className="w-full sm:w-auto inline-flex justify-center items-center gap-2 bg-blue text-white px-4 py-2 rounded-lg shadow"
             >
               <Plus size={16} /> Add Car
             </button>
           </div>
         </div>
 
-        <div className="mt-6 bg-white rounded-2xl shadow p-4 overflow-x-auto">
+        <div className="mt-6 bg-white rounded shadow p-4 overflow-x-auto">
           <table className="w-full min-w-[900px] text-sm">
             <thead>
               <tr className="text-left text-gray-500 border-b border-text-muted">
