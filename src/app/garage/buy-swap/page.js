@@ -148,7 +148,7 @@ export default function CarMarketplace() {
     <div>
       <div
         className="relative bg-cover bg-center h-[400px] flex items-center justify-center text-center"
-        style={{ backgroundImage: "url('/images/hero.png')" }}
+        style={{ backgroundImage: "url('/images/rangebg.webp')" }}
       >
         <div className="absolute inset-0 bg-black/60"></div>
         <div className="relative z-10 text-white px-4">

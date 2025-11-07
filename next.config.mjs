@@ -9,10 +9,10 @@ const nextConfig = {
     ],
   },
   eslint: {
-    ignoreDuringBuilds: true, // skip ESLint errors during build
+    ignoreDuringBuilds: true,
   },
   turbopack: {
-    root: "./", // fix workspace root warning
+    root: "./",
   },
   typedRoutes: true,
 };

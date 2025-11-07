@@ -186,7 +186,7 @@ export default function AdminLogin() {
               <div className="flex-grow border-t border-gray-300"></div>
             </div>
 
-            {/* Social logins */}
+            {/* Social logins
             <div className="flex items-center justify-center gap-4">
               <button
                 type="button"
@@ -200,7 +200,7 @@ export default function AdminLogin() {
               >
                 <FaApple size={24} className="text-black" />
               </button>
-            </div>
+            </div> */}
           </form>
 
           {/* Footer */}
