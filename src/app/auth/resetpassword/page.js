@@ -1,11 +1,11 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, Suspense } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import toast, { Toaster } from "react-hot-toast";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
 
-export default function ResetPassword() {
+function ResetPasswordContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const token = searchParams.get("token");
@@ -38,7 +38,7 @@ export default function ResetPassword() {
     setLoading(true);
     try {
       const res = await fetch(
-        `http://localhost:5000/api/auth/reset-password?token=${token}`,
+        `https://donjay-server.vercel.app/api/auth/reset-password?token=${token}`,
         {
           method: "PUT",
           headers: { "Content-Type": "application/json" },
@@ -151,5 +151,13 @@ export default function ResetPassword() {
         </div>
       </div>
     </div>
+  );
+}
+
+export default function ResetPassword() {
+  return (
+    <Suspense fallback={<div className="min-h-screen bg-gradient-to-br from-blue to-indigo-900 flex items-center justify-center">Loading...</div>}>
+      <ResetPasswordContent />
+    </Suspense>
   );
 }

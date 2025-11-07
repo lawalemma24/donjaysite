@@ -24,11 +24,14 @@ export default function AdminLogin() {
     }
 
     try {
-      const res = await fetch("http://localhost:5000/api/auth/login", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email, password }),
-      });
+      const res = await fetch(
+        "https://donjay-server.vercel.app/api/auth/login",
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ email, password }),
+        }
+      );
 
       if (!res.ok) {
         toast.error(
@@ -183,7 +186,7 @@ export default function AdminLogin() {
               <div className="flex-grow border-t border-gray-300"></div>
             </div>
 
-            {/* Social logins */}
+            {/* Social logins
             <div className="flex items-center justify-center gap-4">
               <button
                 type="button"
@@ -197,7 +200,7 @@ export default function AdminLogin() {
               >
                 <FaApple size={24} className="text-black" />
               </button>
-            </div>
+            </div> */}
           </form>
 
           {/* Footer */}

@@ -62,16 +62,22 @@ export default function Sidebar() {
     <>
       {/* Mobile Menu Toggle */}
       <button
-        className="lg:hidden p-3 absolute top-4 left-4 z-50"
+        className="xl:hidden p-3 absolute top-4 left-4 z-50"
         onClick={() => setOpen(!open)}
       >
-        {open ? <X size={24} /> : <Menu size={24} />}
+        {open ? <X size={1} /> : <Menu size={24} />}
       </button>
-
       <aside
-        className={`bg-white shadow-md h-screen w-64 p-6 flex flex-col fixed lg:static z-40 transform transition-transform duration-300
-        ${open ? "translate-x-0" : "-translate-x-full lg:translate-x-0"}`}
+        className={`bg-white shadow-md h-screen w-64 p-6 flex flex-col fixed xl:static z-40 transform transition-transform duration-300
+        ${open ? "translate-x-0" : "-translate-x-full xl:translate-x-0"}`}
       >
+        {/* Mobile Menu Toggle */}
+        <button
+          className="xl:hidden p-3 absolute top-4 left-4 z-50"
+          onClick={() => setOpen(!open)}
+        >
+          {open ? <X size={24} /> : <Menu size={24} />}
+        </button>
         {/* Logo */}
         <div className="text-2xl font-bold text-blue-600 mb-8 flex items-center justify-center border-b pb-4 md:pb-6 border-gray-300">
           <img

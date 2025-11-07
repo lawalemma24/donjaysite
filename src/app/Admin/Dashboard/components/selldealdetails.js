@@ -1,199 +1,138 @@
 "use client";
-import { useState } from "react";
 import Image from "next/image";
 
 export default function SellDealDetails({ deal, onClose }) {
   if (!deal) return null;
 
-  const [finalPrice, setFinalPrice] = useState(deal.finalPrice || "");
-  const [editingFinalPrice, setEditingFinalPrice] = useState(false);
-
-  const handleSavePrice = () => {
-    setEditingFinalPrice(false);
-    if (finalPrice.trim() === "") {
-      setFinalPrice("");
-    }
-  };
-
+  // Add all relevant statuses
   const statusColors = {
     Pending: "bg-yellow-100 text-yellow-700",
     Completed: "bg-green-100 text-green-700",
     Cancelled: "bg-red-100 text-red-700",
+    Approved: "bg-blue-100 text-blue-700", // Added Approved
+    Reject: "bg-red-100 text-red-700", // Optional, if you use "reject"
   };
+
+  // Normalize status string
+  const status = deal.status
+    ? deal.status.charAt(0).toUpperCase() + deal.status.slice(1).toLowerCase()
+    : "Pending";
 
   return (
     <div
-      className="fixed inset-0 bg-black/60 z-50 flex justify-center items-center"
+      className="fixed inset-0 bg-black/80 z-50 flex justify-center items-center"
       onClick={onClose}
     >
       <div
-        className="bg-white rounded-2xl p-6 w-full max-w-lg shadow-lg relative"
+        className="bg-white rounded-xl p-6 w-full max-w-md shadow-lg relative"
         onClick={(e) => e.stopPropagation()}
       >
-        {/* Header */}
-        <div className="flex justify-between items-start mb-4">
-          <h2 className="text-lg font-bold">Sell Details</h2>
+        <h2 className="text-xl font-bold mb-3">Buy Deal Details</h2>
+
+        <div className="flex justify-between mb-4">
+          <Image
+            src={deal.customer?.profilePic || "/images/default-car.png"}
+            alt={deal.customer?.name || "-"}
+            width={90}
+            height={90}
+            className="rounded-md mb-4"
+          />
           <p className="text-xs font-medium">
             Status:
             <span
               className={`ml-2 px-2 py-1 rounded-full text-[11px] font-semibold ${
-                statusColors[deal.status] || "bg-gray-100 text-gray-600"
+                statusColors[status] || "bg-gray-100 text-gray-600"
               }`}
             >
-              {deal.status || "Pending"}
+              {status}
             </span>
           </p>
         </div>
 
-        {/* Images */}
-        <div className="flex gap-2 mb-4">
-          <Image
-            src={deal.avatar}
-            alt={deal.name}
-            width={100}
-            height={100}
-            className="rounded-md border"
-          />
-          <Image
-            src={deal.avatar}
-            alt={deal.name}
-            width={70}
-            height={70}
-            className="rounded-md border"
-          />
-          <div className="w-16 h-16 flex items-center justify-center rounded-md border text-xs text-gray-600">
-            +10
-          </div>
-        </div>
-
-        {/* Specifications */}
-        <h3 className="font-semibold mb-2">Specifications</h3>
-        <div className="space-y-1 mb-3 text-sm">
+        <div className="mb-4">
+          <h3 className="font-semibold mb-1">Customer Information</h3>
           <p className="flex justify-between">
-            <span className="text-gray-500">Condition:</span>
-            <span className="text-black">{deal.condition || "Used"}</span>
+            <span className="text-lightgrey">Name:</span>
+            <span className="text-black">{deal.customer?.name || "-"}</span>
           </p>
           <p className="flex justify-between">
-            <span className="text-gray-500">Make:</span>
-            <span className="text-black">{deal.make || "Hyundai Tucson"}</span>
-          </p>
-          <p className="flex justify-between">
-            <span className="text-gray-500">Year:</span>
-            <span className="text-black">{deal.year || "2024"}</span>
-          </p>
-          <p className="flex justify-between">
-            <span className="text-gray-500">Transmission:</span>
+            <span className="text-lightgrey">Phone:</span>
             <span className="text-black">
-              {deal.transmission || "Automatic"}
+              {deal.customer?.phoneNumber || "-"}
             </span>
           </p>
           <p className="flex justify-between">
-            <span className="text-gray-500">Fuel Type:</span>
-            <span className="text-black">{deal.fuel || "Hybrid"}</span>
-          </p>
-          <p className="flex justify-between">
-            <span className="text-gray-500">Mileage:</span>
-            <span className="text-black">{deal.mileage || "163KM"}</span>
-          </p>
-          <p className="flex justify-between">
-            <span className="text-gray-500">Engine:</span>
-            <span className="text-black">
-              {deal.engine || "3.0 L inline-6 turbo + hybrid"}
-            </span>
-          </p>
-        </div>
-
-        {/* Customer Info */}
-        <h3 className="font-semibold mb-2">Customer Information</h3>
-        <div className="space-y-1 mb-3 text-sm">
-          <p className="flex justify-between">
-            <span className="text-gray-500">Name:</span>
-            <span className="text-black">{deal.customerName || "Don Jay"}</span>
-          </p>
-          <p className="flex justify-between">
-            <span className="text-gray-500">Address:</span>
-            <span className="text-black">
-              {deal.address || "Akin Adesola Street, VI, Lagos"}
-            </span>
-          </p>
-          <p className="flex justify-between">
-            <span className="text-gray-500">Phone:</span>
-            <span className="text-black">{deal.phone || "08123456789"}</span>
-          </p>
-        </div>
-
-        {/* Offer Info */}
-        <h3 className="font-semibold mb-2">Offer Information</h3>
-        <div className="space-y-1 mb-3 text-sm">
-          <p className="flex justify-between">
-            <span className="text-gray-500">Asking Price:</span>
-            <span className="text-black">
-              {deal.askingPrice || "N20,000,000"}
+            <span className="text-lightgrey">Email:</span>
+            <span className="text-black text-xs">
+              {deal.customer?.email || "-"}
             </span>
           </p>
 
-          {/* Final Price Editable Always */}
+          <h3 className="font-semibold mb-1 mt-4">Car Information</h3>
           <p className="flex justify-between">
-            <span className="text-gray-500">Final Price:</span>
-            <span className="text-blue-600 cursor-pointer">
-              {editingFinalPrice ? (
-                <input
-                  type="text"
-                  value={finalPrice}
-                  onChange={(e) => setFinalPrice(e.target.value)}
-                  onBlur={handleSavePrice}
-                  onKeyDown={(e) => {
-                    if (e.key === "Enter") handleSavePrice();
-                  }}
-                  autoFocus
-                  className="border border-gray-300 rounded px-2 py-1 text-sm w-32"
-                  placeholder="Edit Price"
-                />
-              ) : (
-                <span onClick={() => setEditingFinalPrice(true)}>
-                  {finalPrice || "Edit Price"}
-                </span>
-              )}
+            <span className="text-lightgrey">Make:</span>
+            <span className="text-black">
+              {deal.primaryCar?.carName || "-"}
             </span>
+          </p>
+          <p className="flex justify-between">
+            <span className="text-lightgrey">Year:</span>
+            <span className="text-black">{deal.primaryCar?.year || "-"}</span>
+          </p>
+          <p className="flex justify-between">
+            <span className="text-lightgrey">Condition:</span>
+            <span className="text-black">
+              {deal.primaryCar?.condition || "-"}
+            </span>
+          </p>
+          <p className="flex justify-between">
+            <span className="text-lightgrey">Transmission:</span>
+            <span className="text-black">
+              {deal.primaryCar?.transmission || "Automatic"}
+            </span>
+          </p>
+          <p className="flex justify-between">
+            <span className="text-lightgrey">Fuel Type:</span>
+            <span className="text-black">
+              {deal.primaryCar?.fuel || "Petrol"}
+            </span>
+          </p>
+          <p className="flex justify-between">
+            <span className="text-lightgrey">Mileage:</span>
+            <span className="text-black">
+              {deal.primaryCar?.mileage || "-"}
+            </span>
+          </p>
+          <p className="flex justify-between">
+            <span className="text-lightgrey">Engine:</span>
+            <span className="text-black">{deal.primaryCar?.engine || "-"}</span>
+          </p>
+
+          <h3 className="font-semibold mb-1 mt-4">Payment Information</h3>
+          <p className="flex justify-between">
+            <span className="text-lightgrey">Offer Price:</span>
+            <span className="text-black">
+              {deal.formattedOfferPrice || "-"}
+            </span>
+          </p>
+          <p className="flex justify-between">
+            <span className="text-lightgrey">Total Paid:</span>
+            <span className="text-blue">{deal.totalPaid || "-"}</span>
+          </p>
+          <p className="flex justify-between">
+            <span className="text-lightgrey">Order ID:</span>
+            <span className="text-blue">{deal.orderId || "-"}</span>
           </p>
         </div>
 
-        {/* Payment Info */}
-        <h3 className="font-semibold mb-2">Payment Information</h3>
-        <div className="space-y-1 mb-3 text-sm">
-          <p className="flex justify-between">
-            <span className="text-gray-500">Order ID:</span>
-            <span className="text-black">
-              {deal.status === "Completed"
-                ? deal.orderId || "-------"
-                : "-------"}
-            </span>
-          </p>
-          <p className="flex justify-between">
-            <span className="text-gray-500">Amount Paid:</span>
-            <span className="text-black">
-              {deal.status === "Completed"
-                ? deal.amountPaid || finalPrice || "-------"
-                : "-------"}
-            </span>
-          </p>
-        </div>
-
-        {/* Footer */}
         <div className="flex justify-between mt-6">
           <button
             onClick={onClose}
-            className="px-6 py-2 border border-blue-600 text-blue-600 rounded-lg"
+            className="px-6 py-2 border border-blue text-blue rounded-lg"
           >
             Close
           </button>
-          <button
-            className={`px-4 py-2 rounded-lg ${
-              deal.status === "Completed"
-                ? "bg-blue-600 text-white"
-                : "bg-gray-200 text-gray-400 cursor-not-allowed"
-            }`}
-          >
+          <button className="px-4 py-2 bg-blue text-white rounded-lg">
             Download Receipt
           </button>
         </div>

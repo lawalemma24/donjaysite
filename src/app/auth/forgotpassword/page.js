@@ -21,7 +21,7 @@ export default function ForgotPassword() {
 
     try {
       const res = await fetch(
-        "http://localhost:5000/api/auth/forgot-password",
+        "https://donjay-server.vercel.app/api/auth/forgot-password",
         {
           method: "POST",
           headers: { "Content-Type": "application/json" },

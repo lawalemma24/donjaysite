@@ -7,6 +7,7 @@ import { useAuth } from "@/app/contexts/AuthContext";
 
 export default function Login() {
   const [showPassword, setShowPassword] = useState(false);
+  const [loading, setLoading] = useState(false);
 
   const { login } = useAuth();
 
@@ -21,12 +22,17 @@ export default function Login() {
       return;
     }
 
+    setLoading(true);
+
     try {
-      const res = await fetch("http://localhost:5000/api/auth/login", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email, password }),
-      });
+      const res = await fetch(
+        "https://donjay-server.vercel.app/api/auth/login",
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ email, password }),
+        }
+      );
 
       if (!res.ok) {
         toast.error(
@@ -34,6 +40,7 @@ export default function Login() {
             ? "Invalid email or password"
             : "Something went wrong"
         );
+        setLoading(false);
         return;
       }
 
@@ -46,6 +53,7 @@ export default function Login() {
         setTimeout(() => {
           window.location.href = "/Admin/Access/Login";
         }, 1500);
+        setLoading(false);
         return;
       }
 
@@ -55,6 +63,8 @@ export default function Login() {
     } catch (error) {
       console.error("Server error:", error);
       toast.error("Server error");
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -137,9 +147,14 @@ export default function Login() {
 
             <button
               type="submit"
-              className="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-4 rounded-lg transition-colors duration-300 mt-2"
+              disabled={loading}
+              className={`w-full ${
+                loading
+                  ? "bg-blue-400 cursor-not-allowed"
+                  : "bg-blue-600 hover:bg-blue-700"
+              } text-white font-bold py-3 px-4 rounded-lg transition-colors duration-300 mt-2`}
             >
-              Sign in
+              {loading ? "Signing in..." : "Sign in"}
             </button>
 
             <div className="flex items-center">
@@ -147,31 +162,16 @@ export default function Login() {
               <span className="mx-3 text-gray-500 text-sm">or</span>
               <div className="flex-grow border-t border-gray-300"></div>
             </div>
-
-            <div className="flex items-center justify-center gap-4">
-              <button
-                type="button"
-                className="flex items-center justify-center w-12 h-12 rounded-full border border-gray-300 hover:bg-gray-100 transition"
-              >
-                <FcGoogle size={24} />
-              </button>
-              <button
-                type="button"
-                className="flex items-center justify-center w-12 h-12 rounded-full border border-gray-300 hover:bg-gray-100 transition"
-              >
-                <FaApple size={24} className="text-black" />
-              </button>
-            </div>
           </form>
 
           <div className="mt-6 text-center">
             <p className="text-gray-500 text-sm">
-              Don't have an account?{" "}
+              Don&apos;t have an account?{" "}
               <a
                 href="/auth/register"
                 className="font-medium text-blue hover:text-blue-800 transition-colors"
               >
-                Sign Up
+                Sign Up Here
               </a>
             </p>
           </div>

@@ -1,17 +1,18 @@
 "use client";
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, Suspense } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
 import InspectionOfferReview from "./summary/page";
 import api from "@/utils/api";
 import NotRegisteredOverlay from "@/components/notuser";
+import Loader from "@/components/preloader";
 
-export default function InspectionPage() {
+function InspectionPageContent() {
   const params = useSearchParams();
   const router = useRouter();
   const carId = params.get("carId");
 
-  const [allCars, setAllCars] = useState([]); // all cars fetched once
-  const [cars, setCars] = useState([]); // filtered & paginated
+  const [allCars, setAllCars] = useState([]);
+  const [cars, setCars] = useState([]);
   const [loading, setLoading] = useState(false);
   const [car, setCar] = useState(null);
   const [date, setDate] = useState("");
@@ -39,7 +40,7 @@ export default function InspectionPage() {
   const fetchAllCars = async () => {
     setLoading(true);
     try {
-      const res = await api.get("/approved?limit=1000"); // fetch all approved cars
+      const res = await api.get("/approved?limit=1000");
       const list = res.data.cars || [];
       setAllCars(list);
     } catch (err) {
@@ -95,7 +96,7 @@ export default function InspectionPage() {
     (async () => {
       try {
         const res = await fetch(
-          `http://localhost:5000/api/inspections/available-slots?date=${date}`,
+          `https://donjay-server.vercel.app/api/inspections/available-slots?date=${date}`,
           {
             headers: {
               "Content-Type": "application/json",
@@ -172,9 +173,7 @@ export default function InspectionPage() {
 
               {/* Car Grid */}
               {loading ? (
-                <p className="text-gray-500 text-center py-4">
-                  Loading cars...
-                </p>
+                <Loader write="Loading cars..." />
               ) : cars.length === 0 ? (
                 <p className="text-gray-500 text-center py-4">No cars found.</p>
               ) : (
@@ -363,9 +362,9 @@ export default function InspectionPage() {
                 <button
                   type="button"
                   onClick={() => setView("gallery")}
-                  className="px-4 py-2 border text-sm rounded hover:bg-gray-100"
+                  className="px-4 py-2 border border-orange text-sm text-orange font-bold rounded hover:bg-orange-100"
                 >
-                  Back to Car Gallery
+                  Choose From Car Gallery
                 </button>
                 <button
                   type="submit"
@@ -390,5 +389,13 @@ export default function InspectionPage() {
         </div>
       </div>
     </div>
+  );
+}
+
+export default function InspectionPage() {
+  return (
+    <Suspense fallback={<div className="min-h-screen bg-white flex items-center justify-center">Loading...</div>}>
+      <InspectionPageContent />
+    </Suspense>
   );
 }

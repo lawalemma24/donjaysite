@@ -3,7 +3,6 @@
 import { useState, useEffect } from "react";
 import {
   MoreVertical,
-  Filter,
   Search,
   ChevronLeft,
   ChevronRight,
@@ -14,9 +13,8 @@ import {
   CheckCircle,
   Trash2,
 } from "lucide-react";
-import FilterCard from "../components/FilterCard";
 import AddCarForm from "../components/addcar";
-import BuyDealDetails from "./buydealdetails";
+import SellDealDetails from "./selldealdetails";
 
 export default function Buydeals() {
   const [deals, setDeals] = useState([]);
@@ -32,7 +30,7 @@ export default function Buydeals() {
   const [totalPages, setTotalPages] = useState(1);
   const [totalEntries, setTotalEntries] = useState(0);
   const [searchQuery, setSearchQuery] = useState("");
-  const [statusFilter, setStatusFilter] = useState(""); // new: status filter
+  const [statusFilter, setStatusFilter] = useState("");
   const pageSize = 7;
 
   // Fetch deals from API
@@ -42,7 +40,7 @@ export default function Buydeals() {
 
     try {
       const token = localStorage.getItem("token");
-      let url = `http://localhost:5000/api/deals/admin/all?type=buy&page=${page}&limit=${pageSize}`;
+      let url = `https://donjay-server.vercel.app/api/deals/admin/all?dealType=buy&page=${page}&limit=${pageSize}`;
       if (searchQuery) url += `&search=${encodeURIComponent(searchQuery)}`;
       if (statusFilter) url += `&status=${encodeURIComponent(statusFilter)}`;
 
@@ -71,7 +69,7 @@ export default function Buydeals() {
         setTotalEntries(0);
       }
     } catch (err) {
-      console.error("❌ Error fetching deals:", err);
+      console.error(" Error fetching deals:", err);
       setError("Failed to load deals. Check console for details.");
     } finally {
       setLoading(false);
@@ -130,7 +128,7 @@ export default function Buydeals() {
         fetchDeals();
       }
     } catch (err) {
-      console.error(`❌ Error performing ${actionType}:`, err);
+      console.error(` Error performing ${actionType}:`, err);
     }
   }
 
@@ -149,7 +147,7 @@ export default function Buydeals() {
         fetchDeals();
       }
     } catch (err) {
-      console.error("❌ Error deleting deal:", err);
+      console.error(" Error deleting deal:", err);
     }
   }
 
@@ -373,7 +371,7 @@ export default function Buydeals() {
 
       {showAddDeal && <AddCarForm onClose={() => setShowAddDeal(false)} />}
       {selectedForView && (
-        <BuyDealDetails
+        <SellDealDetails
           deal={selectedForView}
           onClose={() => setSelectedForView(null)}
         />

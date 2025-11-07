@@ -7,8 +7,9 @@ import Trusted from "@/components/trusted";
 import WhatWeDo from "@/components/whatwedo";
 import { useEffect } from "react";
 import { useSearchParams } from "next/navigation";
+import { Suspense } from "react";
 
-export default function Home() {
+function HomeContent() {
   const params = useSearchParams();
   const scrollTo = params.get("scrollTo");
 
@@ -43,5 +44,13 @@ export default function Home() {
 
       <BackToTopButton />
     </>
+  );
+}
+
+export default function Home() {
+  return (
+    <Suspense fallback={<div>Loading...</div>}>
+      <HomeContent />
+    </Suspense>
   );
 }

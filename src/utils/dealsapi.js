@@ -1,7 +1,7 @@
 import axios from "axios";
 
 const dealsApi = axios.create({
-  baseURL: "http://localhost:5000/api/deals",
+  baseURL: "https://donjay-server.vercel.app/api/deals",
 });
 
 dealsApi.interceptors.request.use((config) => {

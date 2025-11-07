@@ -4,29 +4,19 @@ import Image from "next/image";
 import dealsApi from "@/utils/dealsapi";
 import DealDetailsModal from "../dealdetailsmodal";
 
-const statusColors = {
-  completed: "text-green-600",
-  pending: "text-yellow-500",
-  cancelled: "text-red-600",
-};
-
 export default function BuyDealsTable() {
   const [search, setSearch] = useState("");
   const [selectedDeal, setSelectedDeal] = useState(null);
   const [deals, setDeals] = useState([]);
   const [loading, setLoading] = useState(true);
 
-  // ✅ Fetch user's deals from backend
   useEffect(() => {
     const fetchDeals = async () => {
       try {
         const response = await dealsApi.get("/my-deals?dealType=buy");
         setDeals(response.data.deals || []);
       } catch (error) {
-        console.error(
-          "❌ Error fetching deals:",
-          error.response?.data || error
-        );
+        console.error(" Error fetching deals:", error.response?.data || error);
       } finally {
         setLoading(false);
       }
@@ -35,10 +25,25 @@ export default function BuyDealsTable() {
     fetchDeals();
   }, []);
 
-  // ✅ Filter deals by car name
   const filteredDeals = deals.filter((deal) =>
     deal?.primaryCar?.carName?.toLowerCase().includes(search.toLowerCase())
   );
+
+  function getStatusColor(status) {
+    switch (status?.toLowerCase()) {
+      case "completed":
+        return "bg-green-100 text-green-700";
+      case "pending":
+        return "bg-yellow-100 text-yellow-700";
+      case "cancelled":
+      case "rejected":
+        return "bg-red-100 text-red-700";
+      case "approved":
+        return "bg-blue-100 text-blue-700";
+      default:
+        return "bg-gray-100 text-gray-700";
+    }
+  }
 
   if (loading) {
     return (
@@ -104,13 +109,14 @@ export default function BuyDealsTable() {
                     <td className="px-4 py-2 text-text-muted min-w-[120px]">
                       {deal.primaryCar?.condition || "—"}
                     </td>
-                    <td
-                      className={`px-4 py-2 font-semibold min-w-[100px] ${
-                        statusColors[deal.status?.toLowerCase()] ||
-                        "text-gray-500"
-                      }`}
-                    >
-                      {deal.status || "—"}
+                    <td className="px-4 py-2 min-w-[100px]">
+                      <span
+                        className={`px-3 py-1 rounded-full font-semibold text-xs ${getStatusColor(
+                          deal.status
+                        )}`}
+                      >
+                        {deal.status || "—"}
+                      </span>
                     </td>
                     <td className="px-4 py-2 text-text-muted min-w-[140px]">
                       {new Date(deal.createdAt).toLocaleDateString("en-US", {
@@ -133,6 +139,7 @@ export default function BuyDealsTable() {
                 <tr>
                   <td colSpan="6" className="text-center py-4 text-gray-500">
                     No deals found.
+                    <br />Try adjusting your search criteria.
                   </td>
                 </tr>
               )}
@@ -141,7 +148,6 @@ export default function BuyDealsTable() {
         </div>
       </div>
 
-      {/* Modal */}
       {selectedDeal && (
         <DealDetailsModal
           deal={selectedDeal}

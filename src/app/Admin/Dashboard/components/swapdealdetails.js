@@ -4,10 +4,10 @@ import Image from "next/image";
 import { AiOutlineSwap } from "react-icons/ai";
 
 export default function SwapDealDetails({ deal, onClose }) {
-  if (!deal) return null;
-
   const [finalPrice, setFinalPrice] = useState(deal.finalPrice || "");
   const [editingFinalPrice, setEditingFinalPrice] = useState(false);
+
+  if (!deal) return null;
 
   const handleSavePrice = () => {
     setEditingFinalPrice(false);

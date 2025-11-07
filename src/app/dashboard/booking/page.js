@@ -6,10 +6,10 @@ import BookingDetailsModal from "../bookingdetails";
 import ProtectedRoute from "@/app/protectedroutes/protected";
 
 const statusColors = {
-  confirmed: "text-green-600",
-  pending: "text-yellow-500",
-  cancelled: "text-red-600",
-  completed: "text-green-700",
+  confirmed: "text-green-600 bg-green-100",
+  pending: "text-yellow-500 bg-yellow-100",
+  cancelled: "text-red-600 bg-red-100",
+  completed: "text-green-700 bg-green-200",
 };
 
 export default function MyInspectionsTable() {
@@ -27,7 +27,7 @@ export default function MyInspectionsTable() {
     setLoading(true);
     try {
       const res = await api.get(
-        "http://localhost:5000/api/inspections/my-inspections",
+        "https://donjay-server.vercel.app/api/inspections/my-inspections",
         {
           params: { page, limit: 10 },
         }
@@ -114,12 +114,15 @@ export default function MyInspectionsTable() {
                       <td className="px-4 py-2 text-text-muted min-w-[120px]">
                         {insp.car?.condition || "—"}
                       </td>
-                      <td
-                        className={`px-4 py-2 font-semibold min-w-[100px] ${
-                          statusColors[insp.status] || "text-gray-600"
-                        }`}
-                      >
-                        {insp.status}
+                      <td>
+                        <span
+                          className={`px-2 rounded-full py-1 font-semibold min-w-[100px] ${
+                            statusColors[insp.status] ||
+                            "text-gray-600 bg-gray-100"
+                          }`}
+                        >
+                          {insp.status}
+                        </span>
                       </td>
                       <td className="px-4 py-2 text-text-muted min-w-[140px]">
                         {insp.inspectionDate

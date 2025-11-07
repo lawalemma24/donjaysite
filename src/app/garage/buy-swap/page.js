@@ -8,6 +8,7 @@ import {
 } from "lucide-react";
 import CarCard from "@/components/carcard";
 import api from "@/utils/api";
+import Loader from "@/components/preloader";
 
 const PER_PAGE = 9;
 
@@ -147,7 +148,7 @@ export default function CarMarketplace() {
     <div>
       <div
         className="relative bg-cover bg-center h-[400px] flex items-center justify-center text-center"
-        style={{ backgroundImage: "url('/images/hero.png')" }}
+        style={{ backgroundImage: "url('/images/rangebg.webp')" }}
       >
         <div className="absolute inset-0 bg-black/60"></div>
         <div className="relative z-10 text-white px-4">
@@ -319,7 +320,7 @@ export default function CarMarketplace() {
           </div>
 
           {loading ? (
-            <p className="text-center py-12 text-gray-500">Loading cars...</p>
+            <Loader write="loading cars..." />
           ) : cars.length === 0 ? (
             <p className="text-center py-12 text-gray-500">
               No cars found matching your criteria.

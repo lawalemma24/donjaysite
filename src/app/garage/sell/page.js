@@ -1,8 +1,8 @@
 "use client";
 
-import Link from "next/link";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { uploadToCloudinary } from "@/utils/uploadToCloudinary";
 
 const SellPage = () => {
   const [form, setForm] = useState({
@@ -23,11 +23,34 @@ const SellPage = () => {
     setImages((prev) => [...prev, ...objectUrls]);
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    const carToReview = { ...form, images };
-    sessionStorage.setItem("carToReview", JSON.stringify(carToReview));
-    router.push("/garage/sellofferreview");
+
+    if (images.length === 0) {
+      alert("Please upload at least one image.");
+      return;
+    }
+
+    try {
+      const fileInputs = document.querySelector("#fileInput").files;
+      const uploadPromises = Array.from(fileInputs).map((file) =>
+        uploadToCloudinary(file)
+      );
+
+      const uploadedImageUrls = await Promise.all(uploadPromises);
+
+      const carToReview = {
+        ...form,
+        images: uploadedImageUrls,
+      };
+
+      // Store for next page
+      sessionStorage.setItem("carToReview", JSON.stringify(carToReview));
+      router.push("/garage/sellofferreview");
+    } catch (err) {
+      console.error("Error uploading images:", err);
+      alert("Failed to upload images. Please try again.");
+    }
   };
 
   return (
@@ -53,17 +76,13 @@ const SellPage = () => {
                 <label className="block text-sm font-medium text-gray-700">
                   Make/Name of car
                 </label>
-                <select
+                <input
                   className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue focus:outline-none sm:text-sm h-10 px-3 border"
                   value={form.carName}
                   onChange={(e) =>
                     setForm({ ...form, carName: e.target.value })
                   }
-                >
-                  <option>Toyota Camry</option>
-                  <option>Lexus RX</option>
-                  <option>Nissan Maxima</option>
-                </select>
+                ></input>
               </div>
 
               <div>
@@ -75,9 +94,32 @@ const SellPage = () => {
                   value={form.year}
                   onChange={(e) => setForm({ ...form, year: e.target.value })}
                 >
+                  <option>2025</option>
+                  <option>2024</option>
                   <option>2023</option>
                   <option>2022</option>
                   <option>2021</option>
+                  <option>2020</option>
+                  <option>2019</option>
+                  <option>2018</option>
+                  <option>2017</option>
+                  <option>2016</option>
+                  <option>2015</option>
+                  <option>2014</option>
+                  <option>2013</option>
+                  <option>2012</option>
+                  <option>2011</option>
+                  <option>2010</option>
+                  <option>2009</option>
+                  <option>2008</option>
+                  <option>2007</option>
+                  <option>2006</option>
+                  <option>2005</option>
+                  <option>2004</option>
+                  <option>2003</option>
+                  <option>2002</option>
+                  <option>2001</option>
+                  <option>2000</option>
                 </select>
               </div>
             </div>
@@ -94,8 +136,8 @@ const SellPage = () => {
                     setForm({ ...form, condition: e.target.value })
                   }
                 >
-                  <option>Used</option>
-                  <option>New</option>
+                  <option>used</option>
+                  <option>new</option>
                 </select>
               </div>
 

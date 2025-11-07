@@ -17,6 +17,7 @@ export default function Register() {
   });
   const [showPassword, setShowPassword] = useState(false);
   const [errors, setErrors] = useState({});
+  const [loading, setLoading] = useState(false);
 
   const validate = () => {
     const newErrors = {};
@@ -70,6 +71,8 @@ export default function Register() {
 
     if (!validate()) return;
 
+    setLoading(true);
+
     const payload = {
       name: form.name,
       email: form.email,
@@ -81,13 +84,16 @@ export default function Register() {
     console.log("Sending signup payload:", payload);
 
     try {
-      const response = await fetch("http://localhost:5000/api/auth/signup", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(payload),
-      });
+      const response = await fetch(
+        "https://donjay-server.vercel.app/api/auth/signup",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(payload),
+        }
+      );
 
       const data = await response.json().catch(() => null);
 
@@ -102,6 +108,8 @@ export default function Register() {
     } catch (error) {
       console.error("Network error:", error);
       toast.error("Network error, please try again");
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -237,30 +245,20 @@ export default function Register() {
 
             <button
               type="submit"
-              className="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-4 rounded-lg transition-colors duration-300 mt-2"
+              disabled={loading}
+              className={`w-full ${
+                loading
+                  ? "bg-blue-400 cursor-not-allowed"
+                  : "bg-blue-600 hover:bg-blue-700"
+              } text-white font-bold py-3 px-4 rounded-lg transition-colors duration-300 mt-2`}
             >
-              Sign Up
+              {loading ? "Signing up..." : "Sign Up"}
             </button>
 
             <div className="flex items-center">
               <div className="flex-grow border-t border-gray-300"></div>
               <span className="mx-3 text-gray-500 text-sm">or</span>
               <div className="flex-grow border-t border-gray-300"></div>
-            </div>
-
-            <div className="flex items-center justify-center gap-4">
-              <button
-                type="button"
-                className="flex items-center justify-center w-12 h-12 rounded-full border border-gray-300 hover:bg-gray-100 transition"
-              >
-                <FcGoogle size={24} />
-              </button>
-              <button
-                type="button"
-                className="flex items-center justify-center w-12 h-12 rounded-full border border-gray-300 hover:bg-gray-100 transition"
-              >
-                <FaApple size={24} className="text-black" />
-              </button>
             </div>
           </form>
 
@@ -271,7 +269,7 @@ export default function Register() {
                 href="/auth/login"
                 className="font-medium text-blue-600 hover:text-blue-800 transition-colors"
               >
-                Sign In
+                Sign In Here
               </a>
             </p>
           </div>

@@ -4,6 +4,7 @@ import { FaRegCreditCard, FaUniversity, FaTruck } from "react-icons/fa";
 import Image from "next/image";
 import PaymentSuccessModal from "@/components/confirmpayment";
 import dealsApi from "@/utils/dealsapi";
+import Loader from "@/components/preloader";
 
 const PaymentCard = () => {
   const [tab, setTab] = useState("card");
@@ -198,6 +199,8 @@ const PaymentCard = () => {
             </div>
 
             {/* Pay button */}
+            {isLoading && <Loader write="processing payment" />}
+
             <button
               onClick={handlePayment}
               disabled={isLoading}
