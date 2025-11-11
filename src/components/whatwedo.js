@@ -25,7 +25,7 @@ const services = [
     desc: "Want to sell your car fast? We buy cars directly from you, any model. Simple process, fair offers, and no stress.",
     icon: <ShoppingCart size={32} className="text-indigo-500" />,
     bg: "bg-indigo-100",
-    link: "/services/sell",
+    link: "/garage/sell",
   },
   {
     title: "Buy Car",
@@ -46,7 +46,7 @@ const services = [
     desc: "Book a professional inspection with our team. Get expert checks and accurate reports to ensure your car’s true condition.",
     icon: <CalendarCheck size={32} className="text-pink-500" />,
     bg: "bg-pink-100",
-    link: "/services/inspection",
+    link: "/inspection",
   },
 ];
 

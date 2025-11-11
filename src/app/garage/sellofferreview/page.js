@@ -22,7 +22,7 @@ export default function SellOfferReview() {
     if (storedCar) setCar(JSON.parse(storedCar));
   }, []);
 
-  const images = car?.images || [];
+  const images = Array.isArray(car?.images) ? car.images.flat() : [];
 
   const prevImage = () =>
     setCurrent((prev) => (prev === 0 ? images.length - 1 : prev - 1));

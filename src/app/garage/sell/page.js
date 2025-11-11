@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { uploadToCloudinary } from "@/utils/uploadToCloudinary";
 
@@ -15,41 +15,73 @@ const SellPage = () => {
     note: "",
   });
   const [images, setImages] = useState([]);
+  const [loading, setLoading] = useState(false);
   const router = useRouter();
+
+  // Load data from sessionStorage if available
+  useEffect(() => {
+    const storedCar = sessionStorage.getItem("carToReview");
+    if (storedCar) {
+      const car = JSON.parse(storedCar);
+      setForm({
+        carName: car.carName || "",
+        year: car.year || "",
+        condition: car.condition || "Used",
+        transmission: car.transmission || "Automatic",
+        fuelType: car.fuelType || "Petrol",
+        price: car.price || "",
+        note: car.note || "",
+      });
+      setImages(car.images?.map((url) => ({ file: null, preview: url })) || []);
+    }
+  }, []);
 
   const handleImageChange = (e) => {
     const files = Array.from(e.target.files);
-    const objectUrls = files.map((file) => URL.createObjectURL(file));
-    setImages((prev) => [...prev, ...objectUrls]);
+    const previews = files.map((file) => ({
+      file,
+      preview: URL.createObjectURL(file),
+    }));
+    setImages((prev) => [...prev, ...previews]);
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    if (images.length === 0) {
+    if (!images.length) {
       alert("Please upload at least one image.");
       return;
     }
 
-    try {
-      const fileInputs = document.querySelector("#fileInput").files;
-      const uploadPromises = Array.from(fileInputs).map((file) =>
-        uploadToCloudinary(file)
-      );
+    setLoading(true);
 
-      const uploadedImageUrls = await Promise.all(uploadPromises);
+    try {
+      const filesToUpload = images
+        .filter((img) => img.file)
+        .map((img) => img.file);
+
+      let uploadedImageUrls = images.map((img) => img.preview); // Keep previews for existing images
+
+      if (filesToUpload.length) {
+        const cloudUrls = await uploadToCloudinary(filesToUpload);
+        // Replace the uploaded images' previews with cloud URLs
+        uploadedImageUrls = images.map((img) =>
+          img.file ? cloudUrls.shift() : img.preview
+        );
+      }
 
       const carToReview = {
         ...form,
         images: uploadedImageUrls,
       };
 
-      // Store for next page
       sessionStorage.setItem("carToReview", JSON.stringify(carToReview));
       router.push("/garage/sellofferreview");
     } catch (err) {
       console.error("Error uploading images:", err);
       alert("Failed to upload images. Please try again.");
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -82,7 +114,7 @@ const SellPage = () => {
                   onChange={(e) =>
                     setForm({ ...form, carName: e.target.value })
                   }
-                ></input>
+                />
               </div>
 
               <div>
@@ -204,7 +236,7 @@ const SellPage = () => {
                 className="mt-1 block w-full rounded-md border-text-muted shadow-sm focus:border-blue focus:outline-none sm:text-sm p-3 border resize-none"
                 value={form.note}
                 onChange={(e) => setForm({ ...form, note: e.target.value })}
-              ></textarea>
+              />
             </div>
 
             <div>
@@ -234,7 +266,7 @@ const SellPage = () => {
                 {images.map((img, idx) => (
                   <img
                     key={idx}
-                    src={img}
+                    src={img.preview}
                     alt={`Preview ${idx + 1}`}
                     className="rounded-lg border border-gray-300 w-24 h-16 object-cover"
                   />
@@ -247,7 +279,7 @@ const SellPage = () => {
                 type="submit"
                 className="w-full bg-blue text-white font-medium py-3 rounded-xl shadow-lg hover:bg-blue-700 transition duration-300"
               >
-                Continue
+                {loading ? "Processing..." : "Continue"}
               </button>
             </div>
           </form>

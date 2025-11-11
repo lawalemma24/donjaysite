@@ -21,6 +21,7 @@ const AccountMenu = () => {
     logout();
     setOpen(false);
     window.location.href = "/";
+    window.location.reload();
   };
 
   useEffect(() => {
