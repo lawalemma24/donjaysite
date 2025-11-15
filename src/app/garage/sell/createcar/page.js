@@ -114,7 +114,7 @@ export default function MyCarsPage() {
     <>
       <ProtectedRoute allowedRoles={["customer"]}>
         <div className="min-h-screen bg-white px-2 md:px-4 py-16">
-          <div className="flex justify-center px-2 md:px-4 pt-4 mt-7 mb-16">
+          <div className="flex justify-center px-2 md:px-4 pt-4 mt-4 md:mt-7 mb-16">
             <div className="w-full max-w-4xl bg-white rounded-2xl">
               <h1 className="text-2xl font-bold mb-2 text-gray-600">
                 My Cars for Sale
@@ -263,7 +263,7 @@ export default function MyCarsPage() {
           </div>
         </div>
 
-        <div className="my-16 px-2 md:px-4">
+        <div className=" px-2 md:px-4">
           <RelatedCars />
         </div>
       </ProtectedRoute>
