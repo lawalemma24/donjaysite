@@ -9,7 +9,7 @@ const ConfirmSwapOverlay = ({ onClose, onSubmit }) => {
         <AiOutlineExclamationCircle className="w-12 h-12 text-yellow-500 block mx-auto mb-7 mt-4" />
         <h2 className="text-xl font-semibold mb-3">Confirm Submission?</h2>
         <p className="text-text-muted text-sm mb-6">
-          This will submit your sell request for review. You cannot undo this
+          This will submit your Swap request for review. You cannot undo this
           action.
         </p>
         <div className="flex justify-between gap-4">

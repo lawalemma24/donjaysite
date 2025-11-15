@@ -25,8 +25,7 @@ const SwapSuccessModal = ({ isOpen, onClose }) => {
 
         <p className="text-gray-600 text-sm mb-6">
           Your request has been received. We will contact you via email within
-          24 hours to schedule a physical inspection and provide a final offer
-          for your car.
+          24 hours,After approval you can now swap your car.
         </p>
 
         <button

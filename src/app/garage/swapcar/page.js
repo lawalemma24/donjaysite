@@ -6,6 +6,7 @@ import dealsApi from "@/utils/dealsapi";
 import Loader from "@/components/preloader";
 import ProtectedRoute from "@/app/protectedroutes/protected";
 import { useRouter } from "next/navigation";
+import RelatedCars from "@/components/relatedcars";
 
 export default function SwapPage() {
   const router = useRouter();
@@ -19,19 +20,16 @@ export default function SwapPage() {
   const [currentPage, setCurrentPage] = useState(1);
   const carsPerPage = 7;
 
-  // Load logged user
   useEffect(() => {
     const loggedUser = JSON.parse(localStorage.getItem("user"));
     setUser(loggedUser);
   }, []);
 
-  // Load selected car from previous page
   useEffect(() => {
     const storedCar = sessionStorage.getItem("selectedCar");
     if (storedCar) setSelectedCar(JSON.parse(storedCar));
   }, []);
 
-  // Fetch user cars and swap deals
   useEffect(() => {
     const fetchCarsAndDeals = async () => {
       try {
@@ -59,7 +57,6 @@ export default function SwapPage() {
       return;
     }
 
-    // Defensive: make sure user has contact info
     const phone = user.phone || "";
     const email = user.email || "";
 
@@ -75,26 +72,22 @@ export default function SwapPage() {
         dealType: "swap",
         primaryCarId: selectedCar._id,
         secondaryCarId: carToSwapWith._id,
-        offerPrice: selectedCar.price, // required
+        offerPrice: selectedCar.price,
         customerContact: {
           phone,
           email,
           preferredContactMethod: "both",
         },
         customerNote: `Swapping ${selectedCar.carName} with ${carToSwapWith.carName}`,
-        additionalAmount: 0, // optional
-        priority: "medium", // optional
-        tags: [], // optional
+        additionalAmount: 0,
+        priority: "medium",
+        tags: [],
       };
 
-      console.log("Creating swap deal with payload:", payload);
-
       const res = await dealsApi.post("/", payload);
-
       setCreatedDeals((prev) => [...prev, selectedCar._id]);
 
       alert("Swap deal created successfully!");
-      // router.push("/garage/my-swaps");
     } catch (err) {
       console.log("Error creating swap deal:", err.response?.data || err);
       alert(
@@ -124,6 +117,12 @@ export default function SwapPage() {
   const indexOfFirstCar = indexOfLastCar - carsPerPage;
   const currentCars = cars.slice(indexOfFirstCar, indexOfLastCar);
 
+  const filteredCars = currentCars.filter(
+    (car) =>
+      (car.status === "approved" || car.status === "pending") &&
+      car._id !== selectedCar?._id
+  );
+
   if (loading) return <Loader write="loading your cars..." />;
 
   return (
@@ -139,19 +138,31 @@ export default function SwapPage() {
               deals.
             </p>
 
-            <p className="text-gray-600 mb-4">
-              Select a car from your garage to swap:
-            </p>
+            <div className="mb-6 p-4 bg-red-50 border border-red-200 rounded-lg">
+              <p className="text-red-400 mb-2 text-xs">
+                1.For you to proceed with the swap, the car you select must be
+                approved. if your car is still pending approval, please wait
+                until it is approved
+              </p>
+              <p className="text-red-400 mb-2 text-xs">
+                2. If you do not have a car uploaded yet or want to add a
+                different car, please add a new car.The car will be reviewed and
+                approved before you can use it for swapping.
+              </p>
+            </div>
+
             <div className="flex justify-end items-center mb-4">
               <button
                 className="px-4 py-2 bg-blue-600 text-white rounded-lg mb-6"
                 onClick={() => router.push("/garage/swapcar/createcar")}
               >
-                Add a car to listing
+                Add New Car
               </button>
             </div>
-
-            {/* Display selected car */}
+            <p className="text-gray-800 text-lg mb-2">
+              Select a car from your garage to swap with:
+            </p>
+            {/* Selected Car */}
             {selectedCar && (
               <div className="mb-6 p-4 bg-blue-50 rounded-lg border border-blue-200">
                 <h2 className="font-bold text-lg mb-2">Car to Swap</h2>
@@ -175,6 +186,7 @@ export default function SwapPage() {
               </div>
             )}
 
+            {/* TABLE */}
             <div className="bg-white shadow rounded-xl py-4 px-2 mb-6">
               <div className="overflow-x-auto">
                 <table className="w-full text-sm text-left border-collapse">
@@ -189,14 +201,25 @@ export default function SwapPage() {
                   </thead>
 
                   <tbody>
-                    {currentCars
-                      .filter(
-                        (car) =>
-                          (car.status === "approved" ||
-                            car.status === "pending") &&
-                          car._id !== selectedCar?._id
-                      )
-                      .map((car) => (
+                    {/* EMPTY STATE */}
+                    {filteredCars.length === 0 ? (
+                      <tr>
+                        <td colSpan="5" className="text-center py-10">
+                          <p className="text-gray-600 mb-3 text-sm">
+                            You have no cars available for swap.
+                          </p>
+                          <button
+                            className="px-4 py-2 bg-blue-600 text-white rounded-lg"
+                            onClick={() =>
+                              router.push("/garage/swapcar/createcar")
+                            }
+                          >
+                            Add a car
+                          </button>
+                        </td>
+                      </tr>
+                    ) : (
+                      filteredCars.map((car) => (
                         <tr key={car._id} className="border-b border-lightgrey">
                           <td className="flex items-center gap-2 px-4 py-4 min-w-[180px]">
                             <Image
@@ -219,7 +242,7 @@ export default function SwapPage() {
 
                           <td className="px-4 py-2">
                             <span
-                              className={`px-3 py-1 rounded-full text-sm  ${getStatusBadge(
+                              className={`px-3 py-1 rounded-full text-sm ${getStatusBadge(
                                 car.status
                               )}`}
                             >
@@ -260,7 +283,8 @@ export default function SwapPage() {
                             )}
                           </td>
                         </tr>
-                      ))}
+                      ))
+                    )}
                   </tbody>
                 </table>
               </div>
@@ -293,6 +317,10 @@ export default function SwapPage() {
             </div>
           </div>
         </div>
+      </div>
+
+      <div className="px-2 md:px-4">
+        <RelatedCars />
       </div>
     </ProtectedRoute>
   );

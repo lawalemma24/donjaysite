@@ -103,7 +103,7 @@ export default function SellOfferReview() {
 
       <div className="max-w-md mx-auto bg-white rounded-2xl shadow p-6">
         <h2 className="text-center text-xl font-semibold mb-4">
-          Review Your Selling Offer
+          Review your Swap Offer
         </h2>
 
         <div
@@ -174,8 +174,8 @@ export default function SellOfferReview() {
         <div className="mt-4 border border-lightgrey rounded-lg p-4 bg-gray-50 text-center">
           <h4 className="font-semibold mb-1">Offer Overview</h4>
           <p className="text-gray-600 text-sm">
-            Our team will review your submission and contact you with a final
-            offer after a physical inspection of your car.
+            Our team will review your submission and contact you when the upload
+            is approved so you can create a swap deal.
           </p>
         </div>
 
@@ -191,7 +191,7 @@ export default function SellOfferReview() {
             disabled={loading}
             className="flex-1 py-2 rounded-lg bg-blue px-2 text-white text-sm"
           >
-            {loading ? "Submitting..." : "Confirm & Submit Sell Offer"}
+            {loading ? "Submitting..." : " Submit Swap Offer"}
           </button>
         </div>
 
