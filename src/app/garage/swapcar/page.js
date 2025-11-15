@@ -14,7 +14,7 @@ export default function SwapPage() {
   const [cars, setCars] = useState([]);
   const [loading, setLoading] = useState(true);
   const [creating, setCreating] = useState("");
-  const [createdDeals, setCreatedDeals] = useState([]);
+  const [createdDeals, setCreatedDeals] = useState([]); // will hold swap pairs
   const [user, setUser] = useState(null);
 
   const [currentPage, setCurrentPage] = useState(1);
@@ -37,10 +37,16 @@ export default function SwapPage() {
         const fetchedCars = res.data.cars || [];
         setCars(fetchedCars);
 
+        // Fetch deals and convert to primary-secondary pair list
         const dealsRes = await dealsApi.get("/my-deals?dealType=swap");
         const swapDeals = dealsRes.data.deals || [];
-        const carIdsInDeals = swapDeals.map((deal) => deal.primaryCar._id);
-        setCreatedDeals(carIdsInDeals);
+
+        const swapPairs = swapDeals.map((deal) => ({
+          primary: deal.primaryCar?._id,
+          secondary: deal.secondaryCar?._id,
+        }));
+
+        setCreatedDeals(swapPairs);
       } catch (err) {
         console.log("Error fetching cars or deals:", err);
       } finally {
@@ -50,6 +56,13 @@ export default function SwapPage() {
 
     fetchCarsAndDeals();
   }, []);
+
+  // 🔥 Prevent duplicate swap requests
+  const hasExistingSwap = (carId) => {
+    return createdDeals.some(
+      (deal) => deal.primary === selectedCar?._id && deal.secondary === carId
+    );
+  };
 
   const createDeal = async (carToSwapWith) => {
     if (!user || !selectedCar) {
@@ -62,6 +75,12 @@ export default function SwapPage() {
 
     if (!phone || !email) {
       alert("Please make sure your profile has phone and email filled in.");
+      return;
+    }
+
+    // ❌ Stop duplicate swaps
+    if (hasExistingSwap(carToSwapWith._id)) {
+      alert("You have already created a swap request with this car.");
       return;
     }
 
@@ -84,8 +103,13 @@ export default function SwapPage() {
         tags: [],
       };
 
-      const res = await dealsApi.post("/", payload);
-      setCreatedDeals((prev) => [...prev, selectedCar._id]);
+      await dealsApi.post("/", payload);
+
+      // Update stored swap pairs
+      setCreatedDeals((prev) => [
+        ...prev,
+        { primary: selectedCar._id, secondary: carToSwapWith._id },
+      ]);
 
       alert("Swap deal created successfully!");
     } catch (err) {
@@ -159,10 +183,11 @@ export default function SwapPage() {
                 Add New Car
               </button>
             </div>
+
             <p className="text-gray-800 text-lg mb-2">
               Select a car from your garage to swap with:
             </p>
-            {/* Selected Car */}
+
             {selectedCar && (
               <div className="mb-6 p-4 bg-blue-50 rounded-lg border border-blue-200">
                 <h2 className="font-bold text-lg mb-2">Car to Swap</h2>
@@ -186,7 +211,6 @@ export default function SwapPage() {
               </div>
             )}
 
-            {/* TABLE */}
             <div className="bg-white shadow rounded-xl py-4 px-2 mb-6">
               <div className="overflow-x-auto">
                 <table className="w-full text-sm text-left border-collapse">
@@ -201,7 +225,6 @@ export default function SwapPage() {
                   </thead>
 
                   <tbody>
-                    {/* EMPTY STATE */}
                     {filteredCars.length === 0 ? (
                       <tr>
                         <td colSpan="5" className="text-center py-10">
@@ -251,9 +274,9 @@ export default function SwapPage() {
                           </td>
 
                           <td className="px-4 py-2 text-xs">
-                            {createdDeals.includes(car._id) ? (
+                            {hasExistingSwap(car._id) ? (
                               <span className="text-blue-600 font-medium">
-                                Listed
+                                Already Swapped
                               </span>
                             ) : (
                               <span className="text-gray-500">Not Listed</span>
@@ -263,11 +286,23 @@ export default function SwapPage() {
                           <td className="px-4 py-2 min-w-[150px]">
                             {car.status === "approved" ? (
                               <button
-                                className="px-3 py-2 bg-green-600 text-white rounded-lg"
-                                onClick={() => createDeal(car)}
-                                disabled={creating === car._id || !user}
+                                className={`px-3 py-2 rounded-lg text-white ${
+                                  hasExistingSwap(car._id)
+                                    ? "bg-gray-400 cursor-not-allowed"
+                                    : "bg-green-600"
+                                }`}
+                                onClick={() =>
+                                  !hasExistingSwap(car._id) && createDeal(car)
+                                }
+                                disabled={
+                                  creating === car._id ||
+                                  !user ||
+                                  hasExistingSwap(car._id)
+                                }
                               >
-                                {creating === car._id
+                                {hasExistingSwap(car._id)
+                                  ? "Already Swapped"
+                                  : creating === car._id
                                   ? "Processing..."
                                   : "Swap with this car"}
                               </button>
