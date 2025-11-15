@@ -130,7 +130,7 @@ export default function TopBar() {
                 className={`flex items-center gap-2 px-4 py-2 text-blue hover:bg-gray-100 ${linkClass(
                   "/garage/sell"
                 )}`}
-                onClick={() => handleProtectedClick("/garage/sell")}
+                onClick={() => handleProtectedClick("/garage/sell/createcar")}
               >
                 <Tags size={16} className="text-blue" /> Sell
               </button>
@@ -263,7 +263,7 @@ export default function TopBar() {
               </Link>
               <button
                 className={`block hover:text-blue ${linkClass("/garage/sell")}`}
-                onClick={() => handleProtectedClick("/garage/sell")}
+                onClick={() => handleProtectedClick("/garage/sell/createcar")}
               >
                 Sell
               </button>

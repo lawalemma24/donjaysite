@@ -51,7 +51,7 @@ export default function Hero() {
 
           {/* Sell */}
           <Link
-            href="/garage/sell"
+            href="/garage/sell/createcar"
             onClick={handleSellClick}
             className="flex items-center gap-2 px-4 py-4 text-blue cursor-pointer hover:bg-gray-50"
           >

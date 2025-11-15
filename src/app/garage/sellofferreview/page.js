@@ -32,35 +32,40 @@ export default function SellOfferReview() {
   // Step 1: create car in backend
   const createCar = async () => {
     const token = localStorage.getItem("token");
-    const carPayload = {
-      carName: car.carName || "Unknown",
-      year: Number(car.year) || new Date().getFullYear(),
-      condition: car.condition?.toLowerCase() || "used",
-      transmission: car.transmission?.toLowerCase() || "manual",
-      fuelType: car.fuelType?.toLowerCase() || "petrol",
-      engine: car.engine || "Unknown",
-      mileage: Number(car.mileage) || 0,
-      price: Number(car.price) || 0,
+
+    const missing = [];
+
+    const cleaned = {
+      carName: car.carName?.trim(),
+      year: Number(car.year),
+      condition: car.condition?.trim(),
+      transmission: car.transmission?.trim(),
+      fuelType: car.fuelType?.trim(),
+      engine: car.engine?.trim(),
+      mileage: Number(car.mileage),
+      price: Number(String(car.price).replace(/,/g, "")),
       note: car.note || "",
-      images:
-        Array.isArray(car.images) && car.images.length
-          ? car.images
-          : ["https://via.placeholder.com/150"],
+      images: car.images?.filter((img) => img && img !== "") || [],
     };
 
-    const response = await api.post("/", carPayload, {
+    Object.entries(cleaned).forEach(([key, value]) => {
+      if (!value || (Array.isArray(value) && value.length === 0)) {
+        missing.push(key);
+      }
+    });
+
+    if (missing.length) {
+      alert("Missing required fields: " + missing.join(", "));
+      throw new Error("Missing fields");
+    }
+
+    const response = await api.post("/", cleaned, {
       headers: { Authorization: `Bearer ${token}` },
     });
 
-    console.log("Create Car response:", response.data);
-
-    // Safely extract car ID from any possible structure
-    const carId = response.data?.car?._id || response.data?.data?._id;
-    if (!carId) throw new Error("Failed to get car ID from API response");
-    return carId;
+    return response.data?.car?._id || response.data?.data?._id;
   };
 
-  // Step 2: create sell deal
   const handleSubmit = async () => {
     if (!car || loading) return;
 
@@ -71,50 +76,16 @@ export default function SellOfferReview() {
       const carId = await createCar();
       console.log("Car created with ID:", carId);
 
-      // 2️ create sell deal immediately, allow pending
-      const token = localStorage.getItem("token");
-      const payload = {
-        dealType: "sell",
-        primaryCarId: carId,
-        offerPrice: Number(car.price),
-        additionalAmount: 0,
-        customerNote: car.note || "",
-        customerContact: {
-          phone: car.phone || "",
-          email: car.email || "",
-          preferredContactMethod: "both",
-        },
-        priority: "medium",
-        tags: car.tags || [],
-        status: "pending",
-      };
-
-      console.log("Submitting deal payload:", payload);
-
-      const dealResponse = await axios.post(
-        "https://donjay-server.vercel.app/api/deals/",
-        payload,
-        { headers: { Authorization: `Bearer ${token}` } }
-      );
-      console.log("Sell deal created:", dealResponse.data);
+      // show success modal immediately
       setSuccessOpen(true);
       sessionStorage.removeItem("carToReview");
     } catch (err) {
-      //Fallback If the API still rejects because car isn't approved :
-      if (err.response?.status === 404) {
-        alert(
-          "Car created successfully. Your sell deal will be queued for admin approval."
-        );
-        setSuccessOpen(true);
-        sessionStorage.removeItem("carToReview");
-      } else {
-        console.error("Error submitting sell offer:", err.response || err);
-        alert(
-          `Failed to submit sell offer: ${
-            err.response?.data?.message || err.message || "Unknown error"
-          }`
-        );
-      }
+      console.error("Error creating car:", err.response || err);
+      alert(
+        `Failed to submit car: ${
+          err.response?.data?.message || err.message || "Unknown error"
+        }`
+      );
     } finally {
       setLoading(false);
     }

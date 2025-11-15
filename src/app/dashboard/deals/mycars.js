@@ -11,6 +11,7 @@ export default function MyCarsPage() {
   const [creating, setCreating] = useState("");
   const [createdDeals, setCreatedDeals] = useState([]);
   const [user, setUser] = useState(null);
+  const [activeTab, setActiveTab] = useState("pending"); // <-- SIMPLE TABS
 
   useEffect(() => {
     const loggedUser = JSON.parse(localStorage.getItem("user"));
@@ -22,12 +23,11 @@ export default function MyCarsPage() {
       try {
         const res = await api.get("/user/my-cars");
         const fetchedCars = res.data.cars || [];
-        console.log("Fetched cars:", fetchedCars);
         setCars(fetchedCars);
 
-        // Fetch existing sell deals to flag cars
         const dealsRes = await dealsApi.get("/my-deals?dealType=sell");
         const sellDeals = dealsRes.data.deals || [];
+
         const carIdsInDeals = sellDeals.map((deal) => deal.primaryCar._id);
         setCreatedDeals(carIdsInDeals);
       } catch (err) {
@@ -75,8 +75,6 @@ export default function MyCarsPage() {
         tags: [],
       };
 
-      console.log("Sending deal:", payload);
-
       await dealsApi.post("/", payload);
 
       setCreatedDeals((prev) => [...prev, car._id]);
@@ -91,121 +89,166 @@ export default function MyCarsPage() {
 
   return (
     <>
-      <div className="bg-white shadow rounded-xl py-4 px-2 mb-6">
-        <h2 className="text-lg font-semibold px-2 mb-3">Pending Cars</h2>
-        <div className="overflow-x-auto">
-          <table className="w-full text-sm text-left border-collapse">
-            <thead>
-              <tr className="border-b border-lightgrey">
-                <th className="px-4 py-2">Car</th>
-                <th className="px-4 py-2">Year</th>
-                <th className="px-4 py-2">Status</th>
-              </tr>
-            </thead>
-            <tbody>
-              {pendingCars.length > 0 ? (
-                pendingCars.map((car) => (
-                  <tr key={car._id} className="border-b border-lightgrey">
-                    <td className="flex items-center gap-2 px-4 py-4 min-w-[180px]">
-                      <Image
-                        src={car.images?.[0] || "/images/placeholder-car.jpg"}
-                        width={50}
-                        height={50}
-                        alt={car.carName || "Unknown Car"}
-                        className="rounded-md w-[50px]"
-                      />
-                      <span>{car.carName || "Unknown Car"}</span>
-                    </td>
-                    <td className="px-4 py-2 text-text-muted min-w-[120px]">
-                      {car.year || "—"}
-                    </td>
-                    <td className="px-4 py-2 text-yellow-500 font-semibold min-w-[120px]">
-                      Pending
-                    </td>
-                  </tr>
-                ))
-              ) : (
-                <tr>
-                  <td colSpan="3" className="text-center py-4 text-gray-500">
-                    No pending cars.
-                  </td>
-                </tr>
-              )}
-            </tbody>
-          </table>
-        </div>
+      {/* ---------------- TABS ---------------- */}
+      <div className="flex gap-4 border-b mb-6">
+        <button
+          onClick={() => setActiveTab("pending")}
+          className={`px-4 py-2 ${
+            activeTab === "pending"
+              ? "border-b-2 border-blue-500 font-semibold"
+              : "text-gray-500"
+          }`}
+        >
+          Pending Cars
+        </button>
+
+        <button
+          onClick={() => setActiveTab("approved")}
+          className={`px-4 py-2 ${
+            activeTab === "approved"
+              ? "border-b-2 border-blue-500 font-semibold"
+              : "text-gray-500"
+          }`}
+        >
+          Approved Cars
+        </button>
+
+        <button
+          onClick={() => setActiveTab("deals")}
+          className={`px-4 py-2 ${
+            activeTab === "deals"
+              ? "border-b-2 border-blue-500 font-semibold"
+              : "text-gray-500"
+          }`}
+        >
+          Sell Deals
+        </button>
       </div>
 
-      <div className="bg-white shadow rounded-xl py-4 px-2 mb-10">
-        <h2 className="text-lg font-semibold px-2 mb-3">Approved Cars</h2>
-        <div className="overflow-x-auto">
-          <table className="w-full text-sm text-left border-collapse">
-            <thead>
-              <tr className="border-b border-lightgrey">
-                <th className="px-4 py-2">Car</th>
-                <th className="px-4 py-2">Year</th>
-                <th className="px-4 py-2">Condition</th>
-                <th className="px-4 py-2">Action</th>
-              </tr>
-            </thead>
-            <tbody>
-              {approvedCars.length > 0 ? (
-                approvedCars.map((car) => (
-                  <tr key={car._id} className="border-b border-lightgrey">
-                    <td className="flex items-center gap-2 px-4 py-4 min-w-[180px]">
-                      <Image
-                        src={car.images?.[0] || "/images/placeholder-car.jpg"}
-                        width={50}
-                        height={50}
-                        alt={car.carName}
-                        className="rounded-md w-[50px]"
-                      />
-                      <span>{car.carName}</span>
-                    </td>
-                    <td className="px-4 py-2 text-text-muted min-w-[120px]">
-                      {car.year}
-                    </td>
-                    <td className="px-4 py-2 text-text-muted min-w-[120px]">
-                      {createdDeals.includes(car._id) ? (
-                        <span className="text-red-500 font-semibold">
-                          Already listed for sale
-                        </span>
-                      ) : (
-                        car.condition || "—"
-                      )}
-                    </td>
-                    <td className="px-4 py-2 min-w-[150px]">
-                      {createdDeals.includes(car._id) ? (
-                        <button className="px-3 py-1 bg-gray-400 text-white rounded-lg cursor-not-allowed">
-                          Deal Created
-                        </button>
-                      ) : (
-                        <button
-                          className="px-3 py-1 bg-blue text-white rounded-lg"
-                          onClick={() => createDeal(car)}
-                          disabled={creating === car._id || !user}
-                        >
-                          {creating === car._id
-                            ? "Creating..."
-                            : "Create Sell Deal"}
-                        </button>
-                      )}
+      {/* -------------- PENDING CARS TAB -------------- */}
+      {activeTab === "pending" && (
+        <div className="bg-white shadow rounded-xl py-4 px-2 mb-6">
+          <h2 className="text-lg font-semibold px-2 mb-3">Pending Cars</h2>
+          <div className="overflow-x-auto">
+            <table className="w-full text-sm text-left border-collapse">
+              <thead>
+                <tr className="border-b border-lightgrey">
+                  <th className="px-4 py-2">Car</th>
+                  <th className="px-4 py-2">Year</th>
+                  <th className="px-4 py-2">Status</th>
+                </tr>
+              </thead>
+              <tbody>
+                {pendingCars.length > 0 ? (
+                  pendingCars.map((car) => (
+                    <tr key={car._id} className="border-b border-lightgrey">
+                      <td className="flex items-center gap-2 px-4 py-4 min-w-[180px]">
+                        <Image
+                          src={car.images?.[0] || "/images/placeholder-car.jpg"}
+                          width={50}
+                          height={50}
+                          alt={car.carName || "Unknown Car"}
+                          className="rounded-md w-[50px]"
+                        />
+                        <span>{car.carName || "Unknown Car"}</span>
+                      </td>
+                      <td className="px-4 py-2 text-text-muted">
+                        {car.year || "—"}
+                      </td>
+                      <td className="px-4 py-2 text-yellow-500 font-semibold">
+                        Pending
+                      </td>
+                    </tr>
+                  ))
+                ) : (
+                  <tr>
+                    <td colSpan="3" className="text-center py-4 text-gray-500">
+                      No pending cars.
                     </td>
                   </tr>
-                ))
-              ) : (
-                <tr>
-                  <td colSpan="4" className="text-center py-4 text-gray-500">
-                    No approved cars.
-                  </td>
-                </tr>
-              )}
-            </tbody>
-          </table>
+                )}
+              </tbody>
+            </table>
+          </div>
         </div>
-      </div>
+      )}
 
-      <SellDealsTable />
+      {/* -------------- APPROVED CARS TAB -------------- */}
+      {activeTab === "approved" && (
+        <div className="bg-white shadow rounded-xl py-4 px-2 mb-6">
+          <h2 className="text-lg font-semibold px-2 mb-3">Approved Cars</h2>
+          <div className="overflow-x-auto">
+            <table className="w-full text-sm text-left border-collapse">
+              <thead>
+                <tr className="border-b border-lightgrey">
+                  <th className="px-4 py-2">Car</th>
+                  <th className="px-4 py-2">Year</th>
+                  <th className="px-4 py-2">Condition</th>
+                  <th className="px-4 py-2">Action</th>
+                </tr>
+              </thead>
+              <tbody>
+                {approvedCars.length > 0 ? (
+                  approvedCars.map((car) => (
+                    <tr key={car._id} className="border-b border-lightgrey">
+                      <td className="flex items-center gap-2 px-4 py-4 min-w-[180px]">
+                        <Image
+                          src={car.images?.[0] || "/images/placeholder-car.jpg"}
+                          width={50}
+                          height={50}
+                          alt={car.carName}
+                          className="rounded-md w-[50px]"
+                        />
+                        <span>{car.carName}</span>
+                      </td>
+                      <td className="px-4 py-2 text-text-muted">{car.year}</td>
+                      <td className="px-4 py-2 text-text-muted">
+                        {createdDeals.includes(car._id) ? (
+                          <span className="text-red-500 font-semibold">
+                            Already listed for sale
+                          </span>
+                        ) : (
+                          car.condition || "—"
+                        )}
+                      </td>
+                      <td className="px-4 py-2 min-w-[150px]">
+                        {createdDeals.includes(car._id) ? (
+                          <button className="px-3 py-1 bg-gray-400 text-white rounded-lg cursor-not-allowed">
+                            Deal Created
+                          </button>
+                        ) : (
+                          <button
+                            className="px-3 py-1 bg-blue text-white rounded-lg"
+                            onClick={() => createDeal(car)}
+                            disabled={creating === car._id || !user}
+                          >
+                            {creating === car._id
+                              ? "Creating..."
+                              : "Create Sell Deal"}
+                          </button>
+                        )}
+                      </td>
+                    </tr>
+                  ))
+                ) : (
+                  <tr>
+                    <td colSpan="4" className="text-center py-4 text-gray-500">
+                      No approved cars.
+                    </td>
+                  </tr>
+                )}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      )}
+
+      {/* -------------- SELL DEALS TAB -------------- */}
+      {activeTab === "deals" && (
+        <div className="bg-white shadow rounded-xl py-4 px-2 mb-6">
+          <SellDealsTable />
+        </div>
+      )}
     </>
   );
 }
