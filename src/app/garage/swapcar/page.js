@@ -155,7 +155,8 @@ export default function SwapPage() {
                     {currentCars
                       .filter(
                         (car) =>
-                          car.status === "approved" &&
+                          (car.status === "approved" ||
+                            car.status === "pending") &&
                           car._id !== selectedCar?._id
                       )
                       .map((car) => (
@@ -200,15 +201,26 @@ export default function SwapPage() {
                           </td>
 
                           <td className="px-4 py-2 min-w-[150px]">
-                            <button
-                              className="px-3 py-2 bg-green-600 text-white rounded-lg"
-                              onClick={() => createDeal(car)}
-                              disabled={creating === car._id || !user}
-                            >
-                              {creating === car._id
-                                ? "Processing..."
-                                : "Swap with this car"}
-                            </button>
+                            {car.status === "approved" ? (
+                              <button
+                                className="px-3 py-2 bg-green-600 text-white rounded-lg"
+                                onClick={() => createDeal(car)}
+                                disabled={creating === car._id || !user}
+                              >
+                                {creating === car._id
+                                  ? "Processing..."
+                                  : "Swap with this car"}
+                              </button>
+                            ) : (
+                              <button
+                                className="px-3 py-2 bg-gray-400 text-white rounded-lg cursor-not-allowed"
+                                disabled
+                              >
+                                {car.status === "pending"
+                                  ? "Pending Approval"
+                                  : "Rejected"}
+                              </button>
+                            )}
                           </td>
                         </tr>
                       ))}
