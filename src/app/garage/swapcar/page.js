@@ -59,23 +59,48 @@ export default function SwapPage() {
       return;
     }
 
+    // Defensive: make sure user has contact info
+    const phone = user.phone || "";
+    const email = user.email || "";
+
+    if (!phone || !email) {
+      alert("Please make sure your profile has phone and email filled in.");
+      return;
+    }
+
     try {
       setCreating(carToSwapWith._id);
 
       const payload = {
         dealType: "swap",
         primaryCarId: selectedCar._id,
-        swapWithCarId: carToSwapWith._id,
+        secondaryCarId: carToSwapWith._id,
+        offerPrice: selectedCar.price, // required
+        customerContact: {
+          phone,
+          email,
+          preferredContactMethod: "both",
+        },
         customerNote: `Swapping ${selectedCar.carName} with ${carToSwapWith.carName}`,
+        additionalAmount: 0, // optional
+        priority: "medium", // optional
+        tags: [], // optional
       };
 
-      await dealsApi.post("/", payload);
+      console.log("Creating swap deal with payload:", payload);
+
+      const res = await dealsApi.post("/", payload);
+
       setCreatedDeals((prev) => [...prev, selectedCar._id]);
+
       alert("Swap deal created successfully!");
-      router.push("/garage/my-swaps");
+      // router.push("/garage/my-swaps");
     } catch (err) {
       console.log("Error creating swap deal:", err.response?.data || err);
-      alert("Failed to create swap deal");
+      alert(
+        err.response?.data?.message ||
+          "Failed to create swap deal. Check console."
+      );
     } finally {
       setCreating("");
     }
