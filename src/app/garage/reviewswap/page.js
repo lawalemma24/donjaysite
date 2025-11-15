@@ -1,266 +1,225 @@
 "use client";
 
-import ConfirmOverlay from "@/components/confirmswap";
-import RelatedCars from "@/components/relatedcars";
-import RequestSubmitted from "@/components/requestsubmitted";
-import dealsApi from "@/utils/dealsapi";
-import Link from "next/link";
-import React, { useState, useEffect } from "react";
-import { AiOutlineSwap } from "react-icons/ai";
+import ConfirmSellOverlay from "@/components/confirmsell";
 
-export default function ReviewSwapPage() {
-  const [showConfirm, setShowConfirm] = useState(false);
-  const [showSubmitted, setShowSubmitted] = useState(false);
-  const [userCar, setUserCar] = useState(null);
-  const [selectedCar, setSelectedCar] = useState(null);
+import Link from "next/link";
+import { useState, useEffect } from "react";
+import { FaChevronLeft, FaChevronRight } from "react-icons/fa";
+import api from "@/utils/api";
+import dealsApi from "@/utils/dealsapi";
+import axios from "axios";
+import SwapSuccessModal from "@/components/swapconfirmed";
+import ConfirmSwapOverlay from "@/components/confirmswap";
+
+export default function SellOfferReview() {
+  const [car, setCar] = useState(null);
+  const [current, setCurrent] = useState(0);
+  const [lightbox, setLightbox] = useState(false);
+  const [open, setOpen] = useState(false);
+  const [successOpen, setSuccessOpen] = useState(false);
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
-    const storedUserCar = sessionStorage.getItem("userCar");
-    const storedSelectedCar = sessionStorage.getItem("selectedCar");
-    const storedImages = sessionStorage.getItem("swapImages");
-
-    if (storedUserCar) {
-      try {
-        const parsedUserCar = JSON.parse(storedUserCar);
-        // If no uploaded images yet, fallback to preview images
-        if (
-          (!parsedUserCar.images || parsedUserCar.images.length === 0) &&
-          storedImages
-        ) {
-          parsedUserCar.images = JSON.parse(storedImages);
-        }
-        setUserCar(parsedUserCar);
-      } catch (err) {
-        console.error("Invalid userCar JSON:", err);
-      }
-    }
-
-    if (storedSelectedCar) {
-      try {
-        setSelectedCar(JSON.parse(storedSelectedCar));
-      } catch (err) {
-        console.error("Invalid selectedCar JSON:", err);
-      }
-    }
+    const storedCar = sessionStorage.getItem("carToReview");
+    if (storedCar) setCar(JSON.parse(storedCar));
   }, []);
 
-  const handleSubmitCarAndSwap = async () => {
-    if (!userCar || !selectedCar) {
-      console.error("Missing car details.");
-      return;
+  const images = Array.isArray(car?.images) ? car.images.flat() : [];
+
+  const prevImage = () =>
+    setCurrent((prev) => (prev === 0 ? images.length - 1 : prev - 1));
+  const nextImage = () =>
+    setCurrent((prev) => (prev === images.length - 1 ? 0 : prev + 1));
+
+  // Step 1: create car in backend
+  const createCar = async () => {
+    const token = localStorage.getItem("token");
+
+    const missing = [];
+
+    const cleaned = {
+      carName: car.carName?.trim(),
+      year: Number(car.year),
+      condition: car.condition?.trim(),
+      transmission: car.transmission?.trim(),
+      fuelType: car.fuelType?.trim(),
+      engine: car.engine?.trim(),
+      mileage: Number(car.mileage),
+      price: Number(String(car.price).replace(/,/g, "")),
+      note: car.note || "",
+      images: car.images?.filter((img) => img && img !== "") || [],
+    };
+
+    Object.entries(cleaned).forEach(([key, value]) => {
+      if (!value || (Array.isArray(value) && value.length === 0)) {
+        missing.push(key);
+      }
+    });
+
+    if (missing.length) {
+      alert("Missing required fields: " + missing.join(", "));
+      throw new Error("Missing fields");
     }
+
+    const response = await api.post("/", cleaned, {
+      headers: { Authorization: `Bearer ${token}` },
+    });
+
+    return response.data?.car?._id || response.data?.data?._id;
+  };
+
+  const handleSubmit = async () => {
+    if (!car || loading) return;
 
     setLoading(true);
 
     try {
-      // 1️⃣ Create the user's car first
-      console.log("Submitting new car to backend:", userCar);
-      const carRes = await dealsApi.post("/cars", userCar); // replace with actual car endpoint
-      const createdCar = carRes.data;
-      console.log("New car created successfully:", createdCar);
+      // 1️ create car and get ID
+      const carId = await createCar();
+      console.log("Car created with ID:", carId);
 
-      // 2️⃣ Submit the swap deal using the returned car ID
-      const payload = {
-        dealType: "swap",
-        primaryCarId: createdCar._id || createdCar.id,
-        secondaryCarId: selectedCar._id || selectedCar.id,
-        offerPrice: selectedCar.price || 0,
-        additionalAmount: 0,
-        customerNote: "User submitted a car swap request.",
-        customerContact: {
-          phone: userCar?.ownerContact || "0000000000",
-          email: userCar?.ownerEmail || "user@example.com",
-          preferredContactMethod: "both",
-        },
-        priority: "medium",
-        tags: [],
-      };
-
-      console.log("Submitting swap deal payload:", payload);
-      const swapRes = await dealsApi.post("/", payload);
-      console.log("Swap deal created successfully:", swapRes.data);
-
-      setShowSubmitted(true);
+      // show success modal immediately
+      setSuccessOpen(true);
+      sessionStorage.removeItem("carToReview");
     } catch (err) {
-      console.error(
-        "Error creating car or swap deal:",
-        err.response?.data || err
+      console.error("Error creating car:", err.response || err);
+      alert(
+        `Failed to submit car: ${
+          err.response?.data?.message || err.message || "Unknown error"
+        }`
       );
     } finally {
       setLoading(false);
     }
   };
 
+  if (!car) return <p>Loading...</p>;
+
   return (
-    <div>
-      {/* Breadcrumbs */}
+    <div className="min-h-screen bg-white px-4 py-16">
       <div className="max-w-7xl mx-auto px-8 pt-4 mt-5 mb-5">
-        <nav className="text-sm text-gray-500">
-          Home <span className="mx-1">/</span> Garage{" "}
-          <span className="mx-1">/</span>
-          <span className="text-gray-500 font-medium">Buy or Swap</span>
-          <span className="mx-1">/</span>
-          <span className="text-gray-500 font-medium">Car Details</span>
-          <span className="mx-1">/</span>
-          <span className="text-gray-500 font-medium">Swap</span>
-          <span className="mx-1">/</span>
-          <span className="text-blue font-medium">Review Swap</span>
-        </nav>
+        <nav className="text-sm text-gray-500">Swap Review</nav>
       </div>
 
-      {/* Main content */}
-      <div className="min-h-screen bg-white p-4 flex justify-center items-center">
-        <div className="w-full max-w-3xl bg-white rounded-2xl shadow-lg p-8">
-          <h1 className="text-2xl font-semibold text-center mb-8">
-            Review Your Swap
-          </h1>
+      <div className="max-w-md mx-auto bg-white rounded-2xl shadow p-6">
+        <h2 className="text-center text-xl font-semibold mb-4">
+          Review Your Selling Offer
+        </h2>
 
-          {/* Cars comparison */}
-          <div className="flex flex-col md:flex-row justify-center items-center gap-6 md:gap-8 mb-8">
-            {/* Your car */}
-            <div className="bg-white rounded-2xl shadow-md p-6 w-full md:w-1/2">
-              <h2 className="text-xl font-semibold mb-4">Your Car</h2>
-              {userCar ? (
-                <>
-                  {userCar.images?.length > 0 && (
-                    <img
-                      src={userCar.images[0]}
-                      alt={userCar.make || "Your car"}
-                      className="w-full h-auto rounded-xl object-cover mb-4"
-                    />
-                  )}
-                  <h3 className="text-lg font-semibold mb-2">
-                    {userCar.year} {userCar.make}
-                  </h3>
-                  <ul className="text-sm space-y-1">
-                    <li className="flex justify-between">
-                      <span className="text-gray-500">Condition:</span>{" "}
-                      {userCar.condition}
-                    </li>
-                    <li className="flex justify-between">
-                      <span className="text-gray-500">Transmission:</span>{" "}
-                      {userCar.transmission}
-                    </li>
-                    <li className="flex justify-between">
-                      <span className="text-gray-500">Fuel Type:</span>{" "}
-                      {userCar.fuel}
-                    </li>
-                    <li className="flex justify-between">
-                      <span className="text-gray-500">Estimated Value:</span>{" "}
-                      {userCar.value || "Pending"}
-                    </li>
-                  </ul>
-                </>
-              ) : (
-                <p className="text-gray-500 text-sm">
-                  Your car details not found.
-                </p>
-              )}
-              <div className="mt-6">
-                <Link href="/garage/swapcar">
-                  <button className="w-full text-blue font-semibold py-3 border border-blue rounded-xl hover:bg-blue-50 transition">
-                    Edit Details
-                  </button>
-                </Link>
-              </div>
-            </div>
+        <div
+          className="relative cursor-pointer"
+          onClick={() => setLightbox(true)}
+        >
+          <img
+            src={images[current]}
+            alt="car"
+            className="w-full h-64 object-cover rounded-lg"
+          />
+          <button
+            onClick={(e) => {
+              e.stopPropagation();
+              prevImage();
+            }}
+            className="absolute left-2 top-1/2 -translate-y-1/2 bg-white p-2 rounded-full shadow"
+          >
+            <FaChevronLeft />
+          </button>
+          <button
+            onClick={(e) => {
+              e.stopPropagation();
+              nextImage();
+            }}
+            className="absolute right-2 top-1/2 -translate-y-1/2 bg-white p-2 rounded-full shadow"
+          >
+            <FaChevronRight />
+          </button>
+        </div>
 
-            <div className="my-4 md:my-0">
-              <AiOutlineSwap className="w-7 h-7 text-blue-600" />
-            </div>
+        <div className="flex gap-2 mt-3 overflow-x-auto">
+          {images.map((img, index) => (
+            <img
+              key={index}
+              src={img}
+              alt="thumbnail"
+              className={`w-20 h-16 object-cover rounded cursor-pointer border ${
+                index === current
+                  ? "border-orange border-2"
+                  : "border-text-muted"
+              }`}
+              onClick={() => setCurrent(index)}
+            />
+          ))}
+        </div>
 
-            {/* Desired car */}
-            <div className="bg-white rounded-2xl shadow-md p-6 w-full md:w-1/2">
-              <h2 className="text-xl font-semibold mb-4">Desired Car</h2>
-              {selectedCar ? (
-                <>
-                  {selectedCar.images?.length > 0 && (
-                    <img
-                      src={selectedCar.images[0]}
-                      alt={selectedCar.carName || "Desired car"}
-                      className="w-full h-auto rounded-xl object-cover mb-4"
-                    />
-                  )}
-                  <h3 className="text-lg font-semibold mb-2">
-                    {selectedCar.year} {selectedCar.carName}
-                  </h3>
-                  <ul className="text-sm space-y-1">
-                    <li className="flex justify-between">
-                      <span className="text-gray-500">Condition:</span>{" "}
-                      {selectedCar.condition || "N/A"}
-                    </li>
-                    <li className="flex justify-between">
-                      <span className="text-gray-500">Transmission:</span>{" "}
-                      {selectedCar.transmission || "Automatic"}
-                    </li>
-                    <li className="flex justify-between">
-                      <span className="text-gray-500">Fuel Type:</span>{" "}
-                      {selectedCar.fuelType || "Petrol"}
-                    </li>
-                    <li className="flex justify-between">
-                      <span className="text-gray-500">Price:</span> ₦
-                      {selectedCar.price
-                        ? selectedCar.price.toLocaleString()
-                        : "Pending"}
-                    </li>
-                  </ul>
-                </>
-              ) : (
-                <p className="text-gray-500 text-sm">
-                  No desired car selected.
-                </p>
-              )}
-              <div className="mt-6">
-                <Link href="/garage">
-                  <button className="w-full text-blue font-semibold py-3 border border-blue rounded-xl hover:bg-blue-50 transition">
-                    Change Car
-                  </button>
-                </Link>
-              </div>
-            </div>
-          </div>
-
-          {/* Balance + note */}
-          <div className="border-t border-gray-200 pt-6">
-            <div className="flex justify-between flex-col md:flex-row font-semibold text-xl my-4">
-              <span>Balance to Pay</span>
-              <span className="text-green-700 text-sm">Pending review</span>
-            </div>
-            <p className="text-red-500 text-xs text-center font-medium">
-              We&apos;ll review your order promptly. A final offer will be given
-              after a physical inspection of your vehicle.
+        <div className="mt-4">
+          <h3 className="font-bold text-lg">{car.carName}</h3>
+          <hr className="my-2 border-lightgrey" />
+          <div className="text-sm text-gray-700 mt-2 space-y-1">
+            <p>
+              Condition: <span className="float-right">{car.condition}</span>
+            </p>
+            <p>
+              Transmission:{" "}
+              <span className="float-right">{car.transmission}</span>
+            </p>
+            <p>
+              Fuel Type: <span className="float-right">{car.fuelType}</span>
+            </p>
+            <p>
+              Estimated Value: <span className="float-right">₦{car.price}</span>
             </p>
           </div>
-
-          {/* Confirm button */}
-          <div className="mt-8">
-            <button
-              onClick={() => setShowConfirm(true)}
-              disabled={loading}
-              className="w-full bg-blue text-white font-medium py-3 rounded-xl shadow-lg hover:bg-blue-700 transition"
-            >
-              {loading ? "Submitting..." : "Confirm & Submit Swap Request"}
-            </button>
-          </div>
-
-          {showConfirm && (
-            <ConfirmOverlay
-              onClose={() => setShowConfirm(false)}
-              onSubmit={() => {
-                setShowConfirm(false);
-                handleSubmitCarAndSwap();
-              }}
-            />
-          )}
-
-          {showSubmitted && (
-            <RequestSubmitted onClose={() => setShowSubmitted(false)} />
-          )}
         </div>
-      </div>
 
-      <RelatedCars />
+        <div className="mt-4 border border-lightgrey rounded-lg p-4 bg-gray-50 text-center">
+          <h4 className="font-semibold mb-1">Offer Overview</h4>
+          <p className="text-gray-600 text-sm">
+            Our team will review your submission and contact you with a final
+            offer after a physical inspection of your car.
+          </p>
+        </div>
+
+        <div className="mt-4 grid grid-cols-2 gap-3">
+          <Link href="/garage/sell">
+            <button className="flex-1 py-2 px-3 border border-blue rounded-lg text-blue">
+              Edit Details
+            </button>
+          </Link>
+
+          <button
+            onClick={() => setOpen(true)}
+            disabled={loading}
+            className="flex-1 py-2 rounded-lg bg-blue px-2 text-white text-sm"
+          >
+            {loading ? "Submitting..." : "Confirm & Submit Sell Offer"}
+          </button>
+        </div>
+
+        {open && (
+          <ConfirmSwapOverlay
+            onClose={() => setOpen(false)}
+            onSubmit={handleSubmit}
+          />
+        )}
+
+        <SwapSuccessModal
+          isOpen={successOpen}
+          onClose={() => setSuccessOpen(false)}
+        />
+
+        {lightbox && (
+          <div
+            className="fixed inset-0 bg-black/80 flex items-center justify-center z-50"
+            onClick={() => setLightbox(false)}
+          >
+            <img
+              src={images[current]}
+              alt="large"
+              className="max-w-full max-h-[90vh] rounded-lg"
+            />
+          </div>
+        )}
+      </div>
     </div>
   );
 }

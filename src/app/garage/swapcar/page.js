@@ -139,6 +139,18 @@ export default function SwapPage() {
               deals.
             </p>
 
+            <p className="text-gray-600 mb-4">
+              Select a car from your garage to swap:
+            </p>
+            <div className="flex justify-end items-center mb-4">
+              <button
+                className="px-4 py-2 bg-blue-600 text-white rounded-lg mb-6"
+                onClick={() => router.push("/garage/swapcar/createcar")}
+              >
+                Add a car to listing
+              </button>
+            </div>
+
             {/* Display selected car */}
             {selectedCar && (
               <div className="mb-6 p-4 bg-blue-50 rounded-lg border border-blue-200">
