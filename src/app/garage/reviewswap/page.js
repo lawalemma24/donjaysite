@@ -18,10 +18,19 @@ export default function ReviewSwapPage() {
   useEffect(() => {
     const storedUserCar = sessionStorage.getItem("userCar");
     const storedSelectedCar = sessionStorage.getItem("selectedCar");
+    const storedImages = sessionStorage.getItem("swapImages");
 
     if (storedUserCar) {
       try {
-        setUserCar(JSON.parse(storedUserCar));
+        const parsedUserCar = JSON.parse(storedUserCar);
+        // If no uploaded images yet, fallback to preview images
+        if (
+          (!parsedUserCar.images || parsedUserCar.images.length === 0) &&
+          storedImages
+        ) {
+          parsedUserCar.images = JSON.parse(storedImages);
+        }
+        setUserCar(parsedUserCar);
       } catch (err) {
         console.error("Invalid userCar JSON:", err);
       }
@@ -36,34 +45,50 @@ export default function ReviewSwapPage() {
     }
   }, []);
 
-  const handleSubmitSwap = async () => {
+  const handleSubmitCarAndSwap = async () => {
     if (!userCar || !selectedCar) {
       console.error("Missing car details.");
       return;
     }
 
-    const payload = {
-      dealType: "swap",
-      secondaryCarId: selectedCar._id || selectedCar.id,
-      offerPrice: selectedCar.price || 0,
-      additionalAmount: 0,
-      customerNote: "User submitted a car swap request.",
-      customerContact: {
-        phone: userCar?.ownerContact || "0000000000",
-        email: userCar?.ownerEmail || "user@example.com",
-        preferredContactMethod: "both",
-      },
-      priority: "medium",
-      tags: [],
-    };
+    setLoading(true);
 
     try {
-      console.log("Submitting deal payload:", payload);
-      const res = await dealsApi.post("/", payload);
-      console.log("Deal created successfully:", res.data);
+      // 1️⃣ Create the user's car first
+      console.log("Submitting new car to backend:", userCar);
+      const carRes = await dealsApi.post("/cars", userCar); // replace with actual car endpoint
+      const createdCar = carRes.data;
+      console.log("New car created successfully:", createdCar);
+
+      // 2️⃣ Submit the swap deal using the returned car ID
+      const payload = {
+        dealType: "swap",
+        primaryCarId: createdCar._id || createdCar.id,
+        secondaryCarId: selectedCar._id || selectedCar.id,
+        offerPrice: selectedCar.price || 0,
+        additionalAmount: 0,
+        customerNote: "User submitted a car swap request.",
+        customerContact: {
+          phone: userCar?.ownerContact || "0000000000",
+          email: userCar?.ownerEmail || "user@example.com",
+          preferredContactMethod: "both",
+        },
+        priority: "medium",
+        tags: [],
+      };
+
+      console.log("Submitting swap deal payload:", payload);
+      const swapRes = await dealsApi.post("/", payload);
+      console.log("Swap deal created successfully:", swapRes.data);
+
       setShowSubmitted(true);
     } catch (err) {
-      console.error("Error creating swap deal:", err.response?.data || err);
+      console.error(
+        "Error creating car or swap deal:",
+        err.response?.data || err
+      );
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -224,7 +249,7 @@ export default function ReviewSwapPage() {
               onClose={() => setShowConfirm(false)}
               onSubmit={() => {
                 setShowConfirm(false);
-                handleSubmitSwap();
+                handleSubmitCarAndSwap();
               }}
             />
           )}

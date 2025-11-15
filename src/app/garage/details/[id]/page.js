@@ -14,21 +14,16 @@ import Loader from "@/components/preloader";
 export default function CarDetails() {
   const { id } = useParams();
   const router = useRouter();
-  const { user } = useAuth(); // use user instead of token
+  const { user } = useAuth();
 
   const [car, setCar] = useState(null);
   const [loading, setLoading] = useState(true);
   const [mainImage, setMainImage] = useState("/images/placeholder.png");
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [modalImage, setModalImage] = useState(null);
-  const [activeTab, setActiveTab] = useState("offer");
-  const [showOverlay, setShowOverlay] = useState(false);
-  const [showConfirm, setShowConfirm] = useState(false);
-  const [showSuccess, setShowSuccess] = useState(false);
   const [submitting, setSubmitting] = useState(false);
   const [showNotRegistered, setShowNotRegistered] = useState(false);
 
-  // Fetch car data
   useEffect(() => {
     const fetchCar = async () => {
       try {
@@ -50,15 +45,12 @@ export default function CarDetails() {
     setModalImage(mainImage);
     setIsModalOpen(true);
   };
-  const handleModalClose = () => setIsModalOpen(false);
 
-  // Booking & actions using user
   const handleBookInspection = () => {
     if (!user || user.role !== "customer") {
       setShowNotRegistered(true);
       return;
     }
-    if (!car || !car.id) return;
     sessionStorage.setItem("selectedCar", JSON.stringify(car));
     router.push(`/inspection?carId=${car.id}`);
   };
@@ -77,24 +69,9 @@ export default function CarDetails() {
       setShowNotRegistered(true);
       return;
     }
+    // Store selected car in sessionStorage
+    sessionStorage.setItem("selectedCar", JSON.stringify(car));
     router.push("/garage/swapcar");
-  };
-
-  const submitBooking = async () => {
-    try {
-      setSubmitting(true);
-      if (!user || user.role !== "customer") {
-        setShowNotRegistered(true);
-        return;
-      }
-      await api.post(`/bookings`, { carId: id });
-      setShowSuccess(true);
-    } catch (err) {
-      console.error("Booking failed:", err.response?.data || err);
-      alert("Failed to book inspection. Please try again.");
-    } finally {
-      setSubmitting(false);
-    }
   };
 
   if (loading) return <Loader write="Loading car details..." />;
@@ -107,7 +84,6 @@ export default function CarDetails() {
   return (
     <>
       <div className="max-w-6xl mx-auto px-4 py-16 md:py-20">
-        {/* Breadcrumb */}
         <div className="max-w-7xl mx-auto px-8 pt-4 mt-4">
           <nav className="text-sm text-gray-500">
             Home <span className="mx-1">/</span> Garage{" "}
@@ -118,9 +94,7 @@ export default function CarDetails() {
           </nav>
         </div>
 
-        {/* Top grid */}
         <div className="max-w-6xl mx-auto grid grid-cols-1 lg:grid-cols-2 mt-4 gap-8">
-          {/* LEFT: IMAGES */}
           <div>
             <div
               className="relative w-full h-96 border border-lightgrey rounded-lg overflow-hidden cursor-pointer"
@@ -152,7 +126,6 @@ export default function CarDetails() {
             </div>
           </div>
 
-          {/* RIGHT: INFO */}
           <div>
             <h1 className="text-2xl md:text-3xl font-bold mb-2">
               {car.carName}
@@ -166,36 +139,35 @@ export default function CarDetails() {
               <span>{car.views || 0} people viewed this car</span>
             </div>
 
-            <div className="my-4 ">
-              <h3 className="text-xl font-bold ">Car Description</h3>
+            <div className="my-4">
+              <h3 className="text-xl font-bold">Car Description</h3>
               <p className="text-sm text-text-muted">{car.note}</p>
             </div>
 
-            <div className="my-4 space-y-2 ">
-              <h3 className="text-xl font-bold ">Specifications</h3>
+            <div className="my-4 space-y-2">
+              <h3 className="text-xl font-bold">Specifications</h3>
               <p className="flex justify-between text-sm">
-                <span>Condition:</span>
+                <span>Condition:</span>{" "}
                 <span className="text-text-muted">{car.condition}</span>
               </p>
               <p className="flex justify-between text-sm">
-                <span>Transmission:</span>
+                <span>Transmission:</span>{" "}
                 <span className="text-text-muted">{car.transmission}</span>
               </p>
               <p className="flex justify-between text-sm">
-                <span>Fuel Type:</span>
+                <span>Fuel Type:</span>{" "}
                 <span className="text-text-muted">{car.fuelType}</span>
               </p>
               <p className="flex justify-between text-sm">
-                <span>Engine:</span>
+                <span>Engine:</span>{" "}
                 <span className="text-text-muted">{car.engine}</span>
               </p>
               <p className="flex justify-between text-sm">
-                <span>Mileage:</span>
+                <span>Mileage:</span>{" "}
                 <span className="text-text-muted">{car.mileage}</span>
               </p>
             </div>
 
-            {/* Book inspection */}
             <button
               onClick={handleBookInspection}
               disabled={submitting}
@@ -211,7 +183,6 @@ export default function CarDetails() {
               >
                 Swap
               </button>
-
               <button
                 onClick={handleBuyClick}
                 className="flex-1 bg-blue-600 text-white rounded-lg px-9 py-2 font-medium hover:bg-blue-700"
@@ -219,17 +190,15 @@ export default function CarDetails() {
                 Buy
               </button>
             </div>
-            <hr className="my-4 border-0 h-[1px] bg-lightgrey" />
           </div>
         </div>
       </div>
 
-      {/* Fullscreen image preview */}
       {isModalOpen && (
         <div className="fixed inset-0 bg-black/90 flex items-center justify-center z-50 p-4">
           <button
             className="absolute top-4 right-4 text-white text-2xl z-50"
-            onClick={handleModalClose}
+            onClick={() => setIsModalOpen(false)}
           >
             ✕
           </button>
@@ -245,22 +214,8 @@ export default function CarDetails() {
         </div>
       )}
 
-      {/* Confirm & Success overlays */}
-      {showConfirm && (
-        <ConfirmBookOverlay
-          onClose={() => setShowConfirm(false)}
-          onSubmit={submitBooking}
-        />
-      )}
-      <BookSuccessModal
-        isOpen={showSuccess}
-        onClose={() => setShowSuccess(false)}
-      />
-
-      {/* Related cars */}
       <RelatedCars />
 
-      {/* Not Registered Overlay */}
       {showNotRegistered && (
         <NotRegisteredOverlay
           onRegisterClick={() => router.push("/auth/register")}

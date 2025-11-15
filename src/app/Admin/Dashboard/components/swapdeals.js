@@ -42,7 +42,7 @@ export default function Swapdeals() {
 
     try {
       const token = localStorage.getItem("token");
-      let url = `https://donjay-server.vercel.app/api/deals/admin/all?dealType=sell&page=${page}&limit=${pageSize}`;
+      let url = `https://donjay-server.vercel.app/api/deals/admin/all?dealType=swap&page=${page}&limit=${pageSize}`;
       if (searchQuery) url += `&search=${encodeURIComponent(searchQuery)}`;
       if (statusFilter) url += `&status=${encodeURIComponent(statusFilter)}`;
 

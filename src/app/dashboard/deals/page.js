@@ -42,7 +42,7 @@ export default function MyDealsPage() {
         {/* Tab Content */}
         {activeTab === "buy" && <BuyDealsTable />}
         {activeTab === "swap" && <SwapDealsTable />}
-        {activeTab === "sell" && <MyCarsPage />}
+        {activeTab === "sell" && <SellDealsTable />}
       </div>
     </ProtectedRoute>
   );
