@@ -67,11 +67,11 @@ export default function SellOfferReview() {
     setLoading(true);
 
     try {
-      // 1️⃣ create car and get ID
+      // 1️ create car and get ID
       const carId = await createCar();
       console.log("Car created with ID:", carId);
 
-      // 2️⃣ create sell deal immediately, allow pending
+      // 2️ create sell deal immediately, allow pending
       const token = localStorage.getItem("token");
       const payload = {
         dealType: "sell",
@@ -86,7 +86,7 @@ export default function SellOfferReview() {
         },
         priority: "medium",
         tags: car.tags || [],
-        status: "pending", // optional, API sets this automatically
+        status: "pending",
       };
 
       console.log("Submitting deal payload:", payload);
@@ -100,7 +100,7 @@ export default function SellOfferReview() {
       setSuccessOpen(true);
       sessionStorage.removeItem("carToReview");
     } catch (err) {
-      // If the API still rejects because car isn't approved, fallback:
+      //Fallback If the API still rejects because car isn't approved :
       if (err.response?.status === 404) {
         alert(
           "Car created successfully. Your sell deal will be queued for admin approval."

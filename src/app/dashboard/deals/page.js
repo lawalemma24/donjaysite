@@ -4,6 +4,7 @@ import BuyDealsTable from "./buydeals";
 import SwapDealsTable from "./swapdeals";
 import SellDealsTable from "./selldeals";
 import ProtectedRoute from "@/app/protectedroutes/protected";
+import MyCarsPage from "./mycars";
 
 export default function MyDealsPage() {
   const [activeTab, setActiveTab] = useState("buy");
@@ -41,7 +42,7 @@ export default function MyDealsPage() {
         {/* Tab Content */}
         {activeTab === "buy" && <BuyDealsTable />}
         {activeTab === "swap" && <SwapDealsTable />}
-        {activeTab === "sell" && <SellDealsTable />}
+        {activeTab === "sell" && <MyCarsPage />}
       </div>
     </ProtectedRoute>
   );
