@@ -40,6 +40,7 @@ export default function SellOfferReview() {
     const cleaned = {
       carName: car.carName?.trim(),
       year: Number(car.year),
+      isSwap: true,
       condition: car.condition?.trim(),
       transmission: car.transmission?.trim(),
       fuelType: car.fuelType?.trim(),
