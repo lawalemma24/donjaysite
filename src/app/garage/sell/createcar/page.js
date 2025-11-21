@@ -8,6 +8,7 @@ import FeaturedCars from "@/components/featuredcars";
 import RelatedCars from "@/components/relatedcars";
 import Loader from "@/components/preloader";
 import ProtectedRoute from "@/app/protectedroutes/protected";
+import toast from "react-hot-toast";
 
 export default function MyCarsPage() {
   const [cars, setCars] = useState([]);
@@ -36,7 +37,7 @@ export default function MyCarsPage() {
         const carIdsInDeals = sellDeals.map((deal) => deal.primaryCar._id);
         setCreatedDeals(carIdsInDeals);
       } catch (err) {
-        console.log("Error fetching cars or deals:", err);
+        toast.error("Error fetching cars or deals:");
       } finally {
         setLoading(false);
       }
@@ -47,7 +48,7 @@ export default function MyCarsPage() {
 
   const createDeal = async (car) => {
     if (!user) {
-      alert("User not loaded yet");
+      toast.error("Hold on as we verify this User");
       return;
     }
 
@@ -70,10 +71,10 @@ export default function MyCarsPage() {
 
       await dealsApi.post("/", payload);
       setCreatedDeals((prev) => [...prev, car._id]);
-      alert("Deal created successfully");
+      toast.success("Deal created successfully");
     } catch (err) {
       console.log("Error creating deal:", err.response?.data || err);
-      alert("Failed to create deal");
+      toast.error("Failed to create deal");
     } finally {
       setCreating("");
     }
@@ -166,7 +167,7 @@ export default function MyCarsPage() {
                                 width={50}
                                 height={50}
                                 alt={car.carName || "Unknown Car"}
-                                className="rounded-md w-[50px]"
+                                className="rounded-md w-[50px] h-auto w-auto"
                               />
                               <span className="text-gray-600">
                                 {car.carName || "Unknown Car"}

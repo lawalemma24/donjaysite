@@ -7,6 +7,7 @@ import Loader from "@/components/preloader";
 import ProtectedRoute from "@/app/protectedroutes/protected";
 import { useRouter } from "next/navigation";
 import RelatedCars from "@/components/relatedcars";
+import toast from "react-hot-toast";
 
 export default function SwapPage() {
   const router = useRouter();
@@ -48,7 +49,7 @@ export default function SwapPage() {
 
         setCreatedDeals(swapPairs);
       } catch (err) {
-        console.log("Error fetching cars or deals:", err);
+        toast.error("Error fetching cars or deals:");
       } finally {
         setLoading(false);
       }
@@ -66,7 +67,7 @@ export default function SwapPage() {
 
   const createDeal = async (carToSwapWith) => {
     if (!user || !selectedCar) {
-      alert("User or selected car not loaded");
+      toast.error("User or selected car not loaded");
       return;
     }
 
@@ -74,13 +75,15 @@ export default function SwapPage() {
     const email = user.email || "";
 
     if (!phone || !email) {
-      alert("Please make sure your profile has phone and email filled in.");
+      toast.error(
+        "Please make sure your profile has phone and email filled in."
+      );
       return;
     }
 
     // ❌ Stop duplicate swaps
     if (hasExistingSwap(carToSwapWith._id)) {
-      alert("You have already created a swap request with this car.");
+      toast.error("You have already created a swap request with this car.");
       return;
     }
 
@@ -111,13 +114,10 @@ export default function SwapPage() {
         { primary: selectedCar._id, secondary: carToSwapWith._id },
       ]);
 
-      alert("Swap deal created successfully!");
+      toast.success("Swap deal created successfully!");
     } catch (err) {
       console.log("Error creating swap deal:", err.response?.data || err);
-      alert(
-        err.response?.data?.message ||
-          "Failed to create swap deal. Check console."
-      );
+      toast.error("Failed to create swap deal.");
     } finally {
       setCreating("");
     }

@@ -4,9 +4,10 @@ import BookSuccessModal from "@/components/bookconfirmed";
 import ConfirmBookOverlay from "@/components/confirmbooking";
 import Loader from "@/components/preloader";
 import React, { useState } from "react";
+import toast from "react-hot-toast";
 
 // Make this route dynamic to prevent prerendering
-export const dynamic = 'force-dynamic';
+export const dynamic = "force-dynamic";
 
 export default function InspectionOfferReview({
   car,
@@ -24,23 +25,17 @@ export default function InspectionOfferReview({
 
   // Handle build-time rendering when props are undefined
   if (!car) {
-    return (
-      <div className="min-h-screen bg-white flex items-center justify-center">
-        <div className="text-center">
-          <p className="text-gray-500">Loading...</p>
-        </div>
-      </div>
-    );
+    return <Loader write="Loading cars" />;
   }
 
   const handleSubmit = async () => {
     if (!time || !time.startTime) {
-      alert("Missing time slot. Please select again.");
+      toast.error("Missing time slot. Please select again.");
       return;
     }
 
     if (!car || (!car._id && !car.id)) {
-      alert("Missing car information. Please go back and select a car.");
+      toast.error("Missing car information. Please go back and select a car.");
       return;
     }
 
@@ -57,8 +52,6 @@ export default function InspectionOfferReview({
         customerNotes: note || "",
       };
 
-      console.log("📦 Payload being sent:", payload);
-
       const res = await fetch(
         "https://donjay-server.vercel.app/api/inspections/book",
         {
@@ -73,14 +66,11 @@ export default function InspectionOfferReview({
 
       const data = await res.json().catch(() => ({}));
 
-      console.log("🔁 Response status:", res.status);
-      console.log("🧾 Response body:", data);
-
       if (!res.ok) throw new Error(data.error || `Failed: ${res.statusText}`);
 
       setSuccessOpen(true);
     } catch (err) {
-      console.error("Booking error:", err);
+      toast.error("Booking error");
       alert(err.message);
     } finally {
       setLoading(false);
@@ -111,11 +101,15 @@ export default function InspectionOfferReview({
           </p>
           <p>
             Condition:{" "}
-            <span className="float-right text-black">{car?.condition || "N/A"}</span>
+            <span className="float-right text-black">
+              {car?.condition || "N/A"}
+            </span>
           </p>
           <p>
             Transmission:{" "}
-            <span className="float-right text-black">{car?.transmission || "N/A"}</span>
+            <span className="float-right text-black">
+              {car?.transmission || "N/A"}
+            </span>
           </p>
           <p>
             Preferred Date:{" "}

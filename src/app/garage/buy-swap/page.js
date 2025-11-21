@@ -322,7 +322,7 @@ export default function CarMarketplace() {
           </div>
 
           {loading ? (
-            <Loader write="loading cars..." />
+            <Loader write="Opening Showroom..." />
           ) : cars.length === 0 ? (
             <p className="text-center py-12 text-gray-500">
               No cars found matching your criteria.

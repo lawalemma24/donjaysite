@@ -10,7 +10,7 @@ export function AuthProvider({ children }) {
     const storedUser = localStorage.getItem("user");
     if (storedUser) {
       const parsed = JSON.parse(storedUser);
-      console.log("RESTORED USER FROM STORAGE:", parsed);
+
       setUser(parsed);
     }
   }, []);
@@ -30,8 +30,6 @@ export function AuthProvider({ children }) {
     localStorage.setItem("token", data.token);
     localStorage.setItem("user", JSON.stringify(normalizedUser));
     setUser(normalizedUser);
-
-    console.log("SAVED USER TO STORAGE:", normalizedUser);
   };
 
   const logout = () => {

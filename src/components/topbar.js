@@ -55,6 +55,7 @@ export default function TopBar() {
             width={90}
             height={35}
             priority
+            className="object-contain h-auto w-auto"
           />
         </Link>
 

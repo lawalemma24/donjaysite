@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { uploadToCloudinary } from "@/utils/uploadToCloudinary";
+import toast from "react-hot-toast";
 
 const SellPage = () => {
   const [form, setForm] = useState({
@@ -66,12 +67,12 @@ const SellPage = () => {
 
     const missing = required.filter((key) => !form[key]?.trim());
     if (missing.length > 0) {
-      alert("Please fill all required fields: " + missing.join(", "));
+      toast.error("Please fill all required fields: " + missing.join(", "));
       return;
     }
 
     if (!images.length) {
-      alert("Please upload at least one image.");
+      toast.error("Please upload at least one image.");
       return;
     }
 
@@ -102,12 +103,11 @@ const SellPage = () => {
       };
 
       sessionStorage.setItem("carToReview", JSON.stringify(carToReview));
-      console.log("Car object sent to backend:", carToReview);
 
       router.push("/garage/reviewswap");
     } catch (err) {
       console.error("Error uploading images:", err);
-      alert("Failed to upload images.");
+      toast.error("Failed to upload images.");
     } finally {
       setLoading(false);
     }

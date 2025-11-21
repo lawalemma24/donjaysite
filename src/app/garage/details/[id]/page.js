@@ -5,8 +5,7 @@ import Image from "next/image";
 import { Eye } from "lucide-react";
 import RelatedCars from "@/components/relatedcars";
 import api from "@/utils/api";
-import ConfirmBookOverlay from "@/components/confirmbooking";
-import BookSuccessModal from "@/components/bookconfirmed";
+
 import NotRegisteredOverlay from "@/components/notuser";
 import { useAuth } from "@/app/contexts/AuthContext";
 import Loader from "@/components/preloader";

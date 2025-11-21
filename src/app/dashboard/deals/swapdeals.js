@@ -91,7 +91,7 @@ export default function SwapDealsTable() {
                         alt={deal.primaryCar?.carName || "Car image"}
                         width={50}
                         height={50}
-                        className="rounded-md w-[50px] h-auto"
+                        className="rounded-md w-[50px] h-auto w-auto"
                       />
                       <span className="truncate">
                         {deal.primaryCar?.carName || "Unknown Car"}

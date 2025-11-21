@@ -4,6 +4,7 @@ import Image from "next/image";
 import api from "@/utils/api";
 import BookingDetailsModal from "../bookingdetails";
 import ProtectedRoute from "@/app/protectedroutes/protected";
+import toast from "react-hot-toast";
 
 const statusColors = {
   confirmed: "text-green-600 bg-green-100",
@@ -32,11 +33,11 @@ export default function MyInspectionsTable() {
           params: { page, limit: 10 },
         }
       );
-      console.log("Fetched inspections:", res.data);
+
       setInspections(res.data?.inspections || []);
       setPagination(res.data?.pagination || { currentPage: 1, totalPages: 1 });
     } catch (err) {
-      console.error("Failed to fetch inspections:", err);
+      toast.error("Failed to fetch inspections");
       setInspections([]);
     } finally {
       setLoading(false);

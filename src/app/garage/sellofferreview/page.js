@@ -8,6 +8,8 @@ import { FaChevronLeft, FaChevronRight } from "react-icons/fa";
 import api from "@/utils/api";
 import dealsApi from "@/utils/dealsapi";
 import axios from "axios";
+import toast from "react-hot-toast";
+import Loader from "@/components/preloader";
 
 export default function SellOfferReview() {
   const [car, setCar] = useState(null);
@@ -55,7 +57,7 @@ export default function SellOfferReview() {
     });
 
     if (missing.length) {
-      alert("Missing required fields: " + missing.join(", "));
+      toast.error("Missing required fields: " + missing.join(", "));
       throw new Error("Missing fields");
     }
 
@@ -74,24 +76,19 @@ export default function SellOfferReview() {
     try {
       // 1️ create car and get ID
       const carId = await createCar();
-      console.log("Car created with ID:", carId);
 
       // show success modal immediately
       setSuccessOpen(true);
       sessionStorage.removeItem("carToReview");
     } catch (err) {
       console.error("Error creating car:", err.response || err);
-      alert(
-        `Failed to submit car: ${
-          err.response?.data?.message || err.message || "Unknown error"
-        }`
-      );
+      toast.error("Failed to submit car");
     } finally {
       setLoading(false);
     }
   };
 
-  if (!car) return <p>Loading...</p>;
+  if (!car) return <Loader write="Loading Sell Info.." />;
 
   return (
     <div className="min-h-screen bg-white px-4 py-16">
