@@ -2,6 +2,7 @@
 import React, { useState } from "react";
 import { useRouter } from "next/navigation";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
+import { apiUrl } from "@/utils/apihelper";
 
 export default function ChangePassword() {
   const router = useRouter();
@@ -38,20 +39,17 @@ export default function ChangePassword() {
         return;
       }
 
-      const res = await fetch(
-        "https://donjay-server.vercel.app/api/auth/changePass",
-        {
-          method: "PUT",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`,
-          },
-          body: JSON.stringify({
-            oldPassword: form.oldPassword,
-            newPassword: form.newPassword,
-          }),
-        }
-      );
+      const res = await fetch(apiUrl("/auth/changePass"), {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({
+          oldPassword: form.oldPassword,
+          newPassword: form.newPassword,
+        }),
+      });
 
       const data = await res.json();
 

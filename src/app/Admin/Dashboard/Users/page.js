@@ -22,8 +22,9 @@ import SuspendUserSuccess from "../components/suspendsuccess";
 import DeleteUserSuccess from "../components/deletesuccess";
 import { Eye, Ban, Trash2 } from "lucide-react";
 import ProtectedRoute from "@/app/protectedroutes/protected";
+import { apiUrl } from "@/utils/apihelper";
 
-const BASE = "https://donjay-server.vercel.app/api/users";
+const BASE = apiUrl("/api/users");
 
 export default function UserManagementPage() {
   // get token from localStorage
@@ -375,7 +376,7 @@ export default function UserManagementPage() {
                   <td className="py-4 flex items-center gap-3">
                     <img
                       src={user.avatar}
-                      alt={user.name}
+                      alt=""
                       className="w-10 h-10 rounded-full border border-text-muted/70 object-cover"
                     />
                     {user.name}

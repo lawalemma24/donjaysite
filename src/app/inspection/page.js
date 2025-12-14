@@ -5,6 +5,7 @@ import InspectionOfferReview from "./summary/page";
 import api from "@/utils/api";
 import NotRegisteredOverlay from "@/components/notuser";
 import Loader from "@/components/preloader";
+import { apiUrl } from "@/utils/apihelper";
 
 function InspectionPageContent() {
   const params = useSearchParams();
@@ -96,7 +97,7 @@ function InspectionPageContent() {
     (async () => {
       try {
         const res = await fetch(
-          `https://donjay-server.vercel.app/api/inspections/available-slots?date=${date}`,
+          apiUrl(`/inspections/available-slots?date=${date}`),
           {
             headers: {
               "Content-Type": "application/json",
@@ -394,7 +395,13 @@ function InspectionPageContent() {
 
 export default function InspectionPage() {
   return (
-    <Suspense fallback={<div className="min-h-screen bg-white flex items-center justify-center">Loading...</div>}>
+    <Suspense
+      fallback={
+        <div className="min-h-screen bg-white flex items-center justify-center">
+          Loading...
+        </div>
+      }
+    >
       <InspectionPageContent />
     </Suspense>
   );

@@ -15,13 +15,13 @@ import {
 } from "lucide-react";
 import AddCarForm from "../components/addcar";
 import SellDealDetails from "./selldealdetails";
+import dealsApi from "@/utils/dealsapi";
 
 export default function Buydeals() {
   const [deals, setDeals] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
-  const [showFilter, setShowFilter] = useState(false);
   const [showAddDeal, setShowAddDeal] = useState(false);
   const [actionMenuOpenFor, setActionMenuOpenFor] = useState(null);
   const [selectedForView, setSelectedForView] = useState(null);
@@ -33,26 +33,21 @@ export default function Buydeals() {
   const [statusFilter, setStatusFilter] = useState("");
   const pageSize = 7;
 
-  // Fetch deals from API
+  // Fetch deals using Axios
   async function fetchDeals() {
     setLoading(true);
     setError(null);
-
     try {
-      const token = localStorage.getItem("token");
-      let url = `https://donjay-server.vercel.app/api/deals/admin/all?dealType=buy&page=${page}&limit=${pageSize}`;
-      if (searchQuery) url += `&search=${encodeURIComponent(searchQuery)}`;
-      if (statusFilter) url += `&status=${encodeURIComponent(statusFilter)}`;
+      const params = {
+        dealType: "buy",
+        page,
+        limit: pageSize,
+      };
+      if (searchQuery) params.search = searchQuery;
+      if (statusFilter) params.status = statusFilter;
 
-      const res = await fetch(url, {
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: token ? `Bearer ${token}` : "",
-        },
-      });
-
-      const data = await res.json();
-      console.log("API Response:", data);
+      const res = await dealsApi.get("/admin/all", { params });
+      const data = res.data;
 
       if (Array.isArray(data.deals)) {
         setDeals(data.deals);
@@ -69,14 +64,13 @@ export default function Buydeals() {
         setTotalEntries(0);
       }
     } catch (err) {
-      console.error(" Error fetching deals:", err);
+      console.error("Error fetching deals:", err);
       setError("Failed to load deals. Check console for details.");
     } finally {
       setLoading(false);
     }
   }
 
-  // Refresh whenever page, search, or filter changes
   useEffect(() => {
     fetchDeals();
   }, [page, searchQuery, statusFilter]);
@@ -102,58 +96,28 @@ export default function Buydeals() {
     }
   }
 
-  // Unified action handler
+  // Handle actions using Axios
   async function handleAction(dealId, actionType) {
     try {
-      const token = localStorage.getItem("token");
       const body = {};
       if (actionType === "reject") body.rejectionReason = "Admin rejected";
       if (actionType === "complete") body.adminNote = "Completed";
 
-      const res = await fetch(
-        `https://donjay-server.vercel.app/api/deals/admin/${dealId}/${actionType}`,
-        {
-          method: "PUT",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: token ? `Bearer ${token}` : "",
-          },
-          body: Object.keys(body).length ? JSON.stringify(body) : null,
-        }
-      );
-
-      const result = await res.json();
-      if (result.message) {
-        // Refresh deals after action
-        fetchDeals();
-      }
+      const res = await dealsApi.put(`/admin/${dealId}/${actionType}`, body);
+      if (res.data?.message) fetchDeals();
     } catch (err) {
-      console.error(` Error performing ${actionType}:`, err);
+      console.error(`Error performing ${actionType}:`, err);
     }
   }
 
   async function handleDelete(dealId) {
     try {
-      const token = localStorage.getItem("token");
-      const res = await fetch(
-        `https://donjay-server.vercel.app/api/deals/${dealId}`,
-        {
-          method: "DELETE",
-          headers: {
-            Authorization: token ? `Bearer ${token}` : "",
-          },
-        }
-      );
-
-      const result = await res.json();
-      if (result.message) {
-        fetchDeals();
-      }
+      const res = await dealsApi.delete(`/${dealId}`);
+      if (res.data?.message) fetchDeals();
     } catch (err) {
-      console.error(" Error deleting deal:", err);
+      console.error("Error deleting deal:", err);
     }
   }
-
   return (
     <div className="p-2 sm:p-6">
       {/* Toolbar */}
@@ -229,7 +193,7 @@ export default function Buydeals() {
                       src={
                         deal.customer?.profilePic || "/images/default-car.png"
                       }
-                      alt={deal.customer?.name || "-"}
+                      alt=""
                       className="w-10 h-10 rounded-full border border-text-muted/70 object-cover"
                     />
                     {deal.customer?.name || "-"}

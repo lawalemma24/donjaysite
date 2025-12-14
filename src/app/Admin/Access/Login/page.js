@@ -5,6 +5,7 @@ import { FcGoogle } from "react-icons/fc";
 import { FaApple, FaEye, FaEyeSlash } from "react-icons/fa";
 import toast from "react-hot-toast";
 import { useAuth } from "@/app/contexts/AuthContext";
+import { apiUrl } from "@/utils/apihelper";
 
 export default function AdminLogin() {
   const [showPassword, setShowPassword] = useState(false);
@@ -16,57 +17,63 @@ export default function AdminLogin() {
 
     const email = e.target.email.value.trim();
     const password = e.target.password.value.trim();
-    const secondPassword = e.target.secondPassword.value.trim();
 
-    if (!email || !password || !secondPassword) {
+    if (!email || !password) {
       toast.error("Please fill in all fields");
       return;
     }
 
+    setLoading(true);
+
+    const url = apiUrl("/auth/login");
+
     try {
-      const res = await fetch(
-        "https://donjay-server.vercel.app/api/auth/login",
-        {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ email, password }),
-        }
-      );
+      const res = await fetch(url, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email, password }),
+      });
 
       if (!res.ok) {
+        const text = await res.text();
         toast.error(
           res.status === 400
             ? "Invalid email or password"
             : "Something went wrong"
         );
+        setLoading(false);
         return;
       }
 
       const data = await res.json();
-      console.log("ADMIN LOGIN RESPONSE:", data);
 
-      if (data.role !== "admin") {
-        toast.error("Customers cannot log in here.");
+      if (!data) {
+        setLoading(false);
+        return;
+      }
+
+      // Check role
+      if (data.role === "admin") {
+        toast.error("Admins must log in through the admin Login Page.");
         setTimeout(() => {
-          window.location.href = "/auth/login";
+          window.location.href = "/Admin/Access/Login";
         }, 1500);
+        setLoading(false);
         return;
       }
 
-      // Hardcoded second password check
-      const HARD_CODED_SECOND_PASSWORD = "Admin@Access234";
+      toast.success("Login successful");
 
-      if (secondPassword !== HARD_CODED_SECOND_PASSWORD) {
-        toast.error("Incorrect second password");
-        return;
-      }
-
-      toast.success("Admin login successful!");
+      // Use context login to store user in state and localStorage
       login(data);
+
+      // Redirect to homepage
       window.location.href = "/";
     } catch (error) {
-      console.error("Server error:", error);
+      console.error("Server/fetch error:", error);
       toast.error("Server error");
+    } finally {
+      setLoading(false);
     }
   };
 

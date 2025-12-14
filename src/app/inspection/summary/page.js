@@ -3,6 +3,7 @@
 import BookSuccessModal from "@/components/bookconfirmed";
 import ConfirmBookOverlay from "@/components/confirmbooking";
 import Loader from "@/components/preloader";
+import { apiUrl } from "@/utils/apihelper";
 import React, { useState } from "react";
 import toast from "react-hot-toast";
 
@@ -52,17 +53,14 @@ export default function InspectionOfferReview({
         customerNotes: note || "",
       };
 
-      const res = await fetch(
-        "https://donjay-server.vercel.app/api/inspections/book",
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`,
-          },
-          body: JSON.stringify(payload),
-        }
-      );
+      const res = await fetch(apiUrl("/inspections/book"), {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify(payload),
+      });
 
       const data = await res.json().catch(() => ({}));
 

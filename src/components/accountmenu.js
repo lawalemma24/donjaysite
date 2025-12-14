@@ -40,13 +40,13 @@ const AccountMenu = () => {
         className="flex items-center gap-2 px-3 py-2 hover:bg-gray-50"
       >
         <Image
-          src={user?.profilePic || "/images/default-profile.png"}
-          alt="profile"
+          src={"https://avatars.dicebear.com/api/avataaars/JohnDoe.svg"}
+          alt="p"
           width={32}
           height={32}
           className="rounded-full"
         />
-        <span className="font-medium hidden lg:block">{user.name}</span>
+        <span className="font-medium hidden lg:block">Account</span>
         <svg
           className={`w-4 h-4 transform transition-transform ${
             open ? "rotate-180" : ""

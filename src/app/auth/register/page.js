@@ -4,6 +4,7 @@ import { useRouter } from "next/navigation";
 import { FcGoogle } from "react-icons/fc";
 import { FaApple, FaEye, FaEyeSlash } from "react-icons/fa";
 import toast from "react-hot-toast";
+import { apiUrl } from "@/utils/apihelper";
 
 export default function Register() {
   const router = useRouter();
@@ -81,19 +82,15 @@ export default function Register() {
       phoneNumber: form.phone,
       address: form.address,
     };
-    console.log("Sending signup payload:", payload);
 
     try {
-      const response = await fetch(
-        "https://donjay-server.vercel.app/api/auth/signup",
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify(payload),
-        }
-      );
+      const response = await fetch(apiUrl("/auth/signup"), {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(payload),
+      });
 
       const data = await response.json().catch(() => null);
 

@@ -3,9 +3,40 @@ import React, { useState } from "react";
 import { useRouter, usePathname } from "next/navigation";
 import { useAuth } from "@/app/contexts/AuthContext";
 import NotRegisteredOverlay from "./notuser";
+import {
+  FaFacebookF,
+  FaInstagram,
+  FaTwitter,
+  FaLinkedinIn,
+  FaWhatsapp,
+} from "react-icons/fa";
 
 const socialIcons = [
-  // ... (same as before)
+  {
+    name: "Facebook",
+    path: "https://www.facebook.com/donjayautos",
+    svg: <FaFacebookF size={18} />,
+  },
+  {
+    name: "Instagram",
+    path: "https://www.instagram.com/donjayautos",
+    svg: <FaInstagram size={18} />,
+  },
+  {
+    name: "Twitter",
+    path: "https://twitter.com/donjayautos",
+    svg: <FaTwitter size={18} />,
+  },
+  {
+    name: "LinkedIn",
+    path: "https://www.linkedin.com/company/donjayautos",
+    svg: <FaLinkedinIn size={18} />,
+  },
+  {
+    name: "WhatsApp",
+    path: "https://wa.me/2348012345678",
+    svg: <FaWhatsapp size={18} />,
+  },
 ];
 
 const links = [
