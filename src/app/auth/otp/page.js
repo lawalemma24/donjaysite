@@ -7,6 +7,8 @@ import { useAuth } from "@/app/contexts/AuthContext";
 export default function Otp() {
   const [code, setCode] = useState(["", "", "", "", "", ""]);
   const [loading, setLoading] = useState(false);
+  const [resendDisabled, setResendDisabled] = useState(true);
+  const [counter, setCounter] = useState(120); // 2 minutes countdown
   const inputs = useRef([]);
   const router = useRouter();
   const { login } = useAuth();
@@ -18,6 +20,19 @@ export default function Otp() {
 
   useEffect(() => {
     inputs.current[0]?.focus();
+    // Start countdown on mount
+    const interval = setInterval(() => {
+      setCounter((prev) => {
+        if (prev <= 1) {
+          clearInterval(interval);
+          setResendDisabled(false);
+          return 0;
+        }
+        return prev - 1;
+      });
+    }, 1000);
+
+    return () => clearInterval(interval);
   }, []);
 
   const handleChange = (value, index) => {
@@ -25,7 +40,15 @@ export default function Otp() {
       const newCode = [...code];
       newCode[index] = value;
       setCode(newCode);
-      if (value && index < 5) inputs.current[index + 1].focus();
+
+      if (value && index < 5) {
+        inputs.current[index + 1].focus();
+      }
+
+      // Auto-submit if all boxes are
+      if (newCode.every((digit) => digit !== "")) {
+        handleVerify();
+      }
     }
   };
 
@@ -36,7 +59,7 @@ export default function Otp() {
   };
 
   const handleVerify = async (e) => {
-    e.preventDefault();
+    if (e) e.preventDefault();
     const otp = code.join("").trim();
 
     if (otp.length !== 6) {
@@ -53,8 +76,6 @@ export default function Otp() {
 
     try {
       const payload = { email, otp };
-      console.log("VERIFY OTP PAYLOAD:", payload);
-
       const res = await fetch(
         "https://donjay-server.vercel.app/api/auth/verify-otp",
         {
@@ -65,14 +86,12 @@ export default function Otp() {
       );
 
       const data = await res.json();
-      console.log("VERIFY OTP RESPONSE:", data);
 
       if (!res.ok) {
         toast.error(data.message || "OTP verification failed");
         return;
       }
 
-      // Backend returns token + user
       if (data.token && data.user) {
         login({ token: data.token, ...data.user });
         toast.success(data.message || "OTP verified");
@@ -81,7 +100,6 @@ export default function Otp() {
         return;
       }
 
-      // Backend returns only message
       if (data.message) {
         toast.success(data.message);
         localStorage.removeItem("signupEmail");
@@ -100,11 +118,11 @@ export default function Otp() {
 
   const handleResend = async () => {
     if (!email) return toast.error("Email not found");
+    setResendDisabled(true);
+    setCounter(120); // Reset countdown
 
     try {
       const payload = { email };
-      console.log("RESEND OTP PAYLOAD:", payload);
-
       const res = await fetch(
         "https://donjay-server.vercel.app/api/auth/resend-otp",
         {
@@ -115,7 +133,6 @@ export default function Otp() {
       );
 
       const data = await res.json();
-      console.log("RESEND OTP RESPONSE:", data);
 
       if (res.ok) {
         toast.success(data.message || "New OTP sent");
@@ -126,6 +143,18 @@ export default function Otp() {
       console.error("Resend OTP error:", error);
       toast.error("Network error, try again");
     }
+
+    // Start countdown again
+    const interval = setInterval(() => {
+      setCounter((prev) => {
+        if (prev <= 1) {
+          clearInterval(interval);
+          setResendDisabled(false);
+          return 0;
+        }
+        return prev - 1;
+      });
+    }, 1000);
   };
 
   return (
@@ -163,10 +192,19 @@ export default function Otp() {
             Didn&apos;t get a code?{" "}
             <button
               type="button"
-              className="text-blue-600 hover:underline"
+              disabled={resendDisabled}
+              className={`text-blue-600 hover:underline ${
+                resendDisabled ? "opacity-50 cursor-not-allowed" : ""
+              }`}
               onClick={handleResend}
             >
-              Click to resend
+              {resendDisabled
+                ? `Resend in ${Math.floor(counter / 60)
+                    .toString()
+                    .padStart(2, "0")}:${(counter % 60)
+                    .toString()
+                    .padStart(2, "0")}`
+                : "Click to resend"}
             </button>
           </p>
 

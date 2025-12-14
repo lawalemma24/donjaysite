@@ -35,10 +35,12 @@ export default function CarMarketplace() {
       try {
         const res = await api.get("/approved?page=1&limit=50");
         const data = res.data.cars || res.data.data || [];
-        setAllCars(data);
-        setFilteredCars(data);
+        const clean = data.filter((c) => !c.isSwap);
+
+        setAllCars(clean);
+        setFilteredCars(clean);
         setPage(1);
-        setCars(data.slice(0, PER_PAGE)); // ✅ show immediately
+        setCars(clean.slice(0, PER_PAGE));
       } catch (err) {
         console.error("Error fetching cars:", err);
       } finally {
@@ -320,7 +322,7 @@ export default function CarMarketplace() {
           </div>
 
           {loading ? (
-            <Loader write="loading cars..." />
+            <Loader write="Opening Showroom..." />
           ) : cars.length === 0 ? (
             <p className="text-center py-12 text-gray-500">
               No cars found matching your criteria.

@@ -37,3 +37,18 @@ body {
 *::-webkit-scrollbar {
   display: none;
 }
+/* ensure inputs have border and no ring */
+input,
+textarea,
+select {
+  outline: none;
+  box-shadow: none;
+}
+
+/* apply the focus border color */
+input:focus,
+textarea:focus,
+select:focus {
+  border-color: #3b82f6 !important;
+  box-shadow: none !important;
+}

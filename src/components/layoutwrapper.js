@@ -7,7 +7,9 @@ import Footer from "@/components/footer";
 export default function LayoutWrapper({ children }) {
   const pathname = usePathname() || "";
   const isPublicPage =
-    !pathname.includes("/auth") && !pathname.includes("/Admin");
+    !pathname.includes("/auth") &&
+    !pathname.includes("/Admin") &&
+    !pathname.includes("/unauthorized");
 
   if (isPublicPage) {
     return (

@@ -2,6 +2,7 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { useAuth } from "@/app/contexts/AuthContext";
+import toast from "react-hot-toast";
 
 export default function ProtectedRoute({ children, allowedRoles }) {
   const { user } = useAuth();
@@ -10,33 +11,28 @@ export default function ProtectedRoute({ children, allowedRoles }) {
 
   useEffect(() => {
     const checkAccess = () => {
-      console.log("🔍 Checking access...");
-
       // Try to restore from storage if not yet in context
       let currentUser = user;
       if (!currentUser) {
         const stored = localStorage.getItem("user");
         if (stored) {
           currentUser = JSON.parse(stored);
-          console.log("📦 Restored user from storage:", currentUser);
         } else {
-          console.log("⚠️ No user in context or storage");
+          toast.error("No access rights");
         }
       } else {
-        console.log("✅ User found in context:", currentUser);
       }
 
       // Not logged in
       if (!currentUser) {
-        console.log("🚫 Not logged in. Redirecting to login...");
+        toast.error("Not logged in. Please login");
         router.push("/auth/login");
         return;
       }
 
       // Role restriction
       if (allowedRoles && !allowedRoles.includes(currentUser.role)) {
-        console.log("❌ Unauthorized role:", currentUser.role);
-        console.log("Allowed roles:", allowedRoles);
+        toast.error(" Unauthorized role");
 
         // Clean up invalid session
         localStorage.removeItem("user");
@@ -46,14 +42,13 @@ export default function ProtectedRoute({ children, allowedRoles }) {
         return;
       }
 
-      console.log("✅ Access granted for role:", currentUser.role);
       setChecking(false);
     };
 
     checkAccess();
   }, [user, router, allowedRoles]);
 
-  if (checking) return null; // Wait until check finishes
+  if (checking) return null;
 
   return children;
 }

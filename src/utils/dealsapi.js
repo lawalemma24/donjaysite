@@ -1,15 +1,24 @@
 import axios from "axios";
 
+// Fallback URL in case the env variable is missing
+const BASE_URL =
+  process.env.NEXT_PUBLIC_API_BASE_URL || "https://donjay.vercel.app";
+
 const dealsApi = axios.create({
-  baseURL: "https://donjay-server.vercel.app/api/deals",
+  baseURL: `${BASE_URL}/api/deals`,
 });
 
-dealsApi.interceptors.request.use((config) => {
-  const token = localStorage.getItem("token");
-  if (token) {
-    config.headers.Authorization = `Bearer ${token}`;
-  }
-  return config;
-});
+dealsApi.interceptors.request.use(
+  (config) => {
+    if (typeof window !== "undefined") {
+      const token = localStorage.getItem("token");
+      if (token) {
+        config.headers.Authorization = `Bearer ${token}`;
+      }
+    }
+    return config;
+  },
+  (error) => Promise.reject(error)
+);
 
 export default dealsApi;

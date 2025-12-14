@@ -22,6 +22,13 @@ export default function TopBar() {
     setGarageOpen(false);
   };
 
+  const handleLogout = () => {
+    logout();
+
+    window.location.href = "/";
+    window.location.reload();
+  };
+
   const handleProtectedClick = (path) => {
     if (!user || user.role !== "customer") {
       setShowOverlay(true);
@@ -48,6 +55,7 @@ export default function TopBar() {
             width={90}
             height={35}
             priority
+            className="object-contain h-auto w-auto"
           />
         </Link>
 
@@ -123,7 +131,7 @@ export default function TopBar() {
                 className={`flex items-center gap-2 px-4 py-2 text-blue hover:bg-gray-100 ${linkClass(
                   "/garage/sell"
                 )}`}
-                onClick={() => handleProtectedClick("/garage/sell")}
+                onClick={() => handleProtectedClick("/garage/sell/createcar")}
               >
                 <Tags size={16} className="text-blue" /> Sell
               </button>
@@ -256,7 +264,7 @@ export default function TopBar() {
               </Link>
               <button
                 className={`block hover:text-blue ${linkClass("/garage/sell")}`}
-                onClick={() => handleProtectedClick("/garage/sell")}
+                onClick={() => handleProtectedClick("/garage/sell/createcar")}
               >
                 Sell
               </button>
@@ -298,7 +306,10 @@ export default function TopBar() {
 
           <div className="border-t border-lightgrey/40 pt-4">
             {user ? (
-              <button className="text-red-600 mb-2 font-bold flex flex-row gap-2">
+              <button
+                onClick={handleLogout}
+                className="text-red-600 mb-2 font-bold flex flex-row gap-2"
+              >
                 <LogOut size={18} /> Log Out
               </button>
             ) : (

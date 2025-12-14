@@ -16,7 +16,7 @@ export default function SellDealsTable() {
   const [deals, setDeals] = useState([]);
   const [loading, setLoading] = useState(true);
 
-  // ✅ Fetch user's deals from backend
+  //Fetching user's deals from backend
   useEffect(() => {
     const fetchDeals = async () => {
       try {
@@ -24,7 +24,7 @@ export default function SellDealsTable() {
         setDeals(response.data.deals || []);
       } catch (error) {
         console.error(
-          "❌ Error fetching deals:",
+          " Error fetching your sell deals:",
           error.response?.data || error
         );
       } finally {
@@ -35,7 +35,7 @@ export default function SellDealsTable() {
     fetchDeals();
   }, []);
 
-  // ✅ Filter deals by car name
+  // Filter deals by car name
   const filteredDeals = deals.filter((deal) =>
     deal?.primaryCar?.carName?.toLowerCase().includes(search.toLowerCase())
   );

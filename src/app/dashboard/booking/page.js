@@ -4,6 +4,8 @@ import Image from "next/image";
 import api from "@/utils/api";
 import BookingDetailsModal from "../bookingdetails";
 import ProtectedRoute from "@/app/protectedroutes/protected";
+import toast from "react-hot-toast";
+import { apiUrl } from "@/utils/apihelper";
 
 const statusColors = {
   confirmed: "text-green-600 bg-green-100",
@@ -26,17 +28,14 @@ export default function MyInspectionsTable() {
   const fetchInspections = async (page = 1) => {
     setLoading(true);
     try {
-      const res = await api.get(
-        "https://donjay-server.vercel.app/api/inspections/my-inspections",
-        {
-          params: { page, limit: 10 },
-        }
-      );
-      console.log("Fetched inspections:", res.data);
+      const res = await api.get(apiUrl("/inspections/my-inspections"), {
+        params: { page, limit: 10 },
+      });
+
       setInspections(res.data?.inspections || []);
       setPagination(res.data?.pagination || { currentPage: 1, totalPages: 1 });
     } catch (err) {
-      console.error("Failed to fetch inspections:", err);
+      toast.error("Failed to fetch inspections");
       setInspections([]);
     } finally {
       setLoading(false);

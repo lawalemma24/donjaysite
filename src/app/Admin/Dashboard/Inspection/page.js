@@ -17,6 +17,7 @@ import InspectionDetails from "../components/inspectiondetails";
 import api from "@/utils/api";
 import ProtectedRoute from "@/app/protectedroutes/protected";
 import axios from "axios";
+import { apiUrl } from "@/utils/apihelper";
 
 export default function InspectionPage() {
   const [inspections, setInspections] = useState([]);
@@ -46,10 +47,9 @@ export default function InspectionPage() {
   const fetchInspections = async (page = 1) => {
     setLoading(true);
     try {
-      const res = await api.get(
-        "https://donjay-server.vercel.app/api/inspections/admin/all",
-        { params: { page, limit: 7 } }
-      );
+      const res = await api.get(apiUrl("/inspections/admin/all"), {
+        params: { page, limit: 7 },
+      });
       const data = res.data?.inspections || [];
       setInspections(data);
       setFilteredInspections(data);
@@ -103,7 +103,7 @@ export default function InspectionPage() {
   const handleConfirmInspection = async (inspectionId) => {
     try {
       await axios.put(
-        `https://donjay-server.vercel.app/api/inspections/admin/${inspectionId}/confirm`,
+        apiUrl(`/inspections/admin/${inspectionId}/confirm`),
         {},
         { headers: { Authorization: `Bearer ${token}` } }
       );
@@ -117,7 +117,7 @@ export default function InspectionPage() {
   const handleMarkCompleted = async (inspectionId) => {
     try {
       await axios.put(
-        `https://donjay-server.vercel.app/api/inspections/admin/${inspectionId}/complete`,
+        apiUrl(`/inspections/admin/${inspectionId}/complete`),
         {
           inspectionReport: {
             overallCondition: "good",

@@ -8,6 +8,7 @@ import WhatWeDo from "@/components/whatwedo";
 import { useEffect } from "react";
 import { useSearchParams } from "next/navigation";
 import { Suspense } from "react";
+import Loader from "@/components/preloader";
 
 function HomeContent() {
   const params = useSearchParams();
@@ -49,7 +50,7 @@ function HomeContent() {
 
 export default function Home() {
   return (
-    <Suspense fallback={<div>Loading...</div>}>
+    <Suspense fallback={<Loader write="Starting" />}>
       <HomeContent />
     </Suspense>
   );

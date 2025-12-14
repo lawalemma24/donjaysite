@@ -15,7 +15,7 @@ const Trusted = () => {
             alt="Car key handover"
             width={400}
             height={300}
-            className="rounded-2xl object-cover"
+            className="rounded-2xl object-cover h-auto w-auto"
           />
         </div>
 
@@ -27,7 +27,7 @@ const Trusted = () => {
             alt="Background Shape"
             width={500}
             height={300}
-            className="object-cover rounded-3xl"
+            className="object-cover rounded-3xl h-auto w-auto"
           />
 
           {/* Text Content */}

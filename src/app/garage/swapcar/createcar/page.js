@@ -104,7 +104,7 @@ const SellPage = () => {
 
       sessionStorage.setItem("carToReview", JSON.stringify(carToReview));
 
-      router.push("/garage/sellofferreview");
+      router.push("/garage/reviewswap");
     } catch (err) {
       console.error("Error uploading images:", err);
       toast.error("Failed to upload images.");
@@ -116,18 +116,16 @@ const SellPage = () => {
   return (
     <div className="min-h-screen bg-white px-4 py-16">
       <div className="max-w-7xl mx-auto px-8 pt-4 mt-5 mb-5">
-        <nav className="text-sm text-gray-500">
-          Home / Garage / Car Details / Sell
-        </nav>
+        <nav className="text-sm text-gray-500">Create car for Swap</nav>
       </div>
 
       <div className="flex justify-center mb-16">
         <div className="w-full max-w-2xl bg-white rounded-2xl shadow-lg p-8">
           <h1 className="text-2xl font-semibold text-center text-black mb-2">
-            Sell Your Car
+            Add Car To Listing
           </h1>
           <p className="text-black/80 text-center text-sm mb-8">
-            Tell us about the car you want to sell
+            Tell us about the car you want to List
           </p>
 
           <form className="space-y-6" onSubmit={handleSubmit}>

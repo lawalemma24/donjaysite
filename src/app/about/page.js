@@ -66,21 +66,21 @@ export default function About() {
               alt="Car sales"
               width={350}
               height={400}
-              className="rounded-2xl"
+              className="rounded-2xl h-auto w-auto"
             />
             <Image
               src="/images/about-us-1.png"
               alt="Car guidance"
               width={400}
               height={600}
-              className="rounded-2xl"
+              className="rounded-2xl h-auto w-auto"
             />
             <Image
               src="/images/about-us-3.png"
               alt="Car inspection"
               width={350}
               height={400}
-              className="rounded-2xl "
+              className="rounded-2xl h-auto w-auto "
             />
           </div>
           <p className="text-black max-w-3xl mx-auto mt-16 mb-16">
@@ -106,7 +106,7 @@ export default function About() {
                 alt="Our Mission"
                 width={500}
                 height={650}
-                className="rounded-4xl shadow-md border-16 border-r-blue border-t-blue border-l-orange border-b-orange "
+                className="rounded-4xl shadow-md border-16 border-r-blue border-t-blue border-l-orange border-b-orange  h-auto w-auto "
               />
             </div>
 
@@ -166,7 +166,7 @@ export default function About() {
               alt="Luxury Car"
               width={500}
               height={350}
-              className="rounded-2xl shadow-md"
+              className="rounded-2xl h-auto w-auto shadow-md"
             />
 
             <div className="absolute -bottom-5 -left-4 bg-white rounded-xl shadow-lg p-2">
@@ -175,7 +175,7 @@ export default function About() {
                 alt="Car Keys"
                 width={200}
                 height={150}
-                className="rounded-lg"
+                className="rounded-lg  h-auto w-auto"
               />
             </div>
           </div>

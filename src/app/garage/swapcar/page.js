@@ -1,344 +1,362 @@
 "use client";
-
-import Link from "next/link";
-import React, { useState, useEffect, Suspense } from "react";
+import { useEffect, useState } from "react";
 import Image from "next/image";
-import { useRouter, useSearchParams } from "next/navigation";
-import { uploadToCloudinary } from "@/utils/uploadToCloudinary";
-
-function SwapPageContent() {
-  const params = useSearchParams();
-  const router = useRouter();
-  const carId = params.get("carId");
-
-  const [selectedCar, setSelectedCar] = useState(null);
-  const [images, setImages] = useState([]);
-  const [loading, setLoading] = useState(false);
-  const [car, setCar] = useState(null);
-
-  // Load selected car
-  useEffect(() => {
-    const savedCar = sessionStorage.getItem("selectedCar");
-    if (savedCar) setCar(JSON.parse(savedCar));
-  }, []);
-
-  // Listen for changes in selectedSwapCar
-  useEffect(() => {
-    const saved =
-      sessionStorage.getItem("selectedCar") ||
-      sessionStorage.getItem("selectedSwapCar");
-    if (saved) {
-      try {
-        setSelectedCar(JSON.parse(saved));
-      } catch {
-        console.error("Invalid JSON in selectedCar");
-      }
-    }
-  }, []);
-
-  // Load saved images
-  useEffect(() => {
-    const savedImages = sessionStorage.getItem("swapImages");
-    if (savedImages) {
-      try {
-        setImages(JSON.parse(savedImages));
-      } catch {
-        console.error("Invalid JSON in swapImages");
-      }
-    }
-  }, []);
-
-  useEffect(() => {
-    sessionStorage.setItem("swapImages", JSON.stringify(images));
-  }, [images]);
-
-  const handleImageChange = (e) => {
-    const files = Array.from(e.target.files);
-    const imageUrls = files.map((file) => URL.createObjectURL(file));
-    setImages((prev) => [...prev, ...imageUrls]);
-  };
-
-  // Submit handler with Cloudinary upload
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    setLoading(true);
-
-    try {
-      const fileInputs = Array.from(document.getElementById("fileInput").files);
-
-      // Upload all files to Cloudinary
-      const uploadedUrls = await Promise.all(
-        fileInputs.map((file) => uploadToCloudinary(file))
-      );
-
-      // Collect form data
-      const userCar = {
-        make: document.getElementById("make").value,
-        year: document.getElementById("year").value,
-        condition: document.getElementById("condition").value,
-        transmission: document.getElementById("transmission").value,
-        value: document.getElementById("value").value,
-        fuel: document.getElementById("fuel").value,
-        note: document.getElementById("note").value,
-        images: uploadedUrls,
-      };
-
-      sessionStorage.setItem("userCar", JSON.stringify(userCar));
-
-      router.push("/garage/reviewswap");
-    } catch (err) {
-      console.error("Swap submission failed:", err);
-      alert("Image upload failed. Try again.");
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  return (
-    <div className="min-h-screen bg-white px-4 py-16">
-      <div className="max-w-7xl mx-auto px-8 pt-4 mt-5 mb-5">
-        <nav className="text-sm text-gray-500">
-          Home <span className="mx-1">/</span> Garage{" "}
-          <span className="mx-1">/</span>
-          <span className="text-gray-500 font-medium">Buy or Swap</span>
-          <span className="mx-1">/</span>
-          <span className="text-gray-500 font-medium">Car Details</span>
-          <span className="mx-1">/</span>
-          <span className="text-blue font-medium">Swap</span>
-        </nav>
-      </div>
-
-      <div className="flex justify-center mb-16">
-        <div className="w-full max-w-2xl bg-white rounded-2xl shadow-lg p-8">
-          <div className="flex flex-col items-center text-center mb-6">
-            {selectedCar ? (
-              <>
-                {selectedCar.images?.length > 0 && (
-                  <div className="relative w-40 h-28 mb-3">
-                    <Image
-                      src={selectedCar.images[0]}
-                      alt={selectedCar?.carName || "Selected car"}
-                      fill
-                      className="object-cover rounded-lg border border-gray-300"
-                    />
-                  </div>
-                )}
-                <h1 className="text-2xl font-semibold text-black mb-1">
-                  Swap for {selectedCar?.carName}
-                </h1>
-                <p className="text-sm text-gray-500">
-                  ₦{selectedCar?.price?.toLocaleString() || "N/A"}
-                </p>
-              </>
-            ) : (
-              <p className="text-gray-500">No car selected</p>
-            )}
-          </div>
-
-          <p className="text-black/80 text-center text-sm mb-8">
-            Tell us about the car you want to trade in
-          </p>
-
-          <form className="space-y-6" onSubmit={handleSubmit}>
-            {/* Make & Year */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <div>
-                <label
-                  htmlFor="make"
-                  className="block text-sm font-medium text-gray-700"
-                >
-                  Make/Name of car
-                </label>
-                <select
-                  id="make"
-                  className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue sm:text-sm h-10 px-3 border"
-                >
-                  <option>Toyota Camry</option>
-                  <option>Honda Accord</option>
-                  <option>Nissan Altima</option>
-                </select>
-              </div>
-
-              <div>
-                <label
-                  htmlFor="year"
-                  className="block text-sm font-medium text-gray-700"
-                >
-                  Year
-                </label>
-                <select
-                  id="year"
-                  className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue sm:text-sm h-10 px-3 border"
-                >
-                  {Array.from({ length: 10 }).map((_, i) => {
-                    const year = 2025 - i;
-                    return <option key={year}>{year}</option>;
-                  })}
-                </select>
-              </div>
-            </div>
-
-            {/* Condition & Transmission */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <div>
-                <label
-                  htmlFor="condition"
-                  className="block text-sm font-medium text-gray-700"
-                >
-                  Condition
-                </label>
-                <select
-                  id="condition"
-                  className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue sm:text-sm h-10 px-3 border"
-                >
-                  <option>Used</option>
-                  <option>New</option>
-                </select>
-              </div>
-
-              <div>
-                <label
-                  htmlFor="transmission"
-                  className="block text-sm font-medium text-gray-700"
-                >
-                  Transmission
-                </label>
-                <select
-                  id="transmission"
-                  className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue sm:text-sm h-10 px-3 border"
-                >
-                  <option>Automatic</option>
-                  <option>Manual</option>
-                </select>
-              </div>
-            </div>
-
-            {/* Value & Fuel */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <div>
-                <label
-                  htmlFor="value"
-                  className="block text-sm font-medium text-gray-700"
-                >
-                  Estimated Value
-                </label>
-                <input
-                  type="text"
-                  id="value"
-                  placeholder="Final decision after inspection"
-                  className="mt-1 block w-full rounded-md border-text-muted shadow-sm focus:border-blue sm:text-sm h-10 px-3 border placeholder:text-gray-400"
-                />
-              </div>
-
-              <div>
-                <label
-                  htmlFor="fuel"
-                  className="block text-sm font-medium text-gray-700"
-                >
-                  Fuel type
-                </label>
-                <select
-                  id="fuel"
-                  className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue sm:text-sm h-10 px-3 border"
-                >
-                  <option>Petrol</option>
-                  <option>Diesel</option>
-                  <option>Hybrid</option>
-                </select>
-              </div>
-            </div>
-
-            {/* Additional Note */}
-            <div>
-              <label
-                htmlFor="note"
-                className="block text-sm font-medium text-gray-700"
-              >
-                Additional Note
-              </label>
-              <textarea
-                id="note"
-                rows="3"
-                placeholder="Any specific note about damage, modifications, or service history?"
-                className="mt-1 block w-full rounded-md border-text-muted shadow-sm focus:border-blue sm:text-sm p-3 border resize-none"
-              ></textarea>
-            </div>
-
-            {/* Image Upload */}
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                Images
-              </label>
-              <div className="border border-dashed border-gray-300 rounded-lg p-6 text-center">
-                <input
-                  type="file"
-                  accept="image/*"
-                  multiple
-                  onChange={handleImageChange}
-                  className="hidden"
-                  id="fileInput"
-                />
-                <label
-                  htmlFor="fileInput"
-                  className="flex justify-center items-center cursor-pointer mb-2 text-blue font-medium"
-                >
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    className="h-6 w-6 mr-2"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    stroke="currentColor"
-                    strokeWidth={2}
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"
-                    />
-                  </svg>
-                  Upload Images
-                </label>
-                <p className="text-xs text-gray-500">
-                  Choose images or drag and drop them here
-                </p>
-                <p className="text-xs text-gray-500">
-                  JPG, JPEG, PNG, and HEIC files. Max size 10MB
-                </p>
-              </div>
-
-              {/* Image previews */}
-              <div className="flex flex-wrap mt-4 gap-4">
-                {images.map((img, idx) => (
-                  <img
-                    key={idx}
-                    src={img}
-                    alt={`Preview ${idx + 1}`}
-                    className="rounded-lg border border-gray-300 w-24 h-16 object-cover"
-                  />
-                ))}
-              </div>
-            </div>
-
-            <div className="pt-4">
-              <button
-                type="submit"
-                disabled={loading}
-                className="w-full bg-blue text-white font-medium py-3 rounded-xl shadow-lg hover:bg-blue-700 transition duration-300"
-              >
-                {loading ? "Uploading..." : "Continue"}
-              </button>
-            </div>
-          </form>
-        </div>
-      </div>
-    </div>
-  );
-}
+import api from "@/utils/api";
+import dealsApi from "@/utils/dealsapi";
+import Loader from "@/components/preloader";
+import ProtectedRoute from "@/app/protectedroutes/protected";
+import { useRouter } from "next/navigation";
+import RelatedCars from "@/components/relatedcars";
+import toast from "react-hot-toast";
 
 export default function SwapPage() {
+  const router = useRouter();
+  const [selectedCar, setSelectedCar] = useState(null);
+  const [cars, setCars] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [creating, setCreating] = useState("");
+  const [createdDeals, setCreatedDeals] = useState([]); // will hold swap pairs
+  const [user, setUser] = useState(null);
+
+  const [currentPage, setCurrentPage] = useState(1);
+  const carsPerPage = 7;
+
+  useEffect(() => {
+    const loggedUser = JSON.parse(localStorage.getItem("user"));
+    setUser(loggedUser);
+  }, []);
+
+  useEffect(() => {
+    const storedCar = sessionStorage.getItem("selectedCar");
+    if (storedCar) setSelectedCar(JSON.parse(storedCar));
+  }, []);
+
+  useEffect(() => {
+    const fetchCarsAndDeals = async () => {
+      try {
+        const res = await api.get("/user/my-cars");
+        const fetchedCars = res.data.cars || [];
+        setCars(fetchedCars);
+
+        // Fetch deals and convert to primary-secondary pair list
+        const dealsRes = await dealsApi.get("/my-deals?dealType=swap");
+        const swapDeals = dealsRes.data.deals || [];
+
+        const swapPairs = swapDeals.map((deal) => ({
+          primary: deal.primaryCar?._id,
+          secondary: deal.secondaryCar?._id,
+        }));
+
+        setCreatedDeals(swapPairs);
+      } catch (err) {
+        toast.error("Error fetching cars or deals:");
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchCarsAndDeals();
+  }, []);
+
+  // 🔥 Prevent duplicate swap requests
+  const hasExistingSwap = (carId) => {
+    return createdDeals.some(
+      (deal) => deal.primary === selectedCar?._id && deal.secondary === carId
+    );
+  };
+
+  const createDeal = async (carToSwapWith) => {
+    if (!user || !selectedCar) {
+      toast.error("User or selected car not loaded");
+      return;
+    }
+
+    const phone = user.phone || "";
+    const email = user.email || "";
+
+    if (!phone || !email) {
+      toast.error(
+        "Please make sure your profile has phone and email filled in."
+      );
+      return;
+    }
+
+    // ❌ Stop duplicate swaps
+    if (hasExistingSwap(carToSwapWith._id)) {
+      toast.error("You have already created a swap request with this car.");
+      return;
+    }
+
+    try {
+      setCreating(carToSwapWith._id);
+
+      const payload = {
+        dealType: "swap",
+        primaryCarId: selectedCar._id,
+        secondaryCarId: carToSwapWith._id,
+        offerPrice: selectedCar.price,
+        customerContact: {
+          phone,
+          email,
+          preferredContactMethod: "both",
+        },
+        customerNote: `Swapping ${selectedCar.carName} with ${carToSwapWith.carName}`,
+        additionalAmount: 0,
+        priority: "medium",
+        tags: [],
+      };
+
+      await dealsApi.post("/", payload);
+
+      // Update stored swap pairs
+      setCreatedDeals((prev) => [
+        ...prev,
+        { primary: selectedCar._id, secondary: carToSwapWith._id },
+      ]);
+
+      toast.success("Swap deal created successfully!");
+    } catch (err) {
+      console.log("Error creating swap deal:", err.response?.data || err);
+      toast.error("Failed to create swap deal.");
+    } finally {
+      setCreating("");
+    }
+  };
+
+  const getStatusBadge = (status) => {
+    switch (status) {
+      case "approved":
+        return "bg-green-100 text-green-700";
+      case "pending":
+        return "bg-yellow-100 text-yellow-700";
+      case "rejected":
+        return "bg-red-100 text-red-700";
+      default:
+        return "bg-gray-100 text-gray-600";
+    }
+  };
+
+  const totalPages = Math.ceil(cars.length / carsPerPage);
+  const indexOfLastCar = currentPage * carsPerPage;
+  const indexOfFirstCar = indexOfLastCar - carsPerPage;
+  const currentCars = cars.slice(indexOfFirstCar, indexOfLastCar);
+
+  const filteredCars = currentCars.filter(
+    (car) =>
+      (car.status === "approved" || car.status === "pending") &&
+      car._id !== selectedCar?._id
+  );
+
+  if (loading) return <Loader write="loading your cars..." />;
+
   return (
-    <Suspense fallback={<div className="min-h-screen bg-white flex items-center justify-center">Loading...</div>}>
-      <SwapPageContent />
-    </Suspense>
+    <ProtectedRoute allowedRoles={["customer"]}>
+      <div className="min-h-screen bg-white px-2 md:px-4 py-16">
+        <div className="flex justify-center px-2 md:px-4 pt-4 mt-4 md:mt-7 mb-16">
+          <div className="w-full max-w-4xl bg-white rounded-2xl">
+            <h1 className="text-2xl font-bold mb-2 text-gray-600">
+              My Cars for Swap
+            </h1>
+            <p className="text-gray-600 text-sm mb-10">
+              View all your cars, track their approval status, and create swap
+              deals.
+            </p>
+
+            <div className="mb-6 p-4 bg-red-50 border border-red-200 rounded-lg">
+              <p className="text-red-400 mb-2 text-xs">
+                1.For you to proceed with the swap, the car you select must be
+                approved. if your car is still pending approval, please wait
+                until it is approved
+              </p>
+              <p className="text-red-400 mb-2 text-xs">
+                2. If you do not have a car uploaded yet or want to add a
+                different car, please add a new car.The car will be reviewed and
+                approved before you can use it for swapping.
+              </p>
+            </div>
+
+            <div className="flex justify-end items-center mb-4">
+              <button
+                className="px-4 py-2 bg-blue-600 text-white rounded-lg mb-6"
+                onClick={() => router.push("/garage/swapcar/createcar")}
+              >
+                Add New Car
+              </button>
+            </div>
+
+            <p className="text-gray-800 text-lg mb-2">
+              Select a car from your garage to swap with:
+            </p>
+
+            {selectedCar && (
+              <div className="mb-6 p-4 bg-blue-50 rounded-lg border border-blue-200">
+                <h2 className="font-bold text-lg mb-2">Car to Swap</h2>
+                <div className="flex items-center gap-4">
+                  <Image
+                    src={
+                      selectedCar.images?.[0] || "/images/placeholder-car.jpg"
+                    }
+                    width={80}
+                    height={50}
+                    alt={selectedCar.carName}
+                    className="rounded"
+                  />
+                  <div>
+                    <p className="font-medium">{selectedCar.carName}</p>
+                    <p className="text-sm text-gray-500">
+                      ₦{selectedCar.price?.toLocaleString() || "N/A"}
+                    </p>
+                  </div>
+                </div>
+              </div>
+            )}
+
+            <div className="bg-white shadow rounded-xl py-4 px-2 mb-6">
+              <div className="overflow-x-auto">
+                <table className="w-full text-sm text-left border-collapse">
+                  <thead>
+                    <tr className="border-b border-lightgrey">
+                      <th className="px-4 py-2">Car</th>
+                      <th className="px-4 py-2">Price</th>
+                      <th className="px-4 py-2">Status</th>
+                      <th className="px-4 py-2">Listed</th>
+                      <th className="px-4 py-2">Action</th>
+                    </tr>
+                  </thead>
+
+                  <tbody>
+                    {filteredCars.length === 0 ? (
+                      <tr>
+                        <td colSpan="5" className="text-center py-10">
+                          <p className="text-gray-600 mb-3 text-sm">
+                            You have no cars available for swap.
+                          </p>
+                          <button
+                            className="px-4 py-2 bg-blue-600 text-white rounded-lg"
+                            onClick={() =>
+                              router.push("/garage/swapcar/createcar")
+                            }
+                          >
+                            Add a car
+                          </button>
+                        </td>
+                      </tr>
+                    ) : (
+                      filteredCars.map((car) => (
+                        <tr key={car._id} className="border-b border-lightgrey">
+                          <td className="flex items-center gap-2 px-4 py-4 min-w-[180px]">
+                            <Image
+                              src={
+                                car.images?.[0] || "/images/placeholder-car.jpg"
+                              }
+                              width={50}
+                              height={50}
+                              alt={car.carName || "Unknown Car"}
+                              className="rounded-md w-[50px]"
+                            />
+                            <span className="text-gray-600">
+                              {car.carName || "Unknown Car"}
+                            </span>
+                          </td>
+
+                          <td className="px-4 py-2 text-gray-500 text-xs">
+                            {car.price?.toLocaleString()}
+                          </td>
+
+                          <td className="px-4 py-2">
+                            <span
+                              className={`px-3 py-1 rounded-full text-sm ${getStatusBadge(
+                                car.status
+                              )}`}
+                            >
+                              {car.status}
+                            </span>
+                          </td>
+
+                          <td className="px-4 py-2 text-xs">
+                            {hasExistingSwap(car._id) ? (
+                              <span className="text-blue-600 font-medium">
+                                Already Swapped
+                              </span>
+                            ) : (
+                              <span className="text-gray-500">Not Listed</span>
+                            )}
+                          </td>
+
+                          <td className="px-4 py-2 min-w-[150px]">
+                            {car.status === "approved" ? (
+                              <button
+                                className={`px-3 py-2 rounded-lg text-white ${
+                                  hasExistingSwap(car._id)
+                                    ? "bg-gray-400 cursor-not-allowed"
+                                    : "bg-green-600"
+                                }`}
+                                onClick={() =>
+                                  !hasExistingSwap(car._id) && createDeal(car)
+                                }
+                                disabled={
+                                  creating === car._id ||
+                                  !user ||
+                                  hasExistingSwap(car._id)
+                                }
+                              >
+                                {hasExistingSwap(car._id)
+                                  ? "Already Swapped"
+                                  : creating === car._id
+                                  ? "Processing..."
+                                  : "Swap with this car"}
+                              </button>
+                            ) : (
+                              <button
+                                className="px-3 py-2 bg-gray-400 text-white rounded-lg cursor-not-allowed"
+                                disabled
+                              >
+                                {car.status === "pending"
+                                  ? "Pending Approval"
+                                  : "Rejected"}
+                              </button>
+                            )}
+                          </td>
+                        </tr>
+                      ))
+                    )}
+                  </tbody>
+                </table>
+              </div>
+
+              {cars.length > carsPerPage && (
+                <div className="flex justify-end items-center gap-2 mt-4">
+                  <button
+                    onClick={() =>
+                      setCurrentPage((prev) => Math.max(prev - 1, 1))
+                    }
+                    disabled={currentPage === 1}
+                    className="px-3 py-1 bg-gray-200 rounded disabled:opacity-50"
+                  >
+                    Prev
+                  </button>
+                  <span className="text-gray-600">
+                    Page {currentPage} of {totalPages}
+                  </span>
+                  <button
+                    onClick={() =>
+                      setCurrentPage((prev) => Math.min(prev + 1, totalPages))
+                    }
+                    disabled={currentPage === totalPages}
+                    className="px-3 py-1 bg-gray-200 rounded disabled:opacity-50"
+                  >
+                    Next
+                  </button>
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div className="px-2 md:px-4">
+        <RelatedCars />
+      </div>
+    </ProtectedRoute>
   );
 }
