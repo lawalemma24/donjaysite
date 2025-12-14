@@ -102,7 +102,6 @@ const Footer = () => {
     }
   };
 
-  // Smooth scroll logic
   const handleScrollLink = (e, sectionId) => {
     e.preventDefault();
     if (!sectionId) return;
@@ -160,7 +159,6 @@ const Footer = () => {
             </ul>
           </div>
 
-          {/* Logo and Socials */}
           <div className="lg:col-span-1 md:col-span-2">
             <div className="flex flex-col items-start lg:items-end">
               <img
