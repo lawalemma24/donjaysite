@@ -107,7 +107,7 @@ export default function Otp() {
       login({ token: data.token, ...data.user });
       toast.success(data.message || "OTP verified");
       localStorage.removeItem("signupEmail");
-      router.push("/dashboard/profile");
+      router.push("/auth/login");
     } catch (err) {
       toast.error("Something went wrong");
     } finally {
