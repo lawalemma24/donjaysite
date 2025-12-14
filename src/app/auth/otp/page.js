@@ -45,7 +45,7 @@ export default function Otp() {
         inputs.current[index + 1].focus();
       }
 
-      // Auto-submit if all boxes are filled
+      // Auto-submit if all boxes are
       if (newCode.every((digit) => digit !== "")) {
         handleVerify();
       }
