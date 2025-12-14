@@ -3,6 +3,7 @@ import { useState, useRef, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import toast from "react-hot-toast";
 import { useAuth } from "@/app/contexts/AuthContext";
+import { apiUrl } from "@/utils/apihelper";
 
 export default function Otp() {
   const [code, setCode] = useState(["", "", "", "", "", ""]);
@@ -76,14 +77,11 @@ export default function Otp() {
 
     try {
       const payload = { email, otp };
-      const res = await fetch(
-        "https://donjay-server.vercel.app/api/auth/verify-otp",
-        {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(payload),
-        }
-      );
+      const res = await fetch(apiUrl("/api/auth/verify-otp"), {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload),
+      });
 
       const data = await res.json();
 
@@ -123,14 +121,11 @@ export default function Otp() {
 
     try {
       const payload = { email };
-      const res = await fetch(
-        "https://donjay-server.vercel.app/api/auth/resend-otp",
-        {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(payload),
-        }
-      );
+      const res = await fetch(apiUrl("/api/auth/resend-otp"), {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload),
+      });
 
       const data = await res.json();
 
