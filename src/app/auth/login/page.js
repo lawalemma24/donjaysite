@@ -47,19 +47,15 @@ export default function Login() {
       const data = await res.json();
       console.log("LOGIN RESPONSE:", data);
 
-      // Check role
-      if (data.role === "admin") {
-        toast.error("Admins must log in through the admin Login Page.");
-        setTimeout(() => {
-          window.location.href = "/Admin/Access/Login";
-        }, 1500);
-        setLoading(false);
-        return;
-      }
-
       toast.success("Login successful");
       login(data);
-      window.location.href = "/";
+
+      // ✅ Role-based redirect (ONLY logic change)
+      if (data.role === "admin") {
+        window.location.href = "/Admin/Dashboard/Overview";
+      } else {
+        window.location.href = "/";
+      }
     } catch (error) {
       console.error("Server error:", error);
       toast.error("Server error");
@@ -81,10 +77,10 @@ export default function Login() {
 
         <div className="px-5 md:px-8 py-4">
           <h1 className="text-2xl md:text-3xl font-semibold text-center text-black mb-2">
-            Customer Log In
+            Sign In
           </h1>
           <p className="text-gray-500 text-center text-sm md:text-base mb-4 md:mb-6">
-            Please enter your details to log in
+            Please enter your details to Sign in
           </p>
 
           <form className="space-y-4 md:space-y-5" onSubmit={handleSubmit}>
@@ -159,7 +155,7 @@ export default function Login() {
 
             <div className="flex items-center">
               <div className="flex-grow border-t border-gray-300"></div>
-              <span className="mx-3 text-gray-500 text-sm">or</span>
+              <span className="mx-3 text-gray-500 text-sm">If You</span>
               <div className="flex-grow border-t border-gray-300"></div>
             </div>
           </form>
