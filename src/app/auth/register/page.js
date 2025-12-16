@@ -254,14 +254,14 @@ export default function Register() {
 
             <div className="flex items-center">
               <div className="flex-grow border-t border-gray-300"></div>
-              <span className="mx-3 text-gray-500 text-sm">or</span>
+              <span className="mx-3 text-gray-500 text-sm">If You</span>
               <div className="flex-grow border-t border-gray-300"></div>
             </div>
           </form>
 
           <div className="mt-6 text-center">
             <p className="text-gray-500 text-sm">
-              Already have an account?{" "}
+              Already have an account{" "}
               <a
                 href="/auth/login"
                 className="font-medium text-blue-600 hover:text-blue-800 transition-colors"

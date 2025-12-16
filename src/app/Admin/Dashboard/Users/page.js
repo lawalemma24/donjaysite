@@ -61,6 +61,7 @@ export default function UserManagementPage() {
       name: u.name || u.username || "No name",
       email: u.email || "",
       phone: u.phoneNumber || u.phone || u.whatsapp || "—",
+      role: u.role || "User",
       status: u.isSuspended ? "Suspended" : "Active",
       joined: u.createdAt ? formatJoined(u.createdAt) : "Unknown",
       avatar: u.profilePic || "/images/testimonial1.png",
@@ -361,6 +362,7 @@ export default function UserManagementPage() {
                 <th>Full Name</th>
                 <th>Email Address</th>
                 <th>Phone Number</th>
+                <th>Role</th>
                 <th>Status</th>
                 <th>Joined Date</th>
                 <th className="w-[60px]"></th>
@@ -383,6 +385,7 @@ export default function UserManagementPage() {
                   </td>
                   <td className="py-4 text-text-muted">{user.email}</td>
                   <td className="py-4">{user.phone}</td>
+                  <td className="py-4 text-sm text-red-4 00">{user.role}</td>
                   <td className="py-4">
                     <span
                       className={`px-3 py-1 rounded-full text-xs font-medium ${

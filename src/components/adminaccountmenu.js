@@ -31,10 +31,7 @@ const AdminAccountMenu = () => {
         className="flex items-center gap-2 px-3 py-2 hover:bg-gray-50"
       >
         <Image
-          src={
-            user?.profilePic ||
-            "https://avatars.dicebear.com/api/avataaars/JohnDoe.svg"
-          }
+          src={"https://avatars.dicebear.com/api/avataaars/JohnDoe.svg"}
           alt=""
           width={32}
           height={32}
