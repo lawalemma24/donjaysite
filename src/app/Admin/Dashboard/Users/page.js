@@ -1,4 +1,3 @@
-// app/(whatever)/UserManagementPage.jsx
 "use client";
 
 import { useState, useEffect, useRef } from "react";
@@ -27,7 +26,6 @@ import { apiUrl } from "@/utils/apihelper";
 const BASE = apiUrl("/api/users");
 
 export default function UserManagementPage() {
-  // get token from localStorage
   const token =
     typeof window !== "undefined" ? localStorage.getItem("token") : null;
 
@@ -41,14 +39,17 @@ export default function UserManagementPage() {
   const [selectedForDelete, setSelectedForDelete] = useState(null);
   const [deleteSuccess, setDeleteSuccess] = useState(false);
   const [suspendSuccess, setSuspendSuccess] = useState(false);
+  const [filters, setFilters] = useState({
+    status: "All",
+    quick: null,
+    from: "",
+    to: "",
+  });
 
-  // pagination
   const [totalEntries, setTotalEntries] = useState(0);
   const pageSize = 7;
   const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
-
-  // search + filter
   const [search, setSearch] = useState("");
   const [roleFilter, setRoleFilter] = useState("");
   const [loading, setLoading] = useState(false);
@@ -82,7 +83,6 @@ export default function UserManagementPage() {
     }
   }
 
-  // fetch users
   async function fetchUsers(opts = {}) {
     const currentFetchId = ++fetchIdRef.current;
     setLoading(true);
@@ -286,9 +286,46 @@ export default function UserManagementPage() {
     setShowAddUserSuccess(true);
   }
 
-  const paginatedUsers = users.slice(0, pageSize);
+  // --- CLIENT-SIDE FILTERING LOGIC ---
+  function applyClientFilters(users, filters) {
+    let result = [...users];
 
-  // --- UI below is 100% unchanged ---
+    if (filters.status !== "All") {
+      result = result.filter((u) => u.status === filters.status);
+    }
+
+    if (filters.quick || filters.from || filters.to) {
+      const now = new Date();
+      result = result.filter((u) => {
+        if (!u.__raw?.createdAt) return true;
+        const joined = new Date(u.__raw.createdAt);
+
+        if (filters.quick === "30") {
+          const d = new Date();
+          d.setDate(d.getDate() - 30);
+          return joined >= d;
+        }
+        if (filters.quick === "6m") {
+          const d = new Date();
+          d.setMonth(d.getMonth() - 6);
+          return joined >= d;
+        }
+        if (filters.quick === "year") {
+          return joined.getFullYear() === now.getFullYear();
+        }
+        if (filters.from && joined < new Date(filters.from)) return false;
+        if (filters.to && joined > new Date(filters.to)) return false;
+        return true;
+      });
+    }
+
+    return result;
+  }
+
+  const filteredUsers = applyClientFilters(users, filters);
+  const paginatedUsers = filteredUsers.slice(0, pageSize);
+  const totalEntriesFiltered = filteredUsers.length;
+
   return (
     <ProtectedRoute allowedRoles={["admin"]}>
       <div className="p-1 md:p-6">
@@ -338,7 +375,22 @@ export default function UserManagementPage() {
               </button>
               {showFilter && (
                 <div className="absolute right-0 mt-2 z-50">
-                  <FilterCard onClose={() => setShowFilter(false)} />
+                  <FilterCard
+                    onApply={(f) => {
+                      setFilters(f);
+                      setPage(1);
+                    }}
+                    onReset={() => {
+                      setFilters({
+                        status: "All",
+                        quick: null,
+                        from: "",
+                        to: "",
+                      });
+                      setPage(1);
+                    }}
+                    onClose={() => setShowFilter(false)}
+                  />
                 </div>
               )}
             </div>

@@ -49,7 +49,9 @@ export default function UserGrowthChart() {
 
         if (!res.ok) {
           const txt = await res.text();
-          throw new Error(`Failed to fetch users: ${res.status} ${txt}`);
+          throw new Error(
+            `Failed to fetch users refresh: ${res.status} ${txt}`
+          );
         }
 
         const result = await res.json();
