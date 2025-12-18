@@ -4,6 +4,7 @@ import { FcGoogle } from "react-icons/fc";
 import { FaApple, FaEye, FaEyeSlash } from "react-icons/fa";
 import toast from "react-hot-toast";
 import { useAuth } from "@/app/contexts/AuthContext";
+import { apiUrl } from "@/utils/apihelper";
 
 export default function Login() {
   const [showPassword, setShowPassword] = useState(false);
@@ -25,14 +26,18 @@ export default function Login() {
     setLoading(true);
 
     try {
-      const res = await fetch(
-        "https://donjay-server.vercel.app/api/auth/login",
-        {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ email, password }),
-        }
-      );
+      const res = await fetch(apiUrl("/api/auth/login"), {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email, password }),
+      });
+
+      // 🚫 Suspended account (common backend pattern)
+      if (res.status === 403) {
+        toast.error("Your account has been suspended. Please contact support.");
+        setLoading(false);
+        return;
+      }
 
       if (!res.ok) {
         toast.error(
@@ -47,10 +52,17 @@ export default function Login() {
       const data = await res.json();
       console.log("LOGIN RESPONSE:", data);
 
+      // 🚫 Suspended account (flag-based pattern)
+      if (data.isSuspended || data.status === "suspended") {
+        toast.error("Your account has been suspended. Please contact support.");
+        setLoading(false);
+        return;
+      }
+
       toast.success("Login successful");
       login(data);
 
-      // ✅ Role-based redirect (ONLY logic change)
+      // ✅ Role-based redirect
       if (data.role === "admin") {
         window.location.href = "/Admin/Dashboard/Overview";
       } else {

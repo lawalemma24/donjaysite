@@ -125,6 +125,19 @@ export default function MyCarsPage() {
                 deals.
               </p>
 
+              <div className="mb-6 p-4 bg-red-50 border border-red-200 rounded-lg">
+                <p className="text-red-400 mb-2 text-xs">
+                  1.For you to List a car for sale, the car you select must be
+                  approved. if your car is still pending approval, please wait
+                  until it is approved
+                </p>
+                <p className="text-red-400 mb-2 text-xs">
+                  2. If you do not have a car uploaded yet or want to add a
+                  different car, please add a new car.The car will be reviewed
+                  and approved for you to list it for sale.
+                </p>
+              </div>
+
               <div className="mb-6 mt-4 flex justify-end">
                 <Link
                   href="/garage/sell"

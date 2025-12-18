@@ -5,9 +5,192 @@ import { useRouter } from "next/navigation";
 import { uploadToCloudinary } from "@/utils/uploadToCloudinary";
 import toast from "react-hot-toast";
 
+const CAR_DATA = {
+  Toyota: [
+    "Corolla",
+    "Camry",
+    "RAV4",
+    "Hilux",
+    "Land Cruiser",
+    "Prius",
+    "Yaris",
+    "C-HR",
+    "Supra",
+    "Fortuner",
+    "Avalon",
+    "Sequoia",
+    "4Runner",
+    "Mirai",
+  ],
+
+  Honda: [
+    "Civic",
+    "Accord",
+    "CR-V",
+    "Pilot",
+    "HR-V",
+    "Fit",
+    "Odyssey",
+    "Ridgeline",
+    "Insight",
+    "Passport",
+  ],
+
+  Ford: [
+    "F-150",
+    "Mustang",
+    "Explorer",
+    "Escape",
+    "Ranger",
+    "Edge",
+    "Bronco",
+    "Focus",
+    "Fiesta",
+    "EcoSport",
+    "Expedition",
+  ],
+
+  Chevrolet: [
+    "Silverado",
+    "Malibu",
+    "Camaro",
+    "Equinox",
+    "Tahoe",
+    "Suburban",
+    "Trailblazer",
+    "Colorado",
+    "Blazer",
+    "Impala",
+    "Corvette",
+  ],
+
+  BMW: [
+    "1 Series",
+    "2 Series",
+    "3 Series",
+    "4 Series",
+    "5 Series",
+    "7 Series",
+    "X1",
+    "X3",
+    "X5",
+    "X7",
+    "Z4",
+    "i3",
+    "i4",
+    "iX",
+  ],
+
+  MercedesBenz: [
+    "A-Class",
+    "C-Class",
+    "E-Class",
+    "S-Class",
+    "GLA",
+    "GLC",
+    "GLE",
+    "GLS",
+    "EQC",
+    "AMG GT",
+  ],
+
+  Audi: [
+    "A3",
+    "A4",
+    "A6",
+    "A8",
+    "Q3",
+    "Q5",
+    "Q7",
+    "Q8",
+    "RS3",
+    "RS7",
+    "e-tron",
+  ],
+
+  Nissan: [
+    "Altima",
+    "Sentra",
+    "Maxima",
+    "Leaf",
+    "Rogue",
+    "Pathfinder",
+    "Murano",
+    "Armada",
+    "370Z",
+    "GT-R",
+  ],
+
+  Volkswagen: [
+    "Golf",
+    "Polo",
+    "Passat",
+    "Jetta",
+    "Tiguan",
+    "Atlas",
+    "Arteon",
+    "Beetle",
+  ],
+
+  Hyundai: [
+    "Elantra",
+    "Sonata",
+    "Tucson",
+    "Santa Fe",
+    "Palisade",
+    "Venue",
+    "Ioniq 5",
+    "Ioniq 6",
+  ],
+
+  Kia: [
+    "Rio",
+    "Forte",
+    "Sportage",
+    "Sorento",
+    "Telluride",
+    "Soul",
+    "K5",
+    "EV6",
+  ],
+
+  Subaru: ["Impreza", "WRX", "Legacy", "Outback", "Forester", "Crosstrek"],
+
+  Mazda: ["Mazda3", "Mazda6", "CX-3", "CX-30", "CX-5", "CX-9", "MX-5 Miata"],
+
+  Tesla: ["Model S", "Model 3", "Model X", "Model Y", "Cybertruck"],
+
+  Lexus: ["ES", "IS", "GS", "LS", "NX", "RX", "UX", "LC"],
+
+  Porsche: ["911", "Boxster", "Cayman", "Cayenne", "Macan", "Taycan"],
+
+  Jaguar: ["XE", "XF", "XJ", "F-Pace", "E-Pace", "I-Pace"],
+
+  LandRover: ["Range Rover", "Discovery", "Defender", "Velar", "Evoque"],
+
+  Volvo: ["S60", "S90", "V60", "V90", "XC40", "XC60", "XC90"],
+
+  Renault: ["Clio", "Megane", "Captur", "Kadjar", "Talisman", "Scenic"],
+
+  Peugeot: ["208", "308", "2008", "3008", "5008", "508"],
+
+  Fiat: ["500", "Panda", "Punto", "Tipo", "500X"],
+
+  Citroen: ["C3", "C4", "C5 Aircross", "Berlingo", "C3 Aircross"],
+
+  Mitsubishi: ["Mirage", "Lancer", "Outlander", "Eclipse Cross", "ASX"],
+
+  AudiSport: ["RS Q3", "RS Q8"],
+
+  Acura: ["Integra", "TLX", "RDX", "MDX"],
+
+  Infiniti: ["Q50", "Q60", "QX50", "QX60", "QX80"],
+};
+
 const SellPage = () => {
   const [form, setForm] = useState({
-    carName: "",
+    carMake: "",
+    carModel: "",
     year: "2023",
     condition: "used",
     transmission: "Automatic",
@@ -42,6 +225,16 @@ const SellPage = () => {
     }
   }, []);
 
+  const handleMakeChange = (e) => {
+    const selectedMake = e.target.value;
+
+    setForm((prev) => ({
+      ...prev,
+      carMake: selectedMake,
+      carModel: "", // reset model when make changes
+    }));
+  };
+
   const handleImageChange = (e) => {
     const files = Array.from(e.target.files);
     const previews = files.map((file) => ({
@@ -55,7 +248,8 @@ const SellPage = () => {
     e.preventDefault();
 
     const required = [
-      "carName",
+      "carMake",
+      "carModel",
       "year",
       "condition",
       "transmission",
@@ -132,18 +326,51 @@ const SellPage = () => {
 
           <form className="space-y-6" onSubmit={handleSubmit}>
             {/* NAME + YEAR */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <div>
-                <label className="block text-sm font-medium text-gray-700">
-                  Make/Name of car
-                </label>
-                <input
-                  className="mt-1 block w-full rounded-md border-gray-300 shadow-sm h-10 px-3 border"
-                  value={form.carName}
-                  onChange={(e) =>
-                    setForm({ ...form, carName: e.target.value })
-                  }
-                />
+            <div className="grid grid-cols-1  gap-6">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                {/* Car Make */}
+                <div>
+                  <label className="block text-sm font-medium text-gray-700">
+                    Car Make
+                  </label>
+                  <select
+                    className="mt-1 block w-full rounded-md border-gray-300 shadow-sm h-10 px-3 border"
+                    value={form.carMake}
+                    onChange={handleMakeChange}
+                  >
+                    <option value="">Select Make</option>
+                    {Object.keys(CAR_DATA).map((make) => (
+                      <option key={make} value={make}>
+                        {make}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+
+                {/* Car Model */}
+                <div>
+                  <label className="block text-sm font-medium text-gray-700">
+                    Car Model
+                  </label>
+                  <select
+                    className="mt-1 block w-full rounded-md border-gray-300 shadow-sm h-10 px-3 border"
+                    value={form.carModel}
+                    onChange={(e) =>
+                      setForm({ ...form, carModel: e.target.value })
+                    }
+                    disabled={!form.carMake}
+                  >
+                    <option value="">
+                      {form.carMake ? "Select Model" : "Select Make First"}
+                    </option>
+                    {form.carMake &&
+                      CAR_DATA[form.carMake].map((model) => (
+                        <option key={model} value={model}>
+                          {model}
+                        </option>
+                      ))}
+                  </select>
+                </div>
               </div>
 
               <div>
@@ -175,8 +402,9 @@ const SellPage = () => {
                     setForm({ ...form, condition: e.target.value })
                   }
                 >
-                  <option>used</option>
-                  <option>new</option>
+                  <option>Brand New</option>
+                  <option>Foreign Used</option>
+                  <option>Pre-Owned</option>
                 </select>
               </div>
 
