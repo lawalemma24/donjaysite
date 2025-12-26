@@ -5,9 +5,192 @@ import { useRouter } from "next/navigation";
 import { uploadToCloudinary } from "@/utils/uploadToCloudinary";
 import toast from "react-hot-toast";
 
+const carData = {
+  Toyota: [
+    "Corolla",
+    "Camry",
+    "RAV4",
+    "Hilux",
+    "Land Cruiser",
+    "Prius",
+    "Yaris",
+    "C-HR",
+    "Supra",
+    "Fortuner",
+    "Avalon",
+    "Sequoia",
+    "4Runner",
+    "Mirai",
+  ],
+
+  Honda: [
+    "Civic",
+    "Accord",
+    "CR-V",
+    "Pilot",
+    "HR-V",
+    "Fit",
+    "Odyssey",
+    "Ridgeline",
+    "Insight",
+    "Passport",
+  ],
+
+  Ford: [
+    "F-150",
+    "Mustang",
+    "Explorer",
+    "Escape",
+    "Ranger",
+    "Edge",
+    "Bronco",
+    "Focus",
+    "Fiesta",
+    "EcoSport",
+    "Expedition",
+  ],
+
+  Chevrolet: [
+    "Silverado",
+    "Malibu",
+    "Camaro",
+    "Equinox",
+    "Tahoe",
+    "Suburban",
+    "Trailblazer",
+    "Colorado",
+    "Blazer",
+    "Impala",
+    "Corvette",
+  ],
+
+  BMW: [
+    "1 Series",
+    "2 Series",
+    "3 Series",
+    "4 Series",
+    "5 Series",
+    "7 Series",
+    "X1",
+    "X3",
+    "X5",
+    "X7",
+    "Z4",
+    "i3",
+    "i4",
+    "iX",
+  ],
+
+  MercedesBenz: [
+    "A-Class",
+    "C-Class",
+    "E-Class",
+    "S-Class",
+    "GLA",
+    "GLC",
+    "GLE",
+    "GLS",
+    "EQC",
+    "AMG GT",
+  ],
+
+  Audi: [
+    "A3",
+    "A4",
+    "A6",
+    "A8",
+    "Q3",
+    "Q5",
+    "Q7",
+    "Q8",
+    "RS3",
+    "RS7",
+    "e-tron",
+  ],
+
+  Nissan: [
+    "Altima",
+    "Sentra",
+    "Maxima",
+    "Leaf",
+    "Rogue",
+    "Pathfinder",
+    "Murano",
+    "Armada",
+    "370Z",
+    "GT-R",
+  ],
+
+  Volkswagen: [
+    "Golf",
+    "Polo",
+    "Passat",
+    "Jetta",
+    "Tiguan",
+    "Atlas",
+    "Arteon",
+    "Beetle",
+  ],
+
+  Hyundai: [
+    "Elantra",
+    "Sonata",
+    "Tucson",
+    "Santa Fe",
+    "Palisade",
+    "Venue",
+    "Ioniq 5",
+    "Ioniq 6",
+  ],
+
+  Kia: [
+    "Rio",
+    "Forte",
+    "Sportage",
+    "Sorento",
+    "Telluride",
+    "Soul",
+    "K5",
+    "EV6",
+  ],
+
+  Subaru: ["Impreza", "WRX", "Legacy", "Outback", "Forester", "Crosstrek"],
+
+  Mazda: ["Mazda3", "Mazda6", "CX-3", "CX-30", "CX-5", "CX-9", "MX-5 Miata"],
+
+  Tesla: ["Model S", "Model 3", "Model X", "Model Y", "Cybertruck"],
+
+  Lexus: ["ES", "IS", "GS", "LS", "NX", "RX", "UX", "LC"],
+
+  Porsche: ["911", "Boxster", "Cayman", "Cayenne", "Macan", "Taycan"],
+
+  Jaguar: ["XE", "XF", "XJ", "F-Pace", "E-Pace", "I-Pace"],
+
+  LandRover: ["Range Rover", "Discovery", "Defender", "Velar", "Evoque"],
+
+  Volvo: ["S60", "S90", "V60", "V90", "XC40", "XC60", "XC90"],
+
+  Renault: ["Clio", "Megane", "Captur", "Kadjar", "Talisman", "Scenic"],
+
+  Peugeot: ["208", "308", "2008", "3008", "5008", "508"],
+
+  Fiat: ["500", "Panda", "Punto", "Tipo", "500X"],
+
+  Citroen: ["C3", "C4", "C5 Aircross", "Berlingo", "C3 Aircross"],
+
+  Mitsubishi: ["Mirage", "Lancer", "Outlander", "Eclipse Cross", "ASX"],
+
+  AudiSport: ["RS Q3", "RS Q8"],
+
+  Acura: ["Integra", "TLX", "RDX", "MDX"],
+
+  Infiniti: ["Q50", "Q60", "QX50", "QX60", "QX80"],
+};
+
 const SellPage = () => {
   const [form, setForm] = useState({
-    carName: "",
+    carMake: "",
+    carModel: "",
     year: "2023",
     condition: "used",
     transmission: "Automatic",
@@ -22,13 +205,13 @@ const SellPage = () => {
   const [loading, setLoading] = useState(false);
   const router = useRouter();
 
-  // Load saved data (editing)
   useEffect(() => {
     const stored = sessionStorage.getItem("carToReview");
     if (stored) {
       const car = JSON.parse(stored);
       setForm({
-        carName: car.carName || "",
+        carMake: car.carMake || "",
+        carModel: car.carModel || "",
         year: car.year || "",
         condition: car.condition || "used",
         transmission: car.transmission || "Automatic",
@@ -55,7 +238,8 @@ const SellPage = () => {
     e.preventDefault();
 
     const required = [
-      "carName",
+      "carMake",
+      "carModel",
       "year",
       "condition",
       "transmission",
@@ -89,7 +273,6 @@ const SellPage = () => {
         uploadedUrls = await uploadToCloudinary(filesToUpload);
       }
 
-      // Combine already existing preview URLs for images without file
       const finalImages = images.map((img) =>
         img.file ? uploadedUrls.shift() : img.preview
       );
@@ -129,21 +312,53 @@ const SellPage = () => {
           </p>
 
           <form className="space-y-6" onSubmit={handleSubmit}>
-            {/* NAME + YEAR */}
+            {/* MAKE + MODEL */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div>
                 <label className="block text-sm font-medium text-gray-700">
-                  Make/Name of car
+                  Make
                 </label>
-                <input
+                <select
                   className="mt-1 block w-full rounded-md border-gray-300 shadow-sm h-10 px-3 border"
-                  value={form.carName}
+                  value={form.carMake}
                   onChange={(e) =>
-                    setForm({ ...form, carName: e.target.value })
+                    setForm({ ...form, carMake: e.target.value, carModel: "" })
                   }
-                />
+                >
+                  <option value="">Select Make</option>
+                  {Object.keys(carData).map((make) => (
+                    <option key={make} value={make}>
+                      {make}
+                    </option>
+                  ))}
+                </select>
               </div>
 
+              <div>
+                <label className="block text-sm font-medium text-gray-700">
+                  Model
+                </label>
+                <select
+                  className="mt-1 block w-full rounded-md border-gray-300 shadow-sm h-10 px-3 border"
+                  value={form.carModel}
+                  onChange={(e) =>
+                    setForm({ ...form, carModel: e.target.value })
+                  }
+                  disabled={!form.carMake}
+                >
+                  <option value="">Select Model</option>
+                  {form.carMake &&
+                    carData[form.carMake].map((model) => (
+                      <option key={model} value={model}>
+                        {model}
+                      </option>
+                    ))}
+                </select>
+              </div>
+            </div>
+
+            {/* YEAR + CONDITION */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div>
                 <label className="block text-sm font-medium text-gray-700">
                   Year
@@ -158,10 +373,7 @@ const SellPage = () => {
                   ))}
                 </select>
               </div>
-            </div>
 
-            {/* CONDITION + TRANSMISSION */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div>
                 <label className="block text-sm font-medium text-gray-700">
                   Condition
@@ -173,11 +385,15 @@ const SellPage = () => {
                     setForm({ ...form, condition: e.target.value })
                   }
                 >
-                  <option>used</option>
-                  <option>new</option>
+                  <option>Brand New</option>
+                  <option>Foreign Used</option>
+                  <option>Pre-Owned</option>
                 </select>
               </div>
+            </div>
 
+            {/* TRANSMISSION + ENGINE */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div>
                 <label className="block text-sm font-medium text-gray-700">
                   Transmission
@@ -193,10 +409,7 @@ const SellPage = () => {
                   <option>Manual</option>
                 </select>
               </div>
-            </div>
 
-            {/* ENGINE + MILEAGE (ADDED!) */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div>
                 <label className="block text-sm font-medium text-gray-700">
                   Engine (e.g. 2.0L, 1500cc)
@@ -207,7 +420,10 @@ const SellPage = () => {
                   onChange={(e) => setForm({ ...form, engine: e.target.value })}
                 />
               </div>
+            </div>
 
+            {/* MILEAGE + PRICE */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div>
                 <label className="block text-sm font-medium text-gray-700">
                   Mileage (KM)
@@ -221,10 +437,7 @@ const SellPage = () => {
                   }
                 />
               </div>
-            </div>
 
-            {/* PRICE + FUEL TYPE */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div>
                 <label className="block text-sm font-medium text-gray-700">
                   Estimated Value
@@ -240,23 +453,22 @@ const SellPage = () => {
                   This is not a final offer.
                 </p>
               </div>
+            </div>
 
-              <div>
-                <label className="block text-sm font-medium text-gray-700">
-                  Fuel type
-                </label>
-                <select
-                  value={form.fuelType}
-                  className="mt-1 block w-full rounded-md border-gray-300 shadow-sm h-10 px-3 border"
-                  onChange={(e) =>
-                    setForm({ ...form, fuelType: e.target.value })
-                  }
-                >
-                  <option>Petrol</option>
-                  <option>Diesel</option>
-                  <option>Electric</option>
-                </select>
-              </div>
+            {/* FUEL TYPE */}
+            <div>
+              <label className="block text-sm font-medium text-gray-700">
+                Fuel type
+              </label>
+              <select
+                value={form.fuelType}
+                className="mt-1 block w-full rounded-md border-gray-300 shadow-sm h-10 px-3 border"
+                onChange={(e) => setForm({ ...form, fuelType: e.target.value })}
+              >
+                <option>Petrol</option>
+                <option>Diesel</option>
+                <option>Electric</option>
+              </select>
             </div>
 
             {/* NOTE */}
@@ -277,7 +489,6 @@ const SellPage = () => {
               <label className="block text-sm font-medium text-gray-700 mb-2">
                 Images
               </label>
-
               <div className="border border-dashed border-gray-300 rounded-lg p-6 text-center">
                 <input
                   type="file"

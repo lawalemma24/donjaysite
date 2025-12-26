@@ -1,27 +1,50 @@
 "use client";
 
 import { useState } from "react";
-
-import { X } from "lucide-react";
+import { X, Mail } from "lucide-react";
 import Modal from "./modal";
-
-import { Mail } from "lucide-react";
+import toast from "react-hot-toast";
+import { apiUrl } from "@/utils/apihelper";
 
 export default function AddUserModal({
   onClose = () => {},
-  onInvite = (email) => {},
+  onInvite = () => {},
 }) {
   const [email, setEmail] = useState("");
   const [sending, setSending] = useState(false);
 
-  function handleInvite() {
-    if (!email) return;
-    setSending(true);
-    setTimeout(() => {
-      // emulate API
-      onInvite(email);
+  const token =
+    typeof window !== "undefined" ? localStorage.getItem("token") : null;
+
+  async function handleInvite() {
+    if (!email || !token) return;
+
+    try {
+      setSending(true);
+
+      const res = await fetch(apiUrl("/api/invite"), {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({ email }),
+      });
+
+      const data = await res.json();
+
+      if (!res.ok) {
+        throw new Error(data.message || "Failed to invite admin");
+      }
+
+      toast.success("Admin invited successfully");
+      onInvite(data.user); // pass created admin back to parent
+      onClose();
+    } catch (err) {
+      toast.error(err.message);
+    } finally {
       setSending(false);
-    }, 900);
+    }
   }
 
   return (
@@ -32,21 +55,23 @@ export default function AddUserModal({
       >
         <X />
       </button>
-      <div className="flex flex-col items-center ">
+
+      <div className="flex flex-col items-center">
         <Mail className="w-12 h-12 text-blue block mx-auto mb-1" />
-        <h3 className="text-xl font-semibold">Invite User</h3>
+        <h3 className="text-xl font-semibold">Invite Admin</h3>
       </div>
+
       <p className="text-text-muted/70 text-sm mb-4 mt-2 text-center">
-        Enter the email address to invite user
+        Enter the email address to invite a new administrator
       </p>
 
       <div className="space-y-3">
         <input
           type="email"
-          placeholder="user@example.com"
+          placeholder="admin@example.com"
           value={email}
           onChange={(e) => setEmail(e.target.value)}
-          className="w-full px-3 py-2 border rounded-md border-text-muted/60 focus:outline-none focus:ring-none focus:border-blue"
+          className="w-full px-3 py-2 border rounded-md border-text-muted/60 focus:outline-none focus:border-blue"
         />
 
         <div className="flex justify-between gap-2 pt-4">
@@ -56,10 +81,11 @@ export default function AddUserModal({
           >
             Cancel
           </button>
+
           <button
             onClick={handleInvite}
             disabled={sending || !email}
-            className="px-4 py-2 rounded-md bg-blue text-white"
+            className="px-4 py-2 rounded-md bg-blue text-white disabled:opacity-60"
           >
             {sending ? "Sending..." : "Send Invite"}
           </button>

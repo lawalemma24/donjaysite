@@ -177,7 +177,7 @@ export default function CarMarketplace() {
 
           <div className="mb-4">
             <h3 className="font-medium mb-2">Condition</h3>
-            {["Brand New", "Used"].map((c) => (
+            {["Brand New", "Foreign Used", "Pre-Owned"].map((c) => (
               <label key={c} className="flex items-center gap-2">
                 <input
                   type="radio"
@@ -197,11 +197,40 @@ export default function CarMarketplace() {
               value={make}
               onChange={(e) => setMake(e.target.value)}
             >
-              <option value="">All Makes</option>
-              <option>Mercedes</option>
-              <option>Toyota</option>
-              <option>Honda</option>
-              <option>Tesla</option>
+              <option value="">All Makes</option> <option>Acura</option>{" "}
+              <option>Alfa Romeo</option> <option>Audi</option>{" "}
+              <option>Aston Martin</option> <option>Bentley</option>{" "}
+              <option>BMW</option> <option>Bugatti</option>{" "}
+              <option>Buick</option> <option>BYD</option>{" "}
+              <option>Cadillac</option> <option>Changan</option>{" "}
+              <option>Chery</option> <option>Chevrolet</option>{" "}
+              <option>Chrysler</option> <option>Citroën</option>{" "}
+              <option>Dacia</option> <option>Daewoo</option>{" "}
+              <option>Daihatsu</option> <option>Dodge</option>{" "}
+              <option>Ferrari</option> <option>Fiat</option>{" "}
+              <option>Ford</option> <option>Geely</option>{" "}
+              <option>Genesis</option> <option>GMC</option>{" "}
+              <option>Great Wall</option> <option>Haval</option>{" "}
+              <option>Honda</option> <option>Hyundai</option>{" "}
+              <option>Infiniti</option> <option>Isuzu</option>{" "}
+              <option>Jaguar</option> <option>Jeep</option> <option>Kia</option>{" "}
+              <option>Lamborghini</option> <option>Land Rover</option>{" "}
+              <option>Lexus</option> <option>Lincoln</option>{" "}
+              <option>Lotus</option> <option>Maserati</option>{" "}
+              <option>Maybach</option> <option>Mazda</option>{" "}
+              <option>McLaren</option> <option>Mercedes-Benz</option>{" "}
+              <option>Mini</option> <option>Mitsubishi</option>{" "}
+              <option>Nissan</option> <option>Opel</option>{" "}
+              <option>Pagani</option> <option>Peugeot</option>{" "}
+              <option>Porsche</option> <option>Proton</option>{" "}
+              <option>Ram</option> <option>Renault</option>{" "}
+              <option>Rolls-Royce</option> <option>Saab</option>{" "}
+              <option>Seat</option> <option>Skoda</option>{" "}
+              <option>Smart</option> <option>Subaru</option>{" "}
+              <option>Suzuki</option> <option>Tata</option>{" "}
+              <option>Tesla</option> <option>Toyota</option>{" "}
+              <option>Vauxhall</option> <option>Volkswagen</option>{" "}
+              <option>Volvo</option> <option>Wuling</option>
             </select>
           </div>
 

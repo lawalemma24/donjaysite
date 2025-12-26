@@ -4,6 +4,7 @@ import { FcGoogle } from "react-icons/fc";
 import { FaApple, FaEye, FaEyeSlash } from "react-icons/fa";
 import toast from "react-hot-toast";
 import { useAuth } from "@/app/contexts/AuthContext";
+import { apiUrl } from "@/utils/apihelper";
 
 export default function Login() {
   const [showPassword, setShowPassword] = useState(false);
@@ -25,14 +26,18 @@ export default function Login() {
     setLoading(true);
 
     try {
-      const res = await fetch(
-        "https://donjay-server.vercel.app/api/auth/login",
-        {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ email, password }),
-        }
-      );
+      const res = await fetch(apiUrl("/api/auth/login"), {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email, password }),
+      });
+
+      // 🚫 Suspended account (common backend pattern)
+      if (res.status === 403) {
+        toast.error("Your account has been suspended. Please contact support.");
+        setLoading(false);
+        return;
+      }
 
       if (!res.ok) {
         toast.error(
@@ -47,19 +52,22 @@ export default function Login() {
       const data = await res.json();
       console.log("LOGIN RESPONSE:", data);
 
-      // Check role
-      if (data.role === "admin") {
-        toast.error("Admins must log in through the admin Login Page.");
-        setTimeout(() => {
-          window.location.href = "/Admin/Access/Login";
-        }, 1500);
+      // 🚫 Suspended account (flag-based pattern)
+      if (data.isSuspended || data.status === "suspended") {
+        toast.error("Your account has been suspended. Please contact support.");
         setLoading(false);
         return;
       }
 
       toast.success("Login successful");
       login(data);
-      window.location.href = "/";
+
+      // ✅ Role-based redirect
+      if (data.role === "admin") {
+        window.location.href = "/Admin/Dashboard/Overview";
+      } else {
+        window.location.href = "/";
+      }
     } catch (error) {
       console.error("Server error:", error);
       toast.error("Server error");
@@ -81,10 +89,10 @@ export default function Login() {
 
         <div className="px-5 md:px-8 py-4">
           <h1 className="text-2xl md:text-3xl font-semibold text-center text-black mb-2">
-            Customer Log In
+            Sign In
           </h1>
           <p className="text-gray-500 text-center text-sm md:text-base mb-4 md:mb-6">
-            Please enter your details to log in
+            Please enter your details to Sign in
           </p>
 
           <form className="space-y-4 md:space-y-5" onSubmit={handleSubmit}>
@@ -159,14 +167,14 @@ export default function Login() {
 
             <div className="flex items-center">
               <div className="flex-grow border-t border-gray-300"></div>
-              <span className="mx-3 text-gray-500 text-sm">or</span>
+              <span className="mx-3 text-gray-500 text-sm">If You</span>
               <div className="flex-grow border-t border-gray-300"></div>
             </div>
           </form>
 
           <div className="mt-6 text-center">
             <p className="text-gray-500 text-sm">
-              Don&apos;t have an account?{" "}
+              Don&apos;t have an account{" "}
               <a
                 href="/auth/register"
                 className="font-medium text-blue hover:text-blue-800 transition-colors"
