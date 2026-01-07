@@ -189,7 +189,7 @@ const CAR_DATA = {
 
 const SellPage = () => {
   const [form, setForm] = useState({
-    carMake: "",
+    carName: "",
     carModel: "",
     year: "2023",
     condition: "used",
@@ -212,6 +212,7 @@ const SellPage = () => {
       const car = JSON.parse(stored);
       setForm({
         carName: car.carName || "",
+        carModel: car.carModel || "",
         year: car.year || "",
         condition: car.condition || "used",
         transmission: car.transmission || "Automatic",
@@ -230,7 +231,7 @@ const SellPage = () => {
 
     setForm((prev) => ({
       ...prev,
-      carMake: selectedMake,
+      carName: selectedMake,
       carModel: "", // reset model when make changes
     }));
   };
@@ -248,7 +249,7 @@ const SellPage = () => {
     e.preventDefault();
 
     const required = [
-      "carMake",
+      "carName",
       "carModel",
       "year",
       "condition",
@@ -335,7 +336,7 @@ const SellPage = () => {
                   </label>
                   <select
                     className="mt-1 block w-full rounded-md border-gray-300 shadow-sm h-10 px-3 border"
-                    value={form.carMake}
+                    value={form.carName}
                     onChange={handleMakeChange}
                   >
                     <option value="">Select Make</option>
@@ -358,13 +359,13 @@ const SellPage = () => {
                     onChange={(e) =>
                       setForm({ ...form, carModel: e.target.value })
                     }
-                    disabled={!form.carMake}
+                    disabled={!form.carName}
                   >
                     <option value="">
-                      {form.carMake ? "Select Model" : "Select Make First"}
+                      {form.carName ? "Select Model" : "Select Make First"}
                     </option>
-                    {form.carMake &&
-                      CAR_DATA[form.carMake].map((model) => (
+                    {form.carName &&
+                      CAR_DATA[form.carName].map((model) => (
                         <option key={model} value={model}>
                           {model}
                         </option>
@@ -402,9 +403,9 @@ const SellPage = () => {
                     setForm({ ...form, condition: e.target.value })
                   }
                 >
-                  <option>Brand New</option>
-                  <option>Foreign Used</option>
-                  <option>Pre-Owned</option>
+                  <option>New</option>
+                  <option>Used</option>
+                  <option>certified Pre-Owned</option>
                 </select>
               </div>
 

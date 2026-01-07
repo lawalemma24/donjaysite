@@ -189,7 +189,7 @@ const carData = {
 
 const SellPage = () => {
   const [form, setForm] = useState({
-    carMake: "",
+    carName: "",
     carModel: "",
     year: "2023",
     condition: "used",
@@ -210,7 +210,7 @@ const SellPage = () => {
     if (stored) {
       const car = JSON.parse(stored);
       setForm({
-        carMake: car.carMake || "",
+        carName: car.carName || "",
         carModel: car.carModel || "",
         year: car.year || "",
         condition: car.condition || "used",
@@ -238,7 +238,7 @@ const SellPage = () => {
     e.preventDefault();
 
     const required = [
-      "carMake",
+      "carName",
       "carModel",
       "year",
       "condition",
@@ -320,9 +320,9 @@ const SellPage = () => {
                 </label>
                 <select
                   className="mt-1 block w-full rounded-md border-gray-300 shadow-sm h-10 px-3 border"
-                  value={form.carMake}
+                  value={form.carName}
                   onChange={(e) =>
-                    setForm({ ...form, carMake: e.target.value, carModel: "" })
+                    setForm({ ...form, carName: e.target.value, carModel: "" })
                   }
                 >
                   <option value="">Select Make</option>
@@ -344,11 +344,11 @@ const SellPage = () => {
                   onChange={(e) =>
                     setForm({ ...form, carModel: e.target.value })
                   }
-                  disabled={!form.carMake}
+                  disabled={!form.carName}
                 >
                   <option value="">Select Model</option>
-                  {form.carMake &&
-                    carData[form.carMake].map((model) => (
+                  {form.carName &&
+                    carData[form.carName].map((model) => (
                       <option key={model} value={model}>
                         {model}
                       </option>
@@ -385,9 +385,9 @@ const SellPage = () => {
                     setForm({ ...form, condition: e.target.value })
                   }
                 >
-                  <option>Brand New</option>
-                  <option>Foreign Used</option>
-                  <option>Pre-Owned</option>
+                  <option>New</option>
+                  <option>Used</option>
+                  <option>certified Pre-Owned</option>
                 </select>
               </div>
             </div>

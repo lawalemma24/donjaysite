@@ -192,7 +192,7 @@ export default function AddCarForm({
   onSuccess = () => {},
 }) {
   const [formData, setFormData] = useState({
-    carMake: "",
+    carName: "",
     carModel: "",
     year: "",
     condition: "",
@@ -230,7 +230,7 @@ export default function AddCarForm({
       return;
     }
 
-    if (!formData.carMake || !formData.carModel) {
+    if (!formData.carName || !formData.carModel) {
       toast.error("Please select both car make and model");
       return;
     }
@@ -243,7 +243,7 @@ export default function AddCarForm({
       const uploadedUrls = await uploadToCloudinary(files);
 
       const payload = {
-        carMake: formData.carMake,
+        carName: formData.carName,
         carModel: formData.carModel,
         year: Number(formData.year),
         condition: formData.condition.toLowerCase(),
@@ -291,12 +291,12 @@ export default function AddCarForm({
               <div>
                 <label className="text-sm">Make</label>
                 <select
-                  name="carMake"
-                  value={formData.carMake}
+                  name="carName"
+                  value={formData.carName}
                   onChange={(e) =>
                     setFormData({
                       ...formData,
-                      carMake: e.target.value,
+                      carName: e.target.value,
                       carModel: "", // reset model when make changes
                     })
                   }
@@ -318,12 +318,12 @@ export default function AddCarForm({
                   name="carModel"
                   value={formData.carModel}
                   onChange={handleChange}
-                  disabled={!formData.carMake}
+                  disabled={!formData.carName}
                   className="w-full border rounded-md p-2 mt-1 border-text-muted/70 focus:border-blue outline-none"
                 >
                   <option value="">Select Model</option>
-                  {formData.carMake &&
-                    carData[formData.carMake].map((model) => (
+                  {formData.carName &&
+                    carData[formData.carName].map((model) => (
                       <option key={model} value={model}>
                         {model}
                       </option>
@@ -341,7 +341,7 @@ export default function AddCarForm({
               <FormSelect
                 label="Condition"
                 name="condition"
-                options={["Brand New", "Foreign Used", "Pre-Owned"]}
+                options={["New", "Used", "certified Pre-Owned"]}
                 onChange={handleChange}
               />
 
