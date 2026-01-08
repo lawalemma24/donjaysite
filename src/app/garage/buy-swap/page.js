@@ -11,6 +11,11 @@ import api from "@/utils/api";
 import Loader from "@/components/preloader";
 
 const PER_PAGE = 9;
+const CONDITION_MAP = {
+  "Brand New": "new",
+  "Foreign Used": "used",
+  "Pre-owned": "certified pre-owned",
+};
 
 export default function CarMarketplace() {
   const [allCars, setAllCars] = useState([]);
@@ -39,8 +44,8 @@ export default function CarMarketplace() {
 
         setAllCars(clean);
         setFilteredCars(clean);
-        setPage(1);
         setCars(clean.slice(0, PER_PAGE));
+        setPage(1);
       } catch (err) {
         console.error("Error fetching cars:", err);
       } finally {
@@ -51,45 +56,26 @@ export default function CarMarketplace() {
   }, []);
 
   const handleFilterAndSearch = () => {
-    const noFiltersApplied =
-      !search &&
-      !condition &&
-      !make &&
-      !transmission &&
-      !fuel &&
-      !priceRange[0] &&
-      !priceRange[1] &&
-      !yearRange[0] &&
-      !yearRange[1];
-
-    if (noFiltersApplied) {
-      setFilteredCars(allCars);
-      setPage(1);
-      return;
-    }
-
     const filtered = allCars.filter((car) => {
       const carName = car.carName || "";
 
       const matchSearch =
         !search || carName.toLowerCase().includes(search.toLowerCase());
 
+      const selectedCondition = CONDITION_MAP[condition];
+
       const matchCondition =
-        !condition ||
-        (car.condition &&
-          car.condition.toLowerCase() === condition.toLowerCase());
+        !condition || car.condition?.toLowerCase() === selectedCondition;
 
       const matchMake =
         !make || carName.toLowerCase().startsWith(make.toLowerCase());
 
       const matchTransmission =
         !transmission ||
-        (car.transmission &&
-          car.transmission.toLowerCase() === transmission.toLowerCase());
+        car.transmission?.toLowerCase() === transmission.toLowerCase();
 
       const matchFuel =
-        !fuel ||
-        (car.fuelType && car.fuelType.toLowerCase() === fuel.toLowerCase());
+        !fuel || car.fuelType?.toLowerCase() === fuel.toLowerCase();
 
       const minPrice = parseInt(priceRange[0], 10);
       const maxPrice = parseInt(priceRange[1], 10);
@@ -116,6 +102,7 @@ export default function CarMarketplace() {
 
     setFilteredCars(filtered);
     setPage(1);
+    setCars(filtered.slice(0, PER_PAGE)); // ✅ CRITICAL FIX
   };
 
   useEffect(() => {
@@ -128,11 +115,8 @@ export default function CarMarketplace() {
   }, [condition, make, yearRange, priceRange, transmission, fuel]);
 
   useEffect(() => {
-    if (filteredCars.length > 0) {
-      const start = (page - 1) * PER_PAGE;
-      const paginated = filteredCars.slice(start, start + PER_PAGE);
-      setCars(paginated);
-    }
+    const start = (page - 1) * PER_PAGE;
+    setCars(filteredCars.slice(start, start + PER_PAGE)); // ✅ allow empty
   }, [page, filteredCars]);
 
   const resetFilters = () => {
@@ -143,7 +127,10 @@ export default function CarMarketplace() {
     setPriceRange(["", ""]);
     setTransmission("");
     setFuel("");
-    setTimeout(() => handleFilterAndSearch(), 0);
+
+    setFilteredCars(allCars);
+    setCars(allCars.slice(0, PER_PAGE)); // ✅ FIX
+    setPage(1);
   };
 
   return (
@@ -177,7 +164,7 @@ export default function CarMarketplace() {
 
           <div className="mb-4">
             <h3 className="font-medium mb-2">Condition</h3>
-            {["Brand New", "Foreign Used", "Pre-Owned"].map((c) => (
+            {["Brand New", "Foreign Used", "Pre-owned"].map((c) => (
               <label key={c} className="flex items-center gap-2">
                 <input
                   type="radio"

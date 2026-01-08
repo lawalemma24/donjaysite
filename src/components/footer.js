@@ -191,7 +191,7 @@ const Footer = () => {
 
         <div className="flex flex-col sm:flex-row justify-between items-center text-xs text-white space-y-1 sm:space-y-0">
           <p>Driven by trust. Powered by innovation</p>
-          <p>&copy; 2025 Don-Jay Autos Limited. All rights reserved</p>
+          <p>&copy; 2026 Don-Jay Autos Limited. All rights reserved</p>
         </div>
       </div>
 

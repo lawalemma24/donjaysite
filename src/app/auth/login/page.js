@@ -78,7 +78,7 @@ export default function Login() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue to-indigo-900 flex items-center justify-center p-4">
-      <div className="bg-white rounded-3xl shadow-2xl w-full max-w-md overflow-hidden">
+      <div className="bg-white rounded shadow-2xl w-full max-w-md overflow-hidden">
         <div className="py-4 md:py-6 px-4 flex justify-center">
           <img
             src="/images/logo.png"
