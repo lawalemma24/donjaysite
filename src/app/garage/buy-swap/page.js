@@ -11,11 +11,6 @@ import api from "@/utils/api";
 import Loader from "@/components/preloader";
 
 const PER_PAGE = 9;
-const CONDITION_MAP = {
-  "Brand New": "new",
-  "Foreign Used": "used",
-  "Pre-owned": "certified pre-owned",
-};
 
 export default function CarMarketplace() {
   const [allCars, setAllCars] = useState([]);
@@ -62,10 +57,8 @@ export default function CarMarketplace() {
       const matchSearch =
         !search || carName.toLowerCase().includes(search.toLowerCase());
 
-      const selectedCondition = CONDITION_MAP[condition];
-
       const matchCondition =
-        !condition || car.condition?.toLowerCase() === selectedCondition;
+        !condition || car.condition?.toLowerCase() === condition.toLowerCase();
 
       const matchMake =
         !make || carName.toLowerCase().startsWith(make.toLowerCase());
@@ -164,15 +157,16 @@ export default function CarMarketplace() {
 
           <div className="mb-4">
             <h3 className="font-medium mb-2">Condition</h3>
-            {["Brand New", "Foreign Used", "Pre-owned"].map((c) => (
-              <label key={c} className="flex items-center gap-2">
+
+            {["Brand-new", "foreign-used", "certfied pre-owned"].map((c) => (
+              <label key={c} className="flex items-center gap-2 capitalize">
                 <input
                   type="radio"
                   name="condition"
                   checked={condition === c}
                   onChange={() => setCondition(c)}
                 />
-                {c}
+                {c.replace("-", " ")}
               </label>
             ))}
           </div>
