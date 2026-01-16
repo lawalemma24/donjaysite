@@ -385,9 +385,9 @@ const SellPage = () => {
                     setForm({ ...form, condition: e.target.value })
                   }
                 >
-                  <option>New</option>
-                  <option>Used</option>
-                  <option>certified Pre-Owned</option>
+                  <option>Brand_New</option>
+                  <option>Foreign_Used</option>
+                  <option>PreOwned</option>
                 </select>
               </div>
             </div>
