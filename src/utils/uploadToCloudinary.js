@@ -1,4 +1,4 @@
-export const uploadToCloudinary = async (files, maxImages = 8) => {
+export const uploadToCloudinary = async (files, maxImages = 15) => {
   if (!files || files.length === 0) return [];
 
   // Limit the number of files
