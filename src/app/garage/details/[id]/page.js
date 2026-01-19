@@ -127,7 +127,8 @@ export default function CarDetails() {
 
           <div>
             <h1 className="text-2xl md:text-3xl font-bold mb-2">
-              {car.carName}
+              {car.carName} {car.carModel}{" "}
+              <span className="text-lg text-gray-500">({car.year})</span>
             </h1>
             <div className="bg-blue-100 text-blue-700 font-bold text-lg inline-block px-3 py-1 mb-2">
               ₦{car.price?.toLocaleString() || "N/A"}
@@ -135,7 +136,7 @@ export default function CarDetails() {
 
             <div className="flex items-center gap-2 text-sm text-green-600 mb-4">
               <Eye className="w-5 h-5" />
-              <span>{car.views || 0} people viewed this car</span>
+              <span>Click on images to expand</span>
             </div>
 
             <div className="my-4">

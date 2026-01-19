@@ -21,6 +21,12 @@ const carData = {
     "Sequoia",
     "4Runner",
     "Mirai",
+    "Highlander",
+    "Venza",
+    "Solara",
+    "FJ-cruiser",
+    "tundra",
+    "Tacoma ",
   ],
 
   Honda: [
@@ -34,6 +40,7 @@ const carData = {
     "Ridgeline",
     "Insight",
     "Passport",
+    " Crosstour",
   ],
 
   Ford: [
@@ -92,6 +99,10 @@ const carData = {
     "GLS",
     "EQC",
     "AMG GT",
+    "GLK350",
+    "M-Class",
+    "C300",
+    "CLA-class",
   ],
 
   Audi: [
@@ -141,6 +152,10 @@ const carData = {
     "Venue",
     "Ioniq 5",
     "Ioniq 6",
+    "Ix35",
+    "Kona",
+    "grandeur",
+    "creta",
   ],
 
   Kia: [
@@ -160,7 +175,7 @@ const carData = {
 
   Tesla: ["Model S", "Model 3", "Model X", "Model Y", "Cybertruck"],
 
-  Lexus: ["ES", "IS", "GS", "LS", "NX", "RX", "UX", "LC"],
+  Lexus: ["ES", "IS", "GS", "LS", "NX", "RX", "UX", "LC", "GX", "RX450H"],
 
   Porsche: ["911", "Boxster", "Cayman", "Cayenne", "Macan", "Taycan"],
 
@@ -334,7 +349,10 @@ export default function AddCarForm({
               <FormSelect
                 label="Year"
                 name="year"
-                options={[2025, 2024, 2023, 2022, 2021]}
+                options={Array.from(
+                  { length: 2026 - 1996 + 1 },
+                  (_, i) => 2026 - i
+                )}
                 onChange={handleChange}
               />
 

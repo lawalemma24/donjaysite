@@ -21,6 +21,12 @@ const CAR_DATA = {
     "Sequoia",
     "4Runner",
     "Mirai",
+    "Highlander",
+    "Venza",
+    "Solara",
+    "FJ-cruiser",
+    "tundra",
+    "Tacoma ",
   ],
 
   Honda: [
@@ -34,6 +40,7 @@ const CAR_DATA = {
     "Ridgeline",
     "Insight",
     "Passport",
+    " Crosstour",
   ],
 
   Ford: [
@@ -92,6 +99,10 @@ const CAR_DATA = {
     "GLS",
     "EQC",
     "AMG GT",
+    "GLK350",
+    "M-Class",
+    "C300",
+    "CLA-class",
   ],
 
   Audi: [
@@ -141,6 +152,10 @@ const CAR_DATA = {
     "Venue",
     "Ioniq 5",
     "Ioniq 6",
+    "Ix35",
+    "Kona",
+    "grandeur",
+    "creta",
   ],
 
   Kia: [
@@ -160,7 +175,7 @@ const CAR_DATA = {
 
   Tesla: ["Model S", "Model 3", "Model X", "Model Y", "Cybertruck"],
 
-  Lexus: ["ES", "IS", "GS", "LS", "NX", "RX", "UX", "LC"],
+  Lexus: ["ES", "IS", "GS", "LS", "NX", "RX", "UX", "LC", "GX", "RX450H"],
 
   Porsche: ["911", "Boxster", "Cayman", "Cayenne", "Macan", "Taycan"],
 
@@ -383,7 +398,7 @@ const SellPage = () => {
                   value={form.year}
                   onChange={(e) => setForm({ ...form, year: e.target.value })}
                 >
-                  {Array.from({ length: 30 }, (_, i) => 2025 - i).map((yr) => (
+                  {Array.from({ length: 30 }, (_, i) => 2026 - i).map((yr) => (
                     <option key={yr}>{yr}</option>
                   ))}
                 </select>
