@@ -25,7 +25,10 @@ export default function CarCard({ car }) {
       </div>
 
       <div className="mt-2">
-        <h3 className="text-lg font-bold text-black">{car.carName}</h3>
+        <h3 className="text-lg font-bold text-black">
+          {car.carName} <span>{car.carModel}</span>{" "}
+          <span className="text-md text-gray-500">{car.year}</span>
+        </h3>
       </div>
 
       <div className="mt-1 flex items-center gap-4 text-sm text-text-muted">

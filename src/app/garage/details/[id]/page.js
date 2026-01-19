@@ -107,11 +107,12 @@ export default function CarDetails() {
               />
             </div>
 
-            <div className="flex gap-4 mt-4">
-              {allImages.slice(0, 4).map((img, idx) => (
+            <div className="flex gap-3 mt-4 overflow-x-auto scrollbar-hide">
+              {allImages.map((img, idx) => (
                 <div
                   key={idx}
-                  className="relative w-24 h-20 border border-lightgrey rounded overflow-hidden cursor-pointer"
+                  className={`relative w-24 h-20 flex-shrink-0 border rounded overflow-hidden cursor-pointer 
+        ${img === mainImage ? "border-black" : "border-lightgrey"}`}
                   onClick={() => handleThumbnailClick(img)}
                 >
                   <Image
