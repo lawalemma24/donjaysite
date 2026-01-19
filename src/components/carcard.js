@@ -25,9 +25,9 @@ export default function CarCard({ car }) {
       </div>
 
       <div className="mt-2">
-        <h3 className="text-lg font-bold text-black">
+        <h3 className=" font-semibold text-black">
           {car.carName} <span>{car.carModel}</span>{" "}
-          <span className="text-md text-gray-500">{car.year}</span>
+          <span className="text-sm text-gray-500">{car.year}</span>
         </h3>
       </div>
 
