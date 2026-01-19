@@ -1,6 +1,7 @@
-export const uploadToCloudinary = async (files, maxImages = 10) => {
+export const uploadToCloudinary = async (files, maxImages = 8) => {
   if (!files || files.length === 0) return [];
 
+  // Limit the number of files
   const limitedFiles = Array.from(files).slice(0, maxImages);
 
   const uploadPromises = limitedFiles.map(async (file) => {
@@ -9,7 +10,7 @@ export const uploadToCloudinary = async (files, maxImages = 10) => {
     data.append("upload_preset", "donjaysite1");
 
     const res = await fetch(
-      "https://api.cloudinary.com/v1_1/dqw3zwnlo/image/upload",
+      "https://api.cloudinary.com/v1_1/dvp775nz7/image/upload",
       {
         method: "POST",
         body: data,
@@ -26,5 +27,6 @@ export const uploadToCloudinary = async (files, maxImages = 10) => {
     return json.secure_url;
   });
 
-  return Promise.all(uploadPromises);
+  const urls = await Promise.all(uploadPromises);
+  return urls;
 };
