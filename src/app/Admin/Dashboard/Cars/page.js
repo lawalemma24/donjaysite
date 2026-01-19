@@ -242,7 +242,7 @@ export default function CarListingPage() {
                         alt={car.carName}
                         className="w-10 h-10 rounded-full border border-text-muted/70 object-cover"
                       />
-                      {car.carName}
+                      {car.carName} {car.carModel}
                     </td>
                     <td className="py-4 text-text-muted">{car.year}</td>
                     <td className="py-4">{car.condition || "N/A"}</td>

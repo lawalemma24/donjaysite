@@ -100,7 +100,7 @@ export default function Otp() {
       const data = await res.json();
 
       if (!res.ok) {
-        toast.error(data.message || "OTP verification failed");
+        toast.error("OTP verification failed");
         return;
       }
 

@@ -95,15 +95,13 @@ export default function Register() {
       const data = await response.json().catch(() => null);
 
       if (response.ok) {
-        toast.success(data?.message || "Signup successful");
+        toast.success("Signup successful");
         localStorage.setItem("signupEmail", form.email);
         router.push("/auth/otp");
       } else {
-        console.error("Signup failed:", data);
-        toast.error(data?.error || "Something went wrong");
+        toast.error("Something went wrong try again");
       }
     } catch (error) {
-      console.error("Network error:", error);
       toast.error("Network error, please try again");
     } finally {
       setLoading(false);

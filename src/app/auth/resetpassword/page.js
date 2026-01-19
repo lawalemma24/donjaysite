@@ -51,10 +51,9 @@ function ResetPasswordContent() {
       );
 
       const data = await res.json();
-      console.log("RESET PASSWORD RESPONSE:", data);
 
       if (!res.ok) {
-        toast.error(data.error || "Something went wrong");
+        toast.error("Something went wrong");
         setLoading(false);
         return;
       }

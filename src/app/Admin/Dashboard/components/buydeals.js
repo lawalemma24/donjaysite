@@ -58,7 +58,7 @@ export default function Buydeals() {
         setTotalPages(1);
         setTotalEntries(data.length);
       } else {
-        console.warn("⚠️ Unexpected API shape:", data);
+        console.warn(" Unexpected API shape:", data);
         setDeals([]);
         setTotalPages(1);
         setTotalEntries(0);
@@ -199,8 +199,12 @@ export default function Buydeals() {
                     {deal.customer?.name || "-"}
                   </td>
                   <td className="py-4 text-black text-sm">
-                    {deal.primaryCar?.carName || "-"}
+                    {deal.primaryCar?.carName || "-"}{" "}
+                    <span className="text-gray-500">
+                      {deal.primaryCar?.carModel || ""}
+                    </span>
                   </td>
+
                   <td className="py-4 text-text-muted">
                     {deal.primaryCar?.year || "-"}
                   </td>

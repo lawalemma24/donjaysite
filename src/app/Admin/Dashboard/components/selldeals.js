@@ -200,8 +200,12 @@ export default function Selldeals() {
                     {deal.customer?.name || "-"}
                   </td>
                   <td className="py-4 text-black text-sm">
-                    {deal.primaryCar?.carName || "-"}
+                    {deal.primaryCar?.carName || "-"}{" "}
+                    <span className="text-gray-500">
+                      {deal.primaryCar?.carModel || ""}
+                    </span>
                   </td>
+
                   <td className="py-4 text-text-muted">
                     {deal.primaryCar?.year || "-"}
                   </td>
