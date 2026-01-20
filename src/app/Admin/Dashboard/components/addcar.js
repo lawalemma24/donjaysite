@@ -253,7 +253,6 @@ export default function AddCarForm({
 
     try {
       setLoading(true);
-      console.log("[CREATE CAR] Uploading images to Cloudinary...");
 
       const files = images.map((img) => img.file);
       const uploadedUrls = await uploadToCloudinary(files);
@@ -272,10 +271,7 @@ export default function AddCarForm({
         images: uploadedUrls,
       };
 
-      console.log("[CREATE CAR] Submitting payload:", payload);
-
       const res = await api.post("/", payload);
-      console.log("[CREATE CAR] Server response:", res.data);
 
       if (res.status === 201) {
         toast.success(res.data.message || "Car added successfully");
@@ -285,7 +281,6 @@ export default function AddCarForm({
         toast.error("Unexpected server response");
       }
     } catch (err) {
-      console.error("[CREATE CAR] Error:", err);
       toast.error(err.response?.data?.message || "Failed to create car");
     } finally {
       setLoading(false);

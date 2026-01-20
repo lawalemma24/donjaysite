@@ -7,10 +7,10 @@ export const uploadToCloudinary = async (files, maxImages = 8) => {
   const uploadPromises = limitedFiles.map(async (file) => {
     const data = new FormData();
     data.append("file", file);
-    data.append("upload_preset", "donjaysite1");
+    data.append("upload_preset", "jaytech");
 
     const res = await fetch(
-      "https://api.cloudinary.com/v1_1/dvp775nz7/image/upload",
+      "https://api.cloudinary.com/v1_1/dc8gfuftv/image/upload",
       {
         method: "POST",
         body: data,
