@@ -182,15 +182,14 @@ const Dashboard = () => {
                   <div className="relative flex items-start p-4 mb-6">
                     <img
                       src={profileImage}
-                      alt="Profile"
-                      className="w-24 h-24 rounded-full object-cover"
+                      className="w-24 h-24 rounded-full object-cover border border-gray-300"
                     />
                     <button
                       type="button"
                       className="absolute bottom-2 left-20 bg-white p-1 rounded-full shadow"
                       onClick={() => fileInputRef.current.click()}
                     >
-                      <Edit3 size={16} className="text-gray-600" />
+                      <Edit3 size={16} className="text-blue-600" />
                     </button>
                     <input
                       type="file"

@@ -22,22 +22,31 @@ const AdminAccountMenu = () => {
     setOpen(false);
     window.location.href = "/";
   };
+  const getNamePlaceholder = (name = "") => {
+    if (!name) return "US";
+    return name.trim().slice(0, 2).toUpperCase();
+  };
 
   return (
     <div className="relative">
       {/* Top Bar Account Button */}
       <button
         onClick={() => setOpen(!open)}
-        className="flex items-center gap-2 px-3 py-2 hover:bg-gray-50"
+        className="flex items-center gap-2 px-3 py-2"
       >
-        <Image
-          src={"https://avatars.dicebear.com/api/avataaars/JohnDoe.svg"}
-          alt=""
-          width={32}
-          height={32}
-          className="rounded-full"
-        />
-        <span className="font-medium hidden lg:block">Admin</span>
+        {user?.profilePic && user.profilePic.trim() !== "" ? (
+          <div
+            className="w-10 h-10 rounded-full bg-center bg-cover border border-gray-300"
+            style={{ backgroundImage: `url(${user.profilePic})` }}
+          />
+        ) : (
+          <div className="w-8 h-8 rounded-full bg-blue-600 text-white flex items-center justify-center text-sm font-semibold select-none">
+            {getNamePlaceholder(user?.name)}
+          </div>
+        )}
+
+        <span className="font-medium hidden lg:block">Profile</span>
+
         <svg
           className={`w-4 h-4 transform transition-transform ${
             open ? "rotate-180" : ""
