@@ -96,15 +96,12 @@ function InspectionPageContent() {
     if (!date) return;
     (async () => {
       try {
-        const res = await fetch(
-          apiUrl(`/inspections/available-slots?date=${date}`),
-          {
-            headers: {
-              "Content-Type": "application/json",
-              Authorization: `Bearer ${localStorage.getItem("token")}`,
-            },
-          }
-        );
+        const res = await fetch(apiUrl(`/inspections/slots?date=${date}`), {
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
+        });
         const data = await res.json();
         const slotsData = data.slots || [];
         const flattened = slotsData.flatMap((p) =>
