@@ -84,7 +84,7 @@ export default function CarDetails() {
   return (
     <>
       <div className="max-w-6xl mx-auto px-4 py-16 md:py-20">
-        <div className="max-w-7xl mx-auto px-8 pt-4 mt-4">
+        <div className="max-w-7xl mx-auto px-8 pt-4 mt-4 hidden md:block">
           <nav className="text-sm text-gray-500">
             Home <span className="mx-1">/</span> Garage{" "}
             <span className="mx-1">/</span>
