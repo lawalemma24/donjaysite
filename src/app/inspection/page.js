@@ -96,7 +96,7 @@ function InspectionPageContent() {
     if (!date) return;
     (async () => {
       try {
-        const res = await fetch(apiUrl(`/inspections/slots?date=${date}`), {
+        const res = await fetch(apiUrl(`/api/inspections/slots?date=${date}`), {
           headers: {
             "Content-Type": "application/json",
             Authorization: `Bearer ${localStorage.getItem("token")}`,
