@@ -7,20 +7,20 @@ import ProtectedRoute from "@/app/protectedroutes/protected";
 import MyCarsPage from "./mycars";
 
 export default function MyDealsPage() {
-  const [activeTab, setActiveTab] = useState("buy");
+  const [activeTab, setActiveTab] = useState("swap");
 
   return (
     <ProtectedRoute allowedRoles={["customer"]}>
       <div className="p-6">
         <h1 className="text-2xl font-bold mb-2">My Deals</h1>
         <p className="text-gray-600 text-sm mb-10">
-          A complete overview of your buying, selling, and swapping activities,
-          with real-time status updates
+          A complete overview of your Selling and Swapping activities, with
+          real-time status updates
         </p>
 
         {/* Tabs */}
         <div className="flex gap-6 border-b border-lightgrey mb-4">
-          {["buy", "swap", "sell"].map((tab) => (
+          {["swap", "sell"].map((tab) => (
             <button
               key={tab}
               onClick={() => setActiveTab(tab)}
@@ -30,17 +30,13 @@ export default function MyDealsPage() {
                   : "text-text-muted"
               }`}
             >
-              {tab === "buy"
-                ? "Buy Deals"
-                : tab === "swap"
-                ? "Swap Deals"
-                : "Sell Deals"}
+              {tab === "swap" ? "Swap Deals" : "Sell Deals"}
             </button>
           ))}
         </div>
 
         {/* Tab Content */}
-        {activeTab === "buy" && <BuyDealsTable />}
+        {/* {activeTab === "buy" && <BuyDealsTable />} */}
         {activeTab === "swap" && <SwapDealsTable />}
         {activeTab === "sell" && <SellDealsTable />}
       </div>

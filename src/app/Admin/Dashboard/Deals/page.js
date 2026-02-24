@@ -7,10 +7,9 @@ import Swapdeals from "../components/swapdeals";
 import ProtectedRoute from "@/app/protectedroutes/protected";
 
 export default function CarListingPage() {
-  const [active, setActive] = useState("buy");
+  const [active, setActive] = useState("sell");
 
   const tabs = [
-    { key: "buy", label: "Buy deals" },
     { key: "sell", label: "Sell deals" },
     { key: "swap", label: "Swap deals" },
   ];
@@ -22,8 +21,8 @@ export default function CarListingPage() {
         <div>
           <h1 className="text-3xl font-bold">Deals</h1>
           <p className="text-gray-500 mt-1">
-            Track and manage all customer transactions, including car purchases,
-            sales and swaps in one place.
+            Track and manage all customer transactions, including car sales and
+            swaps in one place.
           </p>
         </div>
         {/* Tabs */}
@@ -47,7 +46,7 @@ export default function CarListingPage() {
 
           {/* Content */}
           <div className="mt-4 sm:mt-6">
-            {active === "buy" && <Buydeals />}
+            {/* {active === "buy" && <Buydeals />} */}
             {active === "sell" && <Selldeals />}
             {active === "swap" && <Swapdeals />}
           </div>

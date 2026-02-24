@@ -9,6 +9,7 @@ import api from "@/utils/api";
 import NotRegisteredOverlay from "@/components/notuser";
 import { useAuth } from "@/app/contexts/AuthContext";
 import Loader from "@/components/preloader";
+import OrderSummaryOverlay from "../../ordersummary/page";
 
 export default function CarDetails() {
   const { id } = useParams();
@@ -22,6 +23,7 @@ export default function CarDetails() {
   const [modalImage, setModalImage] = useState(null);
   const [submitting, setSubmitting] = useState(false);
   const [showNotRegistered, setShowNotRegistered] = useState(false);
+  const [showOrderOverlay, setShowOrderOverlay] = useState(false);
 
   useEffect(() => {
     const fetchCar = async () => {
@@ -60,7 +62,7 @@ export default function CarDetails() {
       return;
     }
     sessionStorage.setItem("selectedCar", JSON.stringify(car));
-    router.push("/garage/ordersummary");
+    setShowOrderOverlay(true); // ✅ Show overlay instead of navigating
   };
 
   const handleSwapClick = () => {
@@ -68,7 +70,6 @@ export default function CarDetails() {
       setShowNotRegistered(true);
       return;
     }
-    // Store selected car in sessionStorage
     sessionStorage.setItem("selectedCar", JSON.stringify(car));
     router.push("/garage/swapcar");
   };
@@ -94,6 +95,7 @@ export default function CarDetails() {
         </div>
 
         <div className="max-w-6xl mx-auto grid grid-cols-1 lg:grid-cols-2 mt-4 gap-8">
+          {/* Left: Images */}
           <div>
             <div
               className="relative w-full h-96 border border-lightgrey rounded-lg overflow-hidden cursor-pointer"
@@ -112,7 +114,7 @@ export default function CarDetails() {
                 <div
                   key={idx}
                   className={`relative w-24 h-20 flex-shrink-0 border rounded overflow-hidden cursor-pointer 
-        ${img === mainImage ? "border-black" : "border-lightgrey"}`}
+                  ${img === mainImage ? "border-black" : "border-lightgrey"}`}
                   onClick={() => handleThumbnailClick(img)}
                 >
                   <Image
@@ -126,6 +128,7 @@ export default function CarDetails() {
             </div>
           </div>
 
+          {/* Right: Details */}
           <div>
             <h1 className="text-2xl md:text-3xl font-bold mb-2">
               {car.carName} {car.carModel}{" "}
@@ -195,6 +198,7 @@ export default function CarDetails() {
         </div>
       </div>
 
+      {/* Car Image Modal */}
       {isModalOpen && (
         <div className="fixed inset-0 bg-black/90 flex items-center justify-center z-50 p-4">
           <button
@@ -215,8 +219,15 @@ export default function CarDetails() {
         </div>
       )}
 
+      {/* Order Summary Overlay */}
+      {showOrderOverlay && (
+        <OrderSummaryOverlay onClose={() => setShowOrderOverlay(false)} />
+      )}
+
+      {/* Related Cars */}
       <RelatedCars />
 
+      {/* Not Registered Overlay */}
       {showNotRegistered && (
         <NotRegisteredOverlay
           onRegisterClick={() => router.push("/auth/register")}
