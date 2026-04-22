@@ -17,7 +17,7 @@ export default function PaymentSummaryCard() {
   if (!orderInfo || !selectedCar)
     return <div className="text-center mt-20">Loading...</div>;
 
-  const deliveryFee = 0;
+  const deliveryFee = 50000;
   const total = (selectedCar.price || 0) + deliveryFee;
 
   return (
@@ -93,10 +93,10 @@ export default function PaymentSummaryCard() {
               ₦{selectedCar.price?.toLocaleString()}
             </span>
           </p>
-          {/* <p className="flex justify-between text-sm">
+          <p className="flex justify-between text-sm">
             <span className="text-gray-500">Delivery Fee:</span>
             <span>₦{deliveryFee.toLocaleString()}</span>
-          </p> */}
+          </p>
         </div>
 
         <hr className="my-3 border border-lightgrey" />

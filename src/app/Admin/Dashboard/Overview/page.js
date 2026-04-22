@@ -12,9 +12,10 @@ import PendingDealsCard from "../components/pendingdeals";
 import TotalUsersCard from "../components/totalusers";
 
 export default function DashboardPage() {
-  const [active, setActive] = useState("sell");
+  const [active, setActive] = useState("buy");
 
   const tabs = [
+    { key: "buy", label: "Buy deals" },
     { key: "sell", label: "Sell deals" },
     { key: "swap", label: "Swap deals" },
   ];
@@ -27,7 +28,7 @@ export default function DashboardPage() {
         </h1>
 
         {/* widgets */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 sm:gap-6">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
           {/* Total Users */}
           <TotalUsersCard />
 
@@ -38,7 +39,7 @@ export default function DashboardPage() {
           <DealsCompletedCard />
 
           {/* Total Revenue */}
-          {/* <div className="bg-white rounded-2xl shadow-sm p-4 sm:p-5 flex items-center gap-3 sm:gap-4">
+          <div className="bg-white rounded-2xl shadow-sm p-4 sm:p-5 flex items-center gap-3 sm:gap-4">
             <div className="bg-yellow-100 text-yellow-600 p-2 sm:p-3 rounded-full">
               <Wallet size={22} />
             </div>
@@ -46,7 +47,7 @@ export default function DashboardPage() {
               <p className="text-gray-500 text-sm font-medium">Total Revenue</p>
               <p className="text-xl sm:text-2xl font-bold text-black">₦800M</p>
             </div>
-          </div> */}
+          </div>
         </div>
 
         {/* Graphs */}
@@ -78,7 +79,7 @@ export default function DashboardPage() {
 
           {/* Tab content */}
           <div className="mt-4 sm:mt-6">
-            {/* {active === "buy" && <Buydeals />} */}
+            {active === "buy" && <Buydeals />}
             {active === "sell" && <Selldeals />}
             {active === "swap" && <Swapdeals />}
           </div>
