@@ -24,10 +24,17 @@ export const uploadToCloudinary = async (
 
     const category = isImage ? "deal_images" : "deal_documents";
 
+    console.log(`📦 Preparing to upload ${file.name} (${file.size} bytes, type: ${file.type}) to category: ${category}`);
+
+    if (file.size === 0) {
+      throw new Error(`File ${file.name} is empty (0 bytes)`);
+    }
+
     const data = new FormData();
-    data.append("file", file);
+    data.append("file", file, file.name);
     data.append("upload_preset", "jaytech");
     data.append("folder", `deals/${category}`);
+    data.append("resource_type", isImage ? "image" : "auto");
 
     const res = await fetch(
       "https://api.cloudinary.com/v1_1/dc8gfuftv/auto/upload",
