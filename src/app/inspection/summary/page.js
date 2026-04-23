@@ -53,7 +53,7 @@ export default function InspectionOfferReview({
         customerNotes: note || "",
       };
 
-      const res = await fetch(apiUrl("/inspections/book"), {
+      const res = await fetch(apiUrl("/api/inspections/book"), {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
