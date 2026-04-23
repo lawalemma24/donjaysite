@@ -36,7 +36,6 @@ export const uploadToCloudinary = async (
     data.append("upload_preset", "jaytech");
     data.append("folder", `deals/${category}`);
     data.append("resource_type", resourceType);
-    data.append("access_mode", "public");
 
     const res = await fetch(
       `https://api.cloudinary.com/v1_1/dc8gfuftv/${resourceType}/upload`,
