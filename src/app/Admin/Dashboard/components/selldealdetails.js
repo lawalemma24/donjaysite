@@ -20,7 +20,7 @@ export default function SellDealDetails({ deal, onClose }) {
     : "Pending";
 
   const receiptUrl = deal.receiptUrl?.toLowerCase() || "";
-  const isPdf = receiptUrl.includes(".pdf");
+  const isPdf = receiptUrl.includes(".pdf") || (receiptUrl.includes("/raw/upload/") && receiptUrl.includes("deal_documents"));
   const isWord = receiptUrl.includes(".doc");
 
   if (deal.receiptUrl) {

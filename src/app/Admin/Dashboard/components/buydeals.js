@@ -145,8 +145,8 @@ export default function Buydeals() {
                 setPage(1);
               }}
               className={`px-3 py-1 rounded border ${statusFilter === status
-                  ? "bg-blue text-white border-blue"
-                  : "border-gray-300 hover:bg-gray-100"
+                ? "bg-blue text-white border-blue"
+                : "border-gray-300 hover:bg-gray-100"
                 }`}
             >
               {status
@@ -185,7 +185,7 @@ export default function Buydeals() {
               {deals.map((deal, i) => {
                 // Robust file type detection
                 const receiptUrl = deal.receiptUrl?.toLowerCase() || "";
-                const isPdf = receiptUrl.includes(".pdf");
+                const isPdf = receiptUrl.includes(".pdf") || receiptUrl.includes("/raw/upload/") && receiptUrl.includes("deal_documents");
                 const isWord = receiptUrl.includes(".doc");
 
                 return (

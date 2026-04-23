@@ -15,16 +15,17 @@ export const uploadToCloudinary = async (
   const limitedFiles = Array.from(files).slice(0, maxFiles);
 
   const uploadPromises = limitedFiles.map(async (file) => {
-    const isImage = allowedImageTypes.includes(file.type);
+    const isImageOrPdf = file.type.startsWith("image/") || file.type === "application/pdf";
     const isDoc = allowedDocTypes.includes(file.type);
 
-    if (!isImage && !isDoc) {
+    if (!isImageOrPdf && !isDoc) {
       throw new Error(`Unsupported file type: ${file.type}`);
     }
 
-    const category = isImage ? "deal_images" : "deal_documents";
+    const category = isImageOrPdf ? "deal_images" : "deal_documents";
+    const resourceType = isImageOrPdf ? "image" : "raw";
 
-    console.log(`📦 Preparing to upload ${file.name} (${file.size} bytes, type: ${file.type}) to category: ${category}`);
+    console.log(`📦 Preparing to upload ${file.name} (${file.size} bytes, type: ${file.type}) to category: ${category} as ${resourceType}`);
 
     if (file.size === 0) {
       throw new Error(`File ${file.name} is empty (0 bytes)`);
@@ -34,10 +35,11 @@ export const uploadToCloudinary = async (
     data.append("file", file, file.name);
     data.append("upload_preset", "jaytech");
     data.append("folder", `deals/${category}`);
-    data.append("resource_type", isImage ? "image" : "raw");
+    data.append("resource_type", resourceType);
+    data.append("access_mode", "public");
 
     const res = await fetch(
-      `https://api.cloudinary.com/v1_1/dc8gfuftv/${isImage ? "image" : "raw"}/upload`,
+      `https://api.cloudinary.com/v1_1/dc8gfuftv/${resourceType}/upload`,
       {
         method: "POST",
         body: data,
