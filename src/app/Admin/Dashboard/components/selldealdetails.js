@@ -19,6 +19,14 @@ export default function SellDealDetails({ deal, onClose }) {
     ? deal.status.charAt(0).toUpperCase() + deal.status.slice(1).toLowerCase()
     : "Pending";
 
+  const receiptUrl = deal.receiptUrl?.toLowerCase() || "";
+  const isPdf = receiptUrl.includes(".pdf");
+  const isWord = receiptUrl.includes(".doc");
+
+  if (deal.receiptUrl) {
+    console.log("🔍 Detailed View Receipt URL:", deal.receiptUrl);
+  }
+
   return (
     <div
       className="fixed inset-0 bg-black/80 z-50 flex justify-center p-3 items-center"
@@ -128,12 +136,12 @@ export default function SellDealDetails({ deal, onClose }) {
             <>
               <h3 className="font-semibold mb-2 mt-6">Payment Receipt</h3>
               <div className="border rounded-lg overflow-hidden bg-gray-50">
-                {deal.receiptUrl.toLowerCase().endsWith('.pdf') ? (
+                {isPdf ? (
                   <div className="py-8 flex flex-col items-center justify-center">
                     <Download className="text-blue-500 mb-2" size={32} />
                     <span className="text-sm font-medium">Receipt Document (PDF)</span>
                   </div>
-                ) : deal.receiptUrl.toLowerCase().endsWith('.doc') || deal.receiptUrl.toLowerCase().endsWith('.docx') ? (
+                ) : isWord ? (
                   <div className="py-8 flex flex-col items-center justify-center">
                     <Download className="text-blue-500 mb-2" size={32} />
                     <span className="text-sm font-medium">Receipt Document (Word)</span>

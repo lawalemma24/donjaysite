@@ -34,10 +34,10 @@ export const uploadToCloudinary = async (
     data.append("file", file, file.name);
     data.append("upload_preset", "jaytech");
     data.append("folder", `deals/${category}`);
-    data.append("resource_type", isImage ? "image" : "auto");
+    data.append("resource_type", isImage ? "image" : "raw");
 
     const res = await fetch(
-      "https://api.cloudinary.com/v1_1/dc8gfuftv/auto/upload",
+      `https://api.cloudinary.com/v1_1/dc8gfuftv/${isImage ? "image" : "raw"}/upload`,
       {
         method: "POST",
         body: data,
