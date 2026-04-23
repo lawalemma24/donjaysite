@@ -1,5 +1,6 @@
 "use client";
 import Image from "next/image";
+import { Download } from "lucide-react";
 
 export default function SellDealDetails({ deal, onClose }) {
   if (!deal) return null;
@@ -40,9 +41,8 @@ export default function SellDealDetails({ deal, onClose }) {
           <p className="text-xs font-medium">
             Status:
             <span
-              className={`ml-2 px-2 py-1 rounded-full text-[11px] font-semibold ${
-                statusColors[status] || "bg-gray-100 text-gray-600"
-              }`}
+              className={`ml-2 px-2 py-1 rounded-full text-[11px] font-semibold ${statusColors[status] || "bg-gray-100 text-gray-600"
+                }`}
             >
               {status}
             </span>
@@ -123,6 +123,26 @@ export default function SellDealDetails({ deal, onClose }) {
             <span className="text-lightgrey">Order ID:</span>
             <span className="text-blue">{deal.orderId || "-"}</span>
           </p>
+
+          {deal.receiptUrl && (
+            <>
+              <h3 className="font-semibold mb-2 mt-6">Payment Receipt</h3>
+              <div className="border rounded-lg overflow-hidden bg-gray-50">
+                {deal.receiptUrl.toLowerCase().endsWith('.pdf') ? (
+                  <div className="py-8 flex flex-col items-center justify-center">
+                    <Download className="text-blue-500 mb-2" size={32} />
+                    <span className="text-sm font-medium">Receipt Document (PDF)</span>
+                  </div>
+                ) : (
+                  <img
+                    src={deal.receiptUrl}
+                    alt="Payment Receipt"
+                    className="w-full max-h-60 object-contain mx-auto"
+                  />
+                )}
+              </div>
+            </>
+          )}
         </div>
 
         <div className="flex justify-between mt-6">
@@ -132,9 +152,20 @@ export default function SellDealDetails({ deal, onClose }) {
           >
             Close
           </button>
-          <button className="px-4 py-2 bg-blue text-white rounded-lg">
-            Download Receipt
-          </button>
+          {deal.receiptUrl ? (
+            <a
+              href={deal.receiptUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="px-4 py-2 bg-blue text-white rounded-lg flex items-center justify-center gap-2"
+            >
+              <Download size={16} /> Download Receipt
+            </a>
+          ) : (
+            <button disabled className="px-4 py-2 bg-gray-300 text-white rounded-lg cursor-not-allowed">
+              No Receipt
+            </button>
+          )}
         </div>
       </div>
     </div>

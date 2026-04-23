@@ -144,11 +144,10 @@ export default function Buydeals() {
                 setStatusFilter(status);
                 setPage(1);
               }}
-              className={`px-3 py-1 rounded border ${
-                statusFilter === status
-                  ? "bg-blue text-white border-blue"
-                  : "border-gray-300 hover:bg-gray-100"
-              }`}
+              className={`px-3 py-1 rounded border ${statusFilter === status
+                ? "bg-blue text-white border-blue"
+                : "border-gray-300 hover:bg-gray-100"
+                }`}
             >
               {status
                 ? status.charAt(0).toUpperCase() + status.slice(1)
@@ -176,6 +175,7 @@ export default function Buydeals() {
                 <th>Year</th>
                 <th>Condition</th>
                 <th>Price</th>
+                <th>Receipt</th>
                 <th>Status</th>
                 <th>Date Listed</th>
                 <th className="w-[60px]"></th>
@@ -210,6 +210,29 @@ export default function Buydeals() {
                   </td>
                   <td className="py-4">{deal.primaryCar?.condition || "-"}</td>
                   <td className="py-4">{deal.formattedOfferPrice || "-"}</td>
+                  <td className="py-4">
+                    {deal.receiptUrl ? (
+                      <a
+                        href={deal.receiptUrl}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="block w-10 h-10 rounded border border-gray-200 overflow-hidden hover:opacity-80 transition-opacity"
+                        title="View Receipt"
+                      >
+                        {deal.receiptUrl.toLowerCase().endsWith('.pdf') ? (
+                          <div className="w-full h-full bg-gray-100 flex items-center justify-center text-[10px] font-bold text-red-500">PDF</div>
+                        ) : (
+                          <img
+                            src={deal.receiptUrl}
+                            alt="Receipt"
+                            className="w-full h-full object-cover"
+                          />
+                        )}
+                      </a>
+                    ) : (
+                      <span className="text-gray-400 text-xs italic">No Receipt</span>
+                    )}
+                  </td>
                   <td className="py-4">
                     <div
                       className={`px-3 py-1 rounded-full text-xs font-medium inline-block ${getStatusColor(
@@ -306,9 +329,8 @@ export default function Buydeals() {
                 <button
                   key={`page-${num}`}
                   onClick={() => handlePageChange(num)}
-                  className={`px-3 py-1 rounded border border-text-muted ${
-                    page === num ? "bg-blue text-white" : "hover:bg-gray-100"
-                  }`}
+                  className={`px-3 py-1 rounded border border-text-muted ${page === num ? "bg-blue text-white" : "hover:bg-gray-100"
+                    }`}
                 >
                   {num}
                 </button>
@@ -317,9 +339,8 @@ export default function Buydeals() {
             <span className="px-2">...</span>
             <button
               onClick={() => handlePageChange(totalPages)}
-              className={`px-3 py-1 rounded border border-text-muted ${
-                page === totalPages ? "bg-blue text-white" : "hover:bg-gray-100"
-              }`}
+              className={`px-3 py-1 rounded border border-text-muted ${page === totalPages ? "bg-blue text-white" : "hover:bg-gray-100"
+                }`}
             >
               {totalPages}
             </button>
