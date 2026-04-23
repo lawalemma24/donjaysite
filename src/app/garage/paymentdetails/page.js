@@ -5,9 +5,11 @@ import Image from "next/image";
 import PaymentSuccessModal from "@/components/confirmpayment";
 import dealsApi from "@/utils/dealsapi";
 import Loader from "@/components/preloader";
+import { uploadToCloudinary } from "@/utils/uploadToCloudinary";
 
 const PaymentCard = () => {
-  const [tab, setTab] = useState("card");
+  const [receiptFile, setReceiptFile] = useState(null);
+  const [receiptPreview, setReceiptPreview] = useState(null);
   const [open, setOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [car, setCar] = useState(null);
@@ -20,6 +22,14 @@ const PaymentCard = () => {
       setCar(JSON.parse(savedCar));
     }
   }, []);
+
+  const handleFileChange = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      setReceiptFile(file);
+      setReceiptPreview(URL.createObjectURL(file));
+    }
+  };
 
   const handlePayment = async () => {
     const token = localStorage.getItem("token");
@@ -40,13 +50,31 @@ const PaymentCard = () => {
       return;
     }
 
+    if (!receiptFile) {
+      alert("Please upload a payment receipt to continue.");
+      return;
+    }
+
     setIsLoading(true);
 
     try {
+      // 1. Upload receipt to Cloudinary
+      console.log("📤 Uploading receipt to Cloudinary...");
+      const uploadResults = await uploadToCloudinary([receiptFile]);
+      const receiptUrl = uploadResults[0]?.url;
+
+      if (!receiptUrl) {
+        throw new Error("Failed to get receipt URL from Cloudinary");
+      }
+
+      console.log("✅ Receipt uploaded:", receiptUrl);
+
+      // 2. Create deal with receiptUrl
       const dealData = {
         dealType: "buy",
         primaryCarId: car._id,
         offerPrice: car.price,
+        receiptUrl: receiptUrl,
         customerNote: `Interested in purchasing ${car.carName}`,
         customerContact: {
           phone: user.phoneNumber || "+254700000000",
@@ -54,10 +82,9 @@ const PaymentCard = () => {
           preferredContactMethod: "both",
         },
         priority: "medium",
-        tags: ["payment", "frontend"],
+        tags: ["payment", "buy-deal", "receipt-uploaded"],
       };
 
-      console.log("🪙 Current car object:", car);
       console.log("🚀 Creating deal with data:", dealData);
 
       const response = await dealsApi.post("/", dealData);
@@ -66,11 +93,12 @@ const PaymentCard = () => {
       setDeal(response.data.deal);
       setOpen(true);
     } catch (error) {
-      console.error("❌ Error creating deal:", error.response?.data || error);
+      console.error("❌ Error during deal creation:", error.response?.data || error);
       alert(
         error.response?.data?.error ||
-          error.response?.data?.message ||
-          "Failed to create deal."
+        error.response?.data?.message ||
+        error.message ||
+        "Failed to process deal."
       );
     } finally {
       setIsLoading(false);
@@ -95,141 +123,99 @@ const PaymentCard = () => {
         </nav>
       </div>
 
-      <div className="max-w-md mx-auto mt-10 bg-white p-6 rounded-2xl shadow-md">
-        <h2 className="text-xl font-bold text-center mb-6">Payment Details</h2>
+      <div className="max-w-md mx-auto mt-10 bg-white p-6 rounded-2xl shadow-md border border-gray-100">
+        <h2 className="text-xl font-bold text-center mb-2">Complete Purchase</h2>
+        <p className="text-gray-500 text-sm text-center mb-6">
+          Upload your payment receipt to finalize the deal
+        </p>
 
-        {/* Tabs */}
-        <div className="flex justify-between gap-3 mb-6 text-xs">
-          <button
-            onClick={() => setTab("card")}
-            className={`flex items-center gap-2 px-4 py-2 border rounded-md font-medium ${
-              tab === "card"
-                ? "border-blue text-blue-600"
-                : "border-gray-300 text-gray-500"
-            }`}
-          >
-            <FaRegCreditCard /> Card
-          </button>
-          <button
-            onClick={() => setTab("bank")}
-            className={`flex items-center gap-2 px-4 py-2 border rounded-md font-medium ${
-              tab === "bank"
-                ? "border-blue text-blue-600"
-                : "border-gray-300 text-gray-500"
-            }`}
-          >
-            <FaUniversity /> Bank Transfer
-          </button>
-          <button
-            onClick={() => setTab("delivery")}
-            className={`flex items-center gap-2 px-4 py-2 border rounded-md font-medium ${
-              tab === "delivery"
-                ? "border-blue text-blue-600"
-                : "border-gray-300 text-gray-500"
-            }`}
-          >
-            <FaTruck /> Pay on Delivery
-          </button>
-        </div>
-
-        {/* CARD PAYMENT */}
-        {tab === "card" && (
-          <div className="space-y-4">
-            {/* Card Number */}
-            <div>
-              <label className="block text-sm font-medium mb-1">
-                Card Number
-              </label>
-              <div className="relative flex items-center">
-                <input
-                  type="text"
-                  placeholder="1234 5678 9101 1213"
-                  className="w-full border border-lightgrey rounded-md px-3 py-2 focus:outline-none focus:border-blue"
-                />
+        <div className="space-y-6">
+          {/* Car Summary */}
+          <div className="bg-gray-50 p-4 rounded-xl flex items-center gap-4">
+            {car.images?.[0] && (
+              <div className="relative w-16 h-16 rounded-lg overflow-hidden flex-shrink-0">
                 <Image
-                  src="/images/mastercard.png"
-                  alt="card"
-                  width={32}
-                  height={20}
-                  className="absolute right-3"
+                  src={car.images[0]}
+                  alt={car.carName}
+                  fill
+                  className="object-cover"
                 />
               </div>
-            </div>
-
-            {/* Expiry + CVV */}
-            <div className="flex gap-4">
-              <div className="flex-1">
-                <label className="block text-sm font-medium mb-1">
-                  Expiry Date
-                </label>
-                <input
-                  type="text"
-                  placeholder="07/11"
-                  className="w-full border border-lightgrey rounded-md px-3 py-2 focus:outline-none focus:border-blue"
-                />
-              </div>
-              <div className="flex-1">
-                <label className="block text-sm font-medium mb-1">CVV</label>
-                <input
-                  type="text"
-                  placeholder="123"
-                  className="w-full border border-lightgrey rounded-md px-3 py-2 focus:outline-none focus:border-blue"
-                />
-              </div>
-            </div>
-
-            {/* Name on Card */}
+            )}
             <div>
-              <label className="block text-sm font-medium mb-1">
-                Name on Card
-              </label>
+              <h3 className="font-semibold text-gray-800">{car.carName}</h3>
+              <p className="text-blue font-bold">₦{(car.price || 0).toLocaleString()}</p>
+            </div>
+          </div>
+
+          {/* Receipt Upload */}
+          <div className="space-y-2">
+            <label className="block text-sm font-medium text-gray-700">
+              Payment Receipt
+            </label>
+            <div className={`border-2 border-dashed rounded-xl p-6 text-center transition-colors ${receiptPreview ? 'border-blue bg-blue/5' : 'border-gray-300 hover:border-blue'
+              }`}>
               <input
-                type="text"
-                placeholder="Don Jay"
-                className="w-full border border-lightgrey rounded-md px-3 py-2 focus:outline-none focus:border-blue"
+                type="file"
+                accept="image/*,application/pdf"
+                onChange={handleFileChange}
+                className="hidden"
+                id="receiptInput"
               />
+              {!receiptPreview ? (
+                <label htmlFor="receiptInput" className="cursor-pointer block">
+                  <div className="flex flex-col items-center">
+                    <FaUniversity className="text-gray-400 text-3xl mb-2" />
+                    <span className="text-blue font-medium">Click to upload receipt</span>
+                    <span className="text-xs text-gray-500 mt-1">
+                      JPG, PNG or PDF (Max 10MB)
+                    </span>
+                  </div>
+                </label>
+              ) : (
+                <div className="relative group">
+                  {receiptFile?.type?.includes('image') ? (
+                    <img
+                      src={receiptPreview}
+                      alt="Receipt preview"
+                      className="mx-auto max-h-48 rounded-lg shadow-sm"
+                    />
+                  ) : (
+                    <div className="py-8 bg-white rounded-lg border flex flex-col items-center">
+                      <FaUniversity className="text-blue text-3xl mb-2" />
+                      <span className="text-sm font-medium">{receiptFile.name}</span>
+                    </div>
+                  )}
+                  <label htmlFor="receiptInput" className="absolute inset-0 flex items-center justify-center bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity rounded-lg cursor-pointer">
+                    <span className="text-white text-sm font-medium">Change Receipt</span>
+                  </label>
+                </div>
+              )}
             </div>
+          </div>
 
-            {/* Save checkbox */}
-            <div className="flex items-center gap-2">
-              <input type="checkbox" className="text-blue-600" defaultChecked />
-              <span className="text-sm text-gray-600">
-                Save card details for future
-              </span>
-            </div>
-
-            {/* Pay button */}
-            {isLoading && <Loader write="processing payment" />}
+          {/* Pay button */}
+          <div className="pt-4">
+            {isLoading && <Loader write="processing deal..." />}
 
             <button
               onClick={handlePayment}
-              disabled={isLoading}
-              className={`w-full py-3 rounded-md font-semibold text-white transition ${
-                isLoading
+              disabled={isLoading || !receiptFile}
+              className={`w-full py-4 rounded-xl font-bold text-white shadow-lg transition-all transform hover:scale-[1.02] active:scale-[0.98] ${isLoading || !receiptFile
                   ? "bg-gray-400 cursor-not-allowed"
                   : "bg-blue hover:bg-blue-700"
-              }`}
+                }`}
             >
-              {isLoading
-                ? "Processing..."
-                : `Pay ₦${(car.price || 0).toLocaleString()}`}
+              {isLoading ? "Processing..." : "Complete Purchase"}
             </button>
-
-            <PaymentSuccessModal isOpen={open} onClose={() => setOpen(false)} />
           </div>
-        )}
 
-        {tab === "bank" && (
-          <div className="text-gray-500 text-center py-6">
-            <p>Bank Transfer option will appear here.</p>
-          </div>
-        )}
+          <p className="text-[10px] text-gray-400 text-center px-4">
+            By clicking Complete Purchase, you agree to our terms of service and acknowledge that your payment receipt will be reviewed by our admin team for verification.
+          </p>
 
-        {tab === "delivery" && (
-          <div className="text-gray-500 text-center py-6">
-            <p>Pay on Delivery option will appear here.</p>
-          </div>
-        )}
+          <PaymentSuccessModal isOpen={open} onClose={() => setOpen(false)} />
+        </div>
       </div>
     </div>
   );
