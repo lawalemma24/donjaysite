@@ -157,7 +157,7 @@ const PaymentCard = () => {
               }`}>
               <input
                 type="file"
-                accept="image/*,application/pdf"
+                accept="image/*,application/pdf,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document"
                 onChange={handleFileChange}
                 className="hidden"
                 id="receiptInput"
@@ -168,7 +168,7 @@ const PaymentCard = () => {
                     <FaUniversity className="text-gray-400 text-3xl mb-2" />
                     <span className="text-blue font-medium">Click to upload receipt</span>
                     <span className="text-xs text-gray-500 mt-1">
-                      JPG, PNG or PDF (Max 10MB)
+                      JPG, PNG, PDF or Word (Max 10MB)
                     </span>
                   </div>
                 </label>
@@ -202,8 +202,8 @@ const PaymentCard = () => {
               onClick={handlePayment}
               disabled={isLoading || !receiptFile}
               className={`w-full py-4 rounded-xl font-bold text-white shadow-lg transition-all transform hover:scale-[1.02] active:scale-[0.98] ${isLoading || !receiptFile
-                  ? "bg-gray-400 cursor-not-allowed"
-                  : "bg-blue hover:bg-blue-700"
+                ? "bg-gray-400 cursor-not-allowed"
+                : "bg-blue hover:bg-blue-700"
                 }`}
             >
               {isLoading ? "Processing..." : "Complete Purchase"}

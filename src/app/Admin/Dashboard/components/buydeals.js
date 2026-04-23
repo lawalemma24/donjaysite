@@ -221,6 +221,8 @@ export default function Buydeals() {
                       >
                         {deal.receiptUrl.toLowerCase().endsWith('.pdf') ? (
                           <div className="w-full h-full bg-gray-100 flex items-center justify-center text-[10px] font-bold text-red-500">PDF</div>
+                        ) : deal.receiptUrl.toLowerCase().endsWith('.doc') || deal.receiptUrl.toLowerCase().endsWith('.docx') ? (
+                          <div className="w-full h-full bg-gray-100 flex items-center justify-center text-[10px] font-bold text-blue-500">DOC</div>
                         ) : (
                           <img
                             src={deal.receiptUrl}

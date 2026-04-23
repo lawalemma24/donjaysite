@@ -133,6 +133,11 @@ export default function SellDealDetails({ deal, onClose }) {
                     <Download className="text-blue-500 mb-2" size={32} />
                     <span className="text-sm font-medium">Receipt Document (PDF)</span>
                   </div>
+                ) : deal.receiptUrl.toLowerCase().endsWith('.doc') || deal.receiptUrl.toLowerCase().endsWith('.docx') ? (
+                  <div className="py-8 flex flex-col items-center justify-center">
+                    <Download className="text-blue-500 mb-2" size={32} />
+                    <span className="text-sm font-medium">Receipt Document (Word)</span>
+                  </div>
                 ) : (
                   <img
                     src={deal.receiptUrl}

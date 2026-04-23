@@ -3,7 +3,11 @@ export const uploadToCloudinary = async (
   {
     maxFiles = 8,
     allowedImageTypes = ["image/jpeg", "image/png", "image/webp"],
-    allowedDocTypes = ["application/pdf"],
+    allowedDocTypes = [
+      "application/pdf",
+      "application/msword",
+      "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+    ],
   } = {}
 ) => {
   if (!files || files.length === 0) return [];
