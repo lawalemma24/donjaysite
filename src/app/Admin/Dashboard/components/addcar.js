@@ -355,7 +355,7 @@ export default function AddCarForm({
               <FormSelect
                 label="Condition"
                 name="condition"
-                options={["Brand_New", "Foreign_Used", "PreOwned"]}
+                options={["brand_new", "foreign_used", "preowned"]}
                 onChange={handleChange}
               />
 

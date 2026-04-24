@@ -208,7 +208,7 @@ const SellPage = () => {
     carName: "",
     carModel: "",
     year: "2023",
-    condition: "PreOwned",
+    condition: "preowned",
     transmission: "Automatic",
     fuelType: "Petrol",
     engine: "",
@@ -230,7 +230,7 @@ const SellPage = () => {
         carName: car.carName || "",
         carModel: car.carModel || "",
         year: car.year || "",
-        condition: car.condition || "PreOwned",
+        condition: car.condition || "preowned",
         transmission: car.transmission || "Automatic",
         fuelType: car.fuelType || "Petrol",
         engine: car.engine || "",
@@ -427,9 +427,9 @@ const SellPage = () => {
                     setForm({ ...form, condition: e.target.value })
                   }
                 >
-                  <option>Brand_New</option>
-                  <option>Foreign_Used</option>
-                  <option>PreOwned</option>
+                  <option value="brand_new">Brand_New</option>
+                  <option value="foreign_used">Foreign_Used</option>
+                  <option value="preowned">PreOwned</option>
                 </select>
               </div>
 
