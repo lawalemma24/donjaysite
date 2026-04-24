@@ -208,7 +208,7 @@ const SellPage = () => {
     carName: "",
     carModel: "",
     year: "2023",
-    condition: "used",
+    condition: "PreOwned",
     transmission: "Automatic",
     fuelType: "Petrol",
     engine: "",
@@ -230,7 +230,7 @@ const SellPage = () => {
         carName: car.carName || "",
         carModel: car.carModel || "",
         year: car.year || "",
-        condition: car.condition || "used",
+        condition: car.condition || "PreOwned",
         transmission: car.transmission || "Automatic",
         fuelType: car.fuelType || "Petrol",
         engine: car.engine || "",
@@ -315,7 +315,7 @@ const SellPage = () => {
 
       const carToReview = {
         ...form,
-        condition: form.condition.toLowerCase(),
+        condition: form.condition,
         transmission: form.transmission.toLowerCase(),
         fuelType: form.fuelType.toLowerCase(),
         images: finalImages,

@@ -204,8 +204,8 @@ const carData = {
 };
 
 export default function AddCarForm({
-  onClose = () => {},
-  onSuccess = () => {},
+  onClose = () => { },
+  onSuccess = () => { },
 }) {
   const [formData, setFormData] = useState({
     carName: "",
@@ -261,7 +261,7 @@ export default function AddCarForm({
         carName: formData.carName,
         carModel: formData.carModel,
         year: Number(formData.year),
-        condition: formData.condition.toLowerCase(),
+        condition: formData.condition,
         transmission: formData.transmission.toLowerCase(),
         fuelType: formData.fuelType.toLowerCase(),
         engine: formData.engine,
@@ -355,7 +355,7 @@ export default function AddCarForm({
               <FormSelect
                 label="Condition"
                 name="condition"
-                options={["brand_new", "foreign_used", "preowned"]}
+                options={["Brand_New", "Foreign_Used", "PreOwned"]}
                 onChange={handleChange}
               />
 

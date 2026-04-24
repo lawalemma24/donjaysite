@@ -208,7 +208,7 @@ const swapPage = () => {
     carName: "",
     carModel: "",
     year: "2023",
-    condition: "used",
+    condition: "PreOwned",
     transmission: "Automatic",
     fuelType: "Petrol",
     engine: "",
@@ -230,7 +230,7 @@ const swapPage = () => {
         carName: car.carName || "",
         carModel: car.carModel || "",
         year: car.year || "",
-        condition: car.condition || "used",
+        condition: car.condition || "PreOwned",
         transmission: car.transmission || "Automatic",
         fuelType: car.fuelType || "Petrol",
         engine: car.engine || "",
@@ -311,25 +311,12 @@ const swapPage = () => {
         img.file ? uploadedUrls.shift() : img.preview
       );
 
-      const normalizeCondition = (val) => {
-        switch (val) {
-          case "Brand_New":
-            return "new";
-          case "Foreign_Used":
-            return "foreign_used";
-          case "PreOwned":
-            return "used";
-          default:
-            return val.toLowerCase();
-        }
-      };
-
       const carToReview = {
         carName: form.carName.trim(),
         carModel: form.carModel.trim(),
         year: Number(form.year),
         isSwap: true,
-        condition: normalizeCondition(form.condition),
+        condition: form.condition,
         transmission: form.transmission.toLowerCase().trim(),
         fuelType: form.fuelType.toLowerCase().trim(),
         engine: form.engine.trim(),
