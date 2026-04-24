@@ -61,7 +61,7 @@ const PaymentCard = () => {
       // 1. Upload receipt to Cloudinary
       console.log("📤 Uploading receipt to Cloudinary...");
       const uploadResults = await uploadToCloudinary([receiptFile]);
-      const receiptUrl = uploadResults[0]?.url;
+      const receiptUrl = uploadResults[0]?.url || uploadResults[0];
 
       if (!receiptUrl) {
         throw new Error("Failed to get receipt URL from Cloudinary");

@@ -9,8 +9,9 @@ export const uploadToCloudinary = async (files, maxImages = 8) => {
     data.append("file", file);
     data.append("upload_preset", "jaytech");
 
+    const resourceType = file.type && file.type.startsWith("image/") ? "image" : "raw";
     const res = await fetch(
-      "https://api.cloudinary.com/v1_1/dc8gfuftv/image/upload",
+      `https://api.cloudinary.com/v1_1/dc8gfuftv/${resourceType}/upload`,
       {
         method: "POST",
         body: data,
