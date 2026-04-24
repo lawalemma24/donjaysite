@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 import { uploadToCloudinary } from "@/utils/uploadToCloudinary";
 import toast from "react-hot-toast";
 
-const carData = {
+const CAR_DATA = {
   Toyota: [
     "Corolla",
     "Camry",
@@ -203,7 +203,7 @@ const carData = {
   Infiniti: ["Q50", "Q60", "QX50", "QX60", "QX80"],
 };
 
-const SellPage = () => {
+const swapPage = () => {
   const [form, setForm] = useState({
     carName: "",
     carModel: "",
@@ -221,6 +221,7 @@ const SellPage = () => {
   const [loading, setLoading] = useState(false);
   const router = useRouter();
 
+  // Load saved data (editing)
   useEffect(() => {
     const stored = sessionStorage.getItem("carToReview");
     if (stored) {
@@ -240,6 +241,16 @@ const SellPage = () => {
       setImages(car.images?.map((url) => ({ file: null, preview: url })) || []);
     }
   }, []);
+
+  const handleMakeChange = (e) => {
+    const selectedMake = e.target.value;
+
+    setForm((prev) => ({
+      ...prev,
+      carName: selectedMake,
+      carModel: "", // reset model when make changes
+    }));
+  };
 
   const handleImageChange = (e) => {
     const files = Array.from(e.target.files);
@@ -265,7 +276,13 @@ const SellPage = () => {
       "price",
     ];
 
-    const missing = required.filter((key) => !form[key]?.trim());
+    const isEmpty = (value) => {
+      if (value === null || value === undefined) return true;
+      if (typeof value === "string") return value.trim() === "";
+      return false;
+    };
+
+    const missing = required.filter((key) => isEmpty(form[key]));
     if (missing.length > 0) {
       toast.error("Please fill all required fields: " + missing.join(", "));
       return;
@@ -289,16 +306,39 @@ const SellPage = () => {
         uploadedUrls = await uploadToCloudinary(filesToUpload);
       }
 
+      // Combine already existing preview URLs for images without file
       const finalImages = images.map((img) =>
         img.file ? uploadedUrls.shift() : img.preview
       );
 
+      const normalizeCondition = (val) => {
+        switch (val) {
+          case "Brand_New":
+            return "new";
+          case "Foreign_Used":
+            return "foreign_used";
+          case "PreOwned":
+            return "used";
+          default:
+            return val.toLowerCase();
+        }
+      };
+
       const carToReview = {
-        ...form,
-        condition: form.condition.toLowerCase(),
-        transmission: form.transmission.toLowerCase(),
-        fuelType: form.fuelType.toLowerCase(),
-        images: finalImages,
+        carName: form.carName.trim(),
+        carModel: form.carModel.trim(),
+        year: Number(form.year),
+        isSwap: true,
+        condition: normalizeCondition(form.condition),
+        transmission: form.transmission.toLowerCase().trim(),
+        fuelType: form.fuelType.toLowerCase().trim(),
+        engine: form.engine.trim(),
+        mileage: Number(form.mileage),
+        price: Number(String(form.price).replace(/,/g, "")),
+        note: form.note?.trim() || "",
+        images: finalImages.filter(
+          (img) => typeof img === "string" && img !== ""
+        ),
       };
 
       sessionStorage.setItem("carToReview", JSON.stringify(carToReview));
@@ -315,66 +355,69 @@ const SellPage = () => {
   return (
     <div className="min-h-screen bg-white px-4 py-16">
       <div className="max-w-7xl mx-auto px-8 pt-4 mt-5 mb-5">
-        <nav className="text-sm text-gray-500">Create car for Swap</nav>
+        <nav className="text-sm text-gray-500">
+          Home / Garage / Car Details / swap
+        </nav>
       </div>
 
       <div className="flex justify-center mb-16">
         <div className="w-full max-w-2xl bg-white rounded-2xl shadow-lg p-8">
           <h1 className="text-2xl font-semibold text-center text-black mb-2">
-            Add Car To Listing
+            Add Your Car
           </h1>
           <p className="text-black/80 text-center text-sm mb-8">
-            Tell us about the car you want to List
+            Tell us about the car you want to swap
           </p>
 
           <form className="space-y-6" onSubmit={handleSubmit}>
-            {/* MAKE + MODEL */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <div>
-                <label className="block text-sm font-medium text-gray-700">
-                  Make
-                </label>
-                <select
-                  className="mt-1 block w-full rounded-md border-gray-300 shadow-sm h-10 px-3 border"
-                  value={form.carName}
-                  onChange={(e) =>
-                    setForm({ ...form, carName: e.target.value, carModel: "" })
-                  }
-                >
-                  <option value="">Select Make</option>
-                  {Object.keys(carData).map((make) => (
-                    <option key={make} value={make}>
-                      {make}
-                    </option>
-                  ))}
-                </select>
-              </div>
-
-              <div>
-                <label className="block text-sm font-medium text-gray-700">
-                  Model
-                </label>
-                <select
-                  className="mt-1 block w-full rounded-md border-gray-300 shadow-sm h-10 px-3 border"
-                  value={form.carModel}
-                  onChange={(e) =>
-                    setForm({ ...form, carModel: e.target.value })
-                  }
-                  disabled={!form.carName}
-                >
-                  <option value="">Select Model</option>
-                  {form.carName &&
-                    carData[form.carName].map((model) => (
-                      <option key={model} value={model}>
-                        {model}
+            {/* NAME + YEAR */}
+            <div className="grid grid-cols-1  gap-6">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                {/* Car Make */}
+                <div>
+                  <label className="block text-sm font-medium text-gray-700">
+                    Car Make
+                  </label>
+                  <select
+                    className="mt-1 block w-full rounded-md border-gray-300 shadow-sm h-10 px-3 border"
+                    value={form.carName}
+                    onChange={handleMakeChange}
+                  >
+                    <option value="">Select Make</option>
+                    {Object.keys(CAR_DATA).map((make) => (
+                      <option key={make} value={make}>
+                        {make}
                       </option>
                     ))}
-                </select>
-              </div>
-            </div>
+                  </select>
+                </div>
 
-            {/* YEAR + CONDITION */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                {/* Car Model */}
+                <div>
+                  <label className="block text-sm font-medium text-gray-700">
+                    Car Model
+                  </label>
+                  <select
+                    className="mt-1 block w-full rounded-md border-gray-300 shadow-sm h-10 px-3 border"
+                    value={form.carModel}
+                    onChange={(e) =>
+                      setForm({ ...form, carModel: e.target.value })
+                    }
+                    disabled={!form.carName}
+                  >
+                    <option value="">
+                      {form.carName ? "Select Model" : "Select Make First"}
+                    </option>
+                    {form.carName &&
+                      CAR_DATA[form.carName].map((model) => (
+                        <option key={model} value={model}>
+                          {model}
+                        </option>
+                      ))}
+                  </select>
+                </div>
+              </div>
+
               <div>
                 <label className="block text-sm font-medium text-gray-700">
                   Year
@@ -389,7 +432,10 @@ const SellPage = () => {
                   ))}
                 </select>
               </div>
+            </div>
 
+            {/* CONDITION + TRANSMISSION */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div>
                 <label className="block text-sm font-medium text-gray-700">
                   Condition
@@ -406,10 +452,7 @@ const SellPage = () => {
                   <option>PreOwned</option>
                 </select>
               </div>
-            </div>
 
-            {/* TRANSMISSION + ENGINE */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div>
                 <label className="block text-sm font-medium text-gray-700">
                   Transmission
@@ -425,7 +468,10 @@ const SellPage = () => {
                   <option>Manual</option>
                 </select>
               </div>
+            </div>
 
+            {/* ENGINE + MILEAGE (ADDED!) */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div>
                 <label className="block text-sm font-medium text-gray-700">
                   Engine (e.g. 2.0L, 1500cc)
@@ -436,10 +482,7 @@ const SellPage = () => {
                   onChange={(e) => setForm({ ...form, engine: e.target.value })}
                 />
               </div>
-            </div>
 
-            {/* MILEAGE + PRICE */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div>
                 <label className="block text-sm font-medium text-gray-700">
                   Mileage (KM)
@@ -453,7 +496,10 @@ const SellPage = () => {
                   }
                 />
               </div>
+            </div>
 
+            {/* PRICE + FUEL TYPE */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div>
                 <label className="block text-sm font-medium text-gray-700">
                   Estimated Value
@@ -469,22 +515,23 @@ const SellPage = () => {
                   This is not a final offer.
                 </p>
               </div>
-            </div>
 
-            {/* FUEL TYPE */}
-            <div>
-              <label className="block text-sm font-medium text-gray-700">
-                Fuel type
-              </label>
-              <select
-                value={form.fuelType}
-                className="mt-1 block w-full rounded-md border-gray-300 shadow-sm h-10 px-3 border"
-                onChange={(e) => setForm({ ...form, fuelType: e.target.value })}
-              >
-                <option>Petrol</option>
-                <option>Diesel</option>
-                <option>Electric</option>
-              </select>
+              <div>
+                <label className="block text-sm font-medium text-gray-700">
+                  Fuel type
+                </label>
+                <select
+                  value={form.fuelType}
+                  className="mt-1 block w-full rounded-md border-gray-300 shadow-sm h-10 px-3 border"
+                  onChange={(e) =>
+                    setForm({ ...form, fuelType: e.target.value })
+                  }
+                >
+                  <option>Petrol</option>
+                  <option>Diesel</option>
+                  <option>Electric</option>
+                </select>
+              </div>
             </div>
 
             {/* NOTE */}
@@ -505,6 +552,7 @@ const SellPage = () => {
               <label className="block text-sm font-medium text-gray-700 mb-2">
                 Images
               </label>
+
               <div className="border border-dashed border-gray-300 rounded-lg p-6 text-center">
                 <input
                   type="file"
@@ -551,4 +599,4 @@ const SellPage = () => {
   );
 };
 
-export default SellPage;
+export default swapPage;

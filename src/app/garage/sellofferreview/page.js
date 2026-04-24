@@ -101,7 +101,7 @@ export default function SellOfferReview() {
 
       <div className="max-w-md mx-auto bg-white rounded-2xl shadow p-6">
         <h2 className="text-center text-xl font-semibold mb-4">
-          Review Your Selling Offer
+          Review Your Car
         </h2>
 
         <div
@@ -189,7 +189,7 @@ export default function SellOfferReview() {
             disabled={loading}
             className="flex-1 py-2 rounded-lg bg-blue px-2 text-white text-sm"
           >
-            {loading ? "Submitting..." : "Confirm & Submit Sell Offer"}
+            {loading ? "Submitting..." : " Submit Car"}
           </button>
         </div>
 

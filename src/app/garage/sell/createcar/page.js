@@ -21,23 +21,41 @@ export default function MyCarsPage() {
   const carsPerPage = 7;
 
   useEffect(() => {
-    const loggedUser = JSON.parse(localStorage.getItem("user"));
-    setUser(loggedUser);
+    try {
+      const storedUser = localStorage.getItem("user");
+      if (storedUser && storedUser !== "undefined") {
+        setUser(JSON.parse(storedUser));
+      }
+    } catch (e) {
+      console.log("User parse error:", e);
+      setUser(null);
+    }
   }, []);
 
   useEffect(() => {
     const fetchCarsAndDeals = async () => {
       try {
+        // FETCH CARS
         const res = await api.get("/user/my-cars");
-        const fetchedCars = res.data.cars || [];
+        const fetchedCars = Array.isArray(res.data?.cars) ? res.data.cars : [];
+
         setCars(fetchedCars);
 
+        // FETCH DEALS
         const dealsRes = await dealsApi.get("/my-deals?dealType=sell");
-        const sellDeals = dealsRes.data.deals || [];
-        const carIdsInDeals = sellDeals.map((deal) => deal.primaryCar._id);
+        const sellDeals = Array.isArray(dealsRes.data?.deals)
+          ? dealsRes.data.deals
+          : [];
+
+        // 🔥 FIX: prevent crash if primaryCar is null
+        const carIdsInDeals = sellDeals
+          .filter((deal) => deal?.primaryCar?._id)
+          .map((deal) => deal.primaryCar._id);
+
         setCreatedDeals(carIdsInDeals);
       } catch (err) {
-        toast.error("Error fetching cars or deals:");
+        console.log("Fetch error:", err?.response?.data || err);
+        toast.error("Error fetching cars or deals");
       } finally {
         setLoading(false);
       }
@@ -48,21 +66,28 @@ export default function MyCarsPage() {
 
   const createDeal = async (car) => {
     if (!user) {
-      toast.error("Hold on as we verify this User");
+      toast.error("User not ready");
+      return;
+    }
+
+    // 🔥 EXTRA GUARD (prevents bad backend calls)
+    if (!car?._id || !car?.price) {
+      toast.error("Invalid car data");
       return;
     }
 
     try {
       setCreating(car._id);
+
       const payload = {
         dealType: "sell",
         primaryCarId: car._id,
-        offerPrice: car.price,
+        offerPrice: Number(car.price) || 0,
         additionalAmount: 0,
         customerNote: car.note || "Selling my car",
         customerContact: {
-          phone: user.phone,
-          email: user.email,
+          phone: user?.phone || "",
+          email: user?.email || "",
           preferredContactMethod: "both",
         },
         priority: "medium",
@@ -70,11 +95,16 @@ export default function MyCarsPage() {
       };
 
       await dealsApi.post("/", payload);
-      setCreatedDeals((prev) => [...prev, car._id]);
+
+      // 🔥 prevent duplicates
+      setCreatedDeals((prev) =>
+        prev.includes(car._id) ? prev : [...prev, car._id]
+      );
+
       toast.success("Deal created successfully");
     } catch (err) {
-      console.log("Error creating deal:", err.response?.data || err);
-      toast.error("Failed to create deal");
+      console.log("Error creating deal:", err?.response?.data || err);
+      toast.error(err?.response?.data?.error || "Failed to create deal");
     } finally {
       setCreating("");
     }
@@ -93,7 +123,6 @@ export default function MyCarsPage() {
     }
   };
 
-  // Pagination calculations
   const totalPages = Math.ceil(cars.length / carsPerPage);
   const indexOfLastCar = currentPage * carsPerPage;
   const indexOfFirstCar = indexOfLastCar - carsPerPage;
@@ -120,23 +149,11 @@ export default function MyCarsPage() {
               <h1 className="text-2xl font-bold mb-2 text-gray-600">
                 My Cars for Sale
               </h1>
+
               <p className="text-gray-600 text-sm mb-10">
                 View all your cars, track their approval status, and create sell
                 deals.
               </p>
-
-              <div className="mb-6 p-4 bg-red-50 border border-red-200 rounded-lg">
-                <p className="text-red-400 mb-2 text-xs">
-                  1.For you to List a car for sale, the car you select must be
-                  approved. if your car is still pending approval, please wait
-                  until it is approved
-                </p>
-                <p className="text-red-400 mb-2 text-xs">
-                  2. If you do not have a car uploaded yet or want to add a
-                  different car, please add a new car.The car will be reviewed
-                  and approved for you to list it for sale.
-                </p>
-              </div>
 
               <div className="mb-6 mt-4 flex justify-end">
                 <Link
@@ -154,33 +171,22 @@ export default function MyCarsPage() {
 
                 <div className="overflow-x-auto">
                   <table className="w-full text-sm text-left border-collapse">
-                    <thead>
-                      <tr className="border-b border-lightgrey">
-                        <th className="px-4 py-2">Car</th>
-                        <th className="px-4 py-2">Price</th>
-                        <th className="px-4 py-2">Status</th>
-                        <th className="px-4 py-2">Listed</th>
-                        <th className="px-4 py-2">Action</th>
-                      </tr>
-                    </thead>
-
                     <tbody>
                       {currentCars.length > 0 ? (
                         currentCars.map((car) => (
-                          <tr
-                            key={car._id}
-                            className="border-b border-lightgrey"
-                          >
+                          <tr key={car._id}>
                             <td className="flex items-center gap-2 px-4 py-4 min-w-[180px]">
                               <Image
                                 src={
-                                  car.images?.[0] ||
-                                  "/images/placeholder-car.jpg"
+                                  typeof car.images?.[0] === "string"
+                                    ? car.images[0]
+                                    : car.images?.[0]?.url ||
+                                      "/images/placeholder-car.jpg"
                                 }
                                 width={50}
                                 height={50}
                                 alt={car.carName || "Unknown Car"}
-                                className="rounded-md w-[50px] h-auto w-auto"
+                                className="rounded-md"
                               />
                               <span className="text-gray-600">
                                 {car.carName || "Unknown Car"}
@@ -188,12 +194,12 @@ export default function MyCarsPage() {
                             </td>
 
                             <td className="px-4 py-2 text-gray-500 text-xs">
-                              {car.price?.toLocaleString()}
+                              {Number(car.price || 0).toLocaleString()}
                             </td>
 
                             <td className="px-4 py-2">
                               <span
-                                className={`px-3 py-1 rounded-full text-sm  ${getStatusBadge(
+                                className={`px-3 py-1 rounded-full text-sm ${getStatusBadge(
                                   car.status
                                 )}`}
                               >
@@ -250,7 +256,6 @@ export default function MyCarsPage() {
                   </table>
                 </div>
 
-                {/* Pagination Controls */}
                 {cars.length > carsPerPage && (
                   <div className="flex justify-end items-center gap-2 mt-4">
                     <button
@@ -260,9 +265,11 @@ export default function MyCarsPage() {
                     >
                       Prev
                     </button>
+
                     <span className="text-gray-600">
                       Page {currentPage} of {totalPages}
                     </span>
+
                     <button
                       onClick={goToNextPage}
                       disabled={currentPage === totalPages}
@@ -277,7 +284,7 @@ export default function MyCarsPage() {
           </div>
         </div>
 
-        <div className=" px-2 md:px-4">
+        <div className="px-2 md:px-4">
           <RelatedCars />
         </div>
       </ProtectedRoute>

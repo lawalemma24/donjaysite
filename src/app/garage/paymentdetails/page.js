@@ -148,6 +148,30 @@ const PaymentCard = () => {
             </div>
           </div>
 
+          {/* Bank Details */}
+          <div className="bg-blue/5 border border-blue/10 rounded-xl p-5 mb-2">
+            <h3 className="text-xs font-bold text-blue uppercase tracking-wider mb-3 flex items-center gap-2">
+              <FaUniversity className="text-sm" /> Payment Information
+            </h3>
+            <div className="space-y-3">
+              <div className="flex justify-between items-center">
+                <span className="text-xs text-gray-500">Bank Name</span>
+                <span className="text-sm font-semibold text-gray-800">Sterling Bank</span>
+              </div>
+              <div className="flex justify-between items-center">
+                <span className="text-xs text-gray-500">Account Number</span>
+                <span className="text-sm font-bold text-blue-600 font-mono">0094496531</span>
+              </div>
+              <div className="flex justify-between items-center">
+                <span className="text-xs text-gray-500">Account Name</span>
+                <span className="text-sm font-semibold text-gray-800">Donjay Autos</span>
+              </div>
+            </div>
+            <p className="text-[10px] text-gray-500 mt-3 italic">
+              * Please make payment to the account above before uploading your receipt.
+            </p>
+          </div>
+
           {/* Receipt Upload */}
           <div className="space-y-2">
             <label className="block text-sm font-medium text-gray-700">

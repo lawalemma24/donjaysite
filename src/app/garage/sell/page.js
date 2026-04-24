@@ -276,7 +276,15 @@ const SellPage = () => {
       "price",
     ];
 
-    const missing = required.filter((key) => !form[key]?.trim());
+    const missing = required.filter((key) => {
+      const value = form[key];
+
+      if (value === null || value === undefined) return true;
+
+      if (typeof value === "string") return value.trim() === "";
+
+      return value === ""; // for numbers or other types
+    });
     if (missing.length > 0) {
       toast.error("Please fill all required fields: " + missing.join(", "));
       return;
@@ -335,7 +343,7 @@ const SellPage = () => {
       <div className="flex justify-center mb-16">
         <div className="w-full max-w-2xl bg-white rounded-2xl shadow-lg p-8">
           <h1 className="text-2xl font-semibold text-center text-black mb-2">
-            Sell Your Car
+            Add Your Car
           </h1>
           <p className="text-black/80 text-center text-sm mb-8">
             Tell us about the car you want to sell

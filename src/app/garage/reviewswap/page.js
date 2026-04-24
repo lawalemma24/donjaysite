@@ -9,7 +9,7 @@ import ConfirmSwapOverlay from "@/components/confirmswap";
 import toast from "react-hot-toast";
 import Loader from "@/components/preloader";
 
-export default function SellOfferReview() {
+export default function SwapOfferReview() {
   const [car, setCar] = useState(null);
   const [current, setCurrent] = useState(0);
   const [lightbox, setLightbox] = useState(false);
@@ -19,7 +19,20 @@ export default function SellOfferReview() {
 
   useEffect(() => {
     const storedCar = sessionStorage.getItem("carToReview");
-    if (storedCar) setCar(JSON.parse(storedCar));
+
+    if (storedCar) {
+      const parsed = JSON.parse(storedCar);
+
+      const normalized = {
+        ...parsed,
+        images: (parsed.images || [])
+          .flat()
+          .map((img) => (typeof img === "string" ? img : img?.url))
+          .filter(Boolean),
+      };
+
+      setCar(normalized);
+    }
   }, []);
 
   const images = Array.isArray(car?.images) ? car.images.flat() : [];
@@ -40,9 +53,9 @@ export default function SellOfferReview() {
       carModel: car.carModel?.trim(),
       year: Number(car.year),
       isSwap: true,
-      condition: car.condition?.trim(),
-      transmission: car.transmission?.trim(),
-      fuelType: car.fuelType?.trim(),
+      condition: car.condition,
+      transmission: car.transmission,
+      fuelType: car.fuelType,
       engine: car.engine?.trim(),
       mileage: Number(car.mileage),
       price: Number(String(car.price).replace(/,/g, "")),
@@ -77,7 +90,7 @@ export default function SellOfferReview() {
       // 1️ create car and get ID
       const carId = await createCar();
 
-      // show success modal immediately
+      // show success modal immediatel
       setSuccessOpen(true);
       sessionStorage.removeItem("carToReview");
     } catch (err) {
@@ -93,12 +106,12 @@ export default function SellOfferReview() {
   return (
     <div className="min-h-screen bg-white px-4 py-16">
       <div className="max-w-7xl mx-auto px-8 pt-4 mt-5 mb-5">
-        <nav className="text-sm text-gray-500">Swap Review</nav>
+        <nav className="text-sm text-gray-500">Car Upload</nav>
       </div>
 
       <div className="max-w-md mx-auto bg-white rounded-2xl shadow p-6">
         <h2 className="text-center text-xl font-semibold mb-4">
-          Review your Swap Offer
+          Review your Upload
         </h2>
 
         <div
@@ -175,7 +188,7 @@ export default function SellOfferReview() {
         </div>
 
         <div className="mt-4 grid grid-cols-2 gap-3">
-          <Link href="/garage/sell">
+          <Link href="/garage/swapcar/createcar">
             <button className="flex-1 py-2 px-3 border border-blue rounded-lg text-blue">
               Edit Details
             </button>
@@ -186,7 +199,7 @@ export default function SellOfferReview() {
             disabled={loading}
             className="flex-1 py-2 rounded-lg bg-blue px-2 text-white text-sm"
           >
-            {loading ? "Submitting..." : " Submit Swap Offer"}
+            {loading ? "Submitting..." : " Submit Car"}
           </button>
         </div>
 
