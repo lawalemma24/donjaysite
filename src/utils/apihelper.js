@@ -1,5 +1,5 @@
 export const API_BASE_URL =
-  process.env.NEXT_PUBLIC_API_BASE_URL || "https://donjay.vercel.app";
+  process.env.NEXT_PUBLIC_API_BASE_URL || "https://donjayautos.com/";
 
 /**
  * Helper to build API URLs safely
