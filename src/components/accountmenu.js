@@ -41,7 +41,7 @@ const AccountMenu = () => {
       >
         <Image
           src={"https://avatars.dicebear.com/api/avataaars/JohnDoe.svg"}
-          alt="p"
+          alt="pics"
           width={32}
           height={32}
           className="rounded-full"
