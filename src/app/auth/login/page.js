@@ -26,18 +26,18 @@ export default function Login() {
     setLoading(true);
 
     try {
-      const res = await fetch(apiUrl("/api/auth/login"), {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email, password }),
-      });
+const res = await fetch(apiUrl("/api/auth/login"), {
+  method: "POST",
+  headers: { "Content-Type": "application/json" },
+  body: JSON.stringify({ email, password }),
+});
 
-      // 🚫 Suspended account (common backend pattern)
-      if (res.status === 403) {
-        toast.error("Your account has been suspended. Please contact support.");
-        setLoading(false);
-        return;
-      }
+// 🚫 Suspended account (HTTP-level check)
+if (res.status === 403) {
+  toast.error("Your account has been suspended. Please contact support.");
+  setLoading(false);
+  return;
+}
 
       if (!res.ok) {
         toast.error(

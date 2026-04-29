@@ -91,11 +91,13 @@ export default function Otp() {
     setLoading(true);
 
     try {
+
       const res = await fetch(apiUrl("/api/auth/verify-otp"), {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email, otp }),
       });
+
 
       const data = await res.json();
 
@@ -125,11 +127,13 @@ export default function Otp() {
     setCounter(120);
 
     try {
+
       const res = await fetch(apiUrl("/api/auth/resend-otp"), {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email }),
       });
+
 
       const data = await res.json();
 
