@@ -84,7 +84,7 @@ export default function Register() {
     };
 
     try {
-      const response = await fetch(apiUrl("/auth/signup"), {
+      const response = await fetch(apiUrl("/api/auth/signup"), {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -95,15 +95,13 @@ export default function Register() {
       const data = await response.json().catch(() => null);
 
       if (response.ok) {
-        toast.success(data?.message || "Signup successful");
+        toast.success("Signup successful");
         localStorage.setItem("signupEmail", form.email);
         router.push("/auth/otp");
       } else {
-        console.error("Signup failed:", data);
-        toast.error(data?.error || "Something went wrong");
+        toast.error("Something went wrong try again");
       }
     } catch (error) {
-      console.error("Network error:", error);
       toast.error("Network error, please try again");
     } finally {
       setLoading(false);
@@ -112,7 +110,7 @@ export default function Register() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue to-indigo-500 flex items-center justify-center px-4 py-9">
-      <div className="bg-white rounded-3xl shadow-2xl w-full max-w-md overflow-hidden">
+      <div className="bg-white rounded shadow-2xl w-full max-w-md overflow-hidden">
         <div className="py-4 md:py-6 px-4 flex justify-center">
           <img
             src="/images/logo.png"
@@ -254,14 +252,14 @@ export default function Register() {
 
             <div className="flex items-center">
               <div className="flex-grow border-t border-gray-300"></div>
-              <span className="mx-3 text-gray-500 text-sm">or</span>
+              <span className="mx-3 text-gray-500 text-sm">If You</span>
               <div className="flex-grow border-t border-gray-300"></div>
             </div>
           </form>
 
           <div className="mt-6 text-center">
             <p className="text-gray-500 text-sm">
-              Already have an account?{" "}
+              Already have an account{" "}
               <a
                 href="/auth/login"
                 className="font-medium text-blue-600 hover:text-blue-800 transition-colors"

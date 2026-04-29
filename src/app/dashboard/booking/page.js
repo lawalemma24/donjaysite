@@ -28,7 +28,7 @@ export default function MyInspectionsTable() {
   const fetchInspections = async (page = 1) => {
     setLoading(true);
     try {
-      const res = await api.get(apiUrl("/inspections/my-inspections"), {
+      const res = await api.get(apiUrl("/api/inspections/my-inspections"), {
         params: { page, limit: 10 },
       });
 

@@ -2,6 +2,7 @@
 const nextConfig = {
   images: {
     domains: [
+      "api.dicebear.com", // ✅ ADD THIS
       "avatar.iran.liara.run",
       "example.com",
       "images.unsplash.com",

@@ -108,7 +108,7 @@ export default function SwapPage() {
 
       await dealsApi.post("/", payload);
 
-      // Update stored swap pairs
+      // Update stored swap paairs
       setCreatedDeals((prev) => [
         ...prev,
         { primary: selectedCar._id, secondary: carToSwapWith._id },

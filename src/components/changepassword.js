@@ -39,7 +39,7 @@ export default function ChangePassword() {
         return;
       }
 
-      const res = await fetch(apiUrl("/auth/changePass"), {
+      const res = await fetch(apiUrl("/api/auth/changePass"), {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",

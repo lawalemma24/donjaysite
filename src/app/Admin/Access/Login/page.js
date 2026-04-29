@@ -10,6 +10,7 @@ import { apiUrl } from "@/utils/apihelper";
 export default function AdminLogin() {
   const [showPassword, setShowPassword] = useState(false);
   const [showSecond, setShowSecond] = useState(false);
+  const [loading, setLoading] = useState(false);
   const { login } = useAuth();
 
   const handleSubmit = async (e) => {
@@ -53,11 +54,8 @@ export default function AdminLogin() {
       }
 
       // Check role
-      if (data.role === "admin") {
-        toast.error("Admins must log in through the admin Login Page.");
-        setTimeout(() => {
-          window.location.href = "/Admin/Access/Login";
-        }, 1500);
+      if (data.role !== "admin") {
+        toast.error("Access denied. Admins only.");
         setLoading(false);
         return;
       }

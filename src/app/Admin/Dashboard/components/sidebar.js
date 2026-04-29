@@ -39,11 +39,7 @@ const links = [
     href: "/Admin/Dashboard/Transactions",
     icon: CreditCard,
   },
-  {
-    name: "Support Center",
-    href: "/Admin/Dashboard/Support",
-    icon: HelpCircle,
-  },
+
   { name: "Settings", href: "/Admin/Dashboard/Settings", icon: Settings },
 ];
 

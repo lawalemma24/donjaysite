@@ -1,4 +1,5 @@
 "use client";
+import { useState } from "react";
 import {
   FaMapMarkerAlt,
   FaEnvelope,
@@ -9,9 +10,56 @@ import {
 } from "react-icons/fa";
 
 export default function Contact() {
+  const [formData, setFormData] = useState({
+    fullName: "",
+    email: "",
+    subject: "",
+    message: "",
+  });
+
+  const [status, setStatus] = useState({ type: "", message: "" });
+  const [loading, setLoading] = useState(false);
+
+  const handleChange = (e) => {
+    setFormData({ ...formData, [e.target.name]: e.target.value });
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setLoading(true);
+    setStatus({ type: "", message: "" });
+
+    try {
+      const res = await fetch("https://donjay.vercel.app/api/contact/submit", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(formData),
+      });
+
+      const data = await res.json();
+
+      if (res.ok) {
+        setStatus({ type: "success", message: data.message });
+        setFormData({ fullName: "", email: "", subject: "", message: "" });
+      } else {
+        setStatus({
+          type: "error",
+          message: data.error || "Something went wrong",
+        });
+      }
+    } catch (error) {
+      setStatus({
+        type: "error",
+        message: "Server error. Please try again later.",
+      });
+    } finally {
+      setLoading(false);
+    }
+  };
+
   return (
     <div className="bg-white">
-      {/* Blue Header Section with clipped wave */}
+      {/* Blue Head Section */}
       <div className="relative text-center text-white">
         <div className="bg-gradient-to-r from-blue-600 to-indigo-700 h-[400px] relative z-0 clip-path-wave flex flex-col items-center justify-center px-4">
           <h1 className="text-3xl font-bold">Contact Us</h1>
@@ -25,7 +73,7 @@ export default function Contact() {
         </div>
       </div>
 
-      {/* Main Contact Section (overlapping wave) */}
+      {/* Contact Section */}
       <div className="max-w-4xl mx-auto px-4 py-10 grid md:grid-cols-3 relative z-10 -mt-32 rounded-lg mb-16">
         {/* Left Info Box */}
         <div className="bg-indigo-50 p-6 md:col-span-1 md:rounded-tl-lg md:rounded-bl-lg md:rounded-tr-none rounded-t-lg">
@@ -52,7 +100,6 @@ export default function Contact() {
           </div>
 
           <hr className="my-6 border-gray-300" />
-
           <p className="font-semibold text-gray-700 mb-2">
             Follow our social media
           </p>
@@ -69,37 +116,67 @@ export default function Contact() {
           </div>
         </div>
 
-        {/* Right Contact Form */}
-        <div className="bg-white md:col-span-2  p-6 md:rounded-tr-lg md:rounded-br-lg rounded-b-lg ">
+        {/* Right Contact */}
+        <div className="bg-white md:col-span-2 p-6 md:rounded-tr-lg md:rounded-br-lg rounded-b-lg">
           <h2 className="text-xl font-semibold text-gray-800 mb-4">
             Send us a message
           </h2>
-          <form className="space-y-4">
+
+          {status.message && (
+            <p
+              className={`mb-4 px-4 py-2 rounded ${
+                status.type === "success"
+                  ? "bg-green-100 text-green-700"
+                  : "bg-red-100 text-red-700"
+              }`}
+            >
+              {status.message}
+            </p>
+          )}
+
+          <form className="space-y-4" onSubmit={handleSubmit}>
             <input
               type="text"
+              name="fullName"
+              value={formData.fullName}
+              onChange={handleChange}
               placeholder="Enter your full name"
               className="w-full border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+              required
             />
             <input
               type="email"
+              name="email"
+              value={formData.email}
+              onChange={handleChange}
               placeholder="Enter your email address"
               className="w-full border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+              required
             />
             <input
               type="text"
+              name="subject"
+              value={formData.subject}
+              onChange={handleChange}
               placeholder="Enter subject"
               className="w-full border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+              required
             />
             <textarea
+              name="message"
+              value={formData.message}
+              onChange={handleChange}
               placeholder="Enter message"
               rows="4"
               className="w-full border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+              required
             ></textarea>
             <button
               type="submit"
-              className="w-full bg-blue-600 text-white rounded-lg py-2 hover:bg-blue-700 transition"
+              disabled={loading}
+              className="w-full bg-blue-600 text-white rounded-lg py-2 hover:bg-blue-700 transition disabled:opacity-50"
             >
-              Send
+              {loading ? "Sending..." : "Send"}
             </button>
           </form>
         </div>

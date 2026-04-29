@@ -38,20 +38,22 @@ function ResetPasswordContent() {
 
     setLoading(true);
     try {
-      const res = await fetch(apiUrl(`/auth/reset-password?token=${token}`), {
-        method: "PUT",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          newPassword: password,
-          confirmPassword,
-        }),
-      });
+      const res = await fetch(
+        apiUrl(`/api/auth/reset-password?token=${token}`),
+        {
+          method: "PUT",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            newPassword: password,
+            confirmPassword,
+          }),
+        }
+      );
 
       const data = await res.json();
-      console.log("RESET PASSWORD RESPONSE:", data);
 
       if (!res.ok) {
-        toast.error(data.error || "Something went wrong");
+        toast.error("Something went wrong");
         setLoading(false);
         return;
       }

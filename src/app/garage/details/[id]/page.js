@@ -83,7 +83,7 @@ export default function CarDetails() {
   return (
     <>
       <div className="max-w-6xl mx-auto px-4 py-16 md:py-20">
-        <div className="max-w-7xl mx-auto px-8 pt-4 mt-4">
+        <div className="max-w-7xl mx-auto px-8 pt-4 mt-4 hidden md:block">
           <nav className="text-sm text-gray-500">
             Home <span className="mx-1">/</span> Garage{" "}
             <span className="mx-1">/</span>
@@ -107,11 +107,12 @@ export default function CarDetails() {
               />
             </div>
 
-            <div className="flex gap-4 mt-4">
-              {allImages.slice(0, 4).map((img, idx) => (
+            <div className="flex gap-3 mt-4 overflow-x-auto scrollbar-hide">
+              {allImages.map((img, idx) => (
                 <div
                   key={idx}
-                  className="relative w-24 h-20 border border-lightgrey rounded overflow-hidden cursor-pointer"
+                  className={`relative w-24 h-20 flex-shrink-0 border rounded overflow-hidden cursor-pointer 
+        ${img === mainImage ? "border-black" : "border-lightgrey"}`}
                   onClick={() => handleThumbnailClick(img)}
                 >
                   <Image
@@ -127,7 +128,8 @@ export default function CarDetails() {
 
           <div>
             <h1 className="text-2xl md:text-3xl font-bold mb-2">
-              {car.carName}
+              {car.carName} {car.carModel}{" "}
+              <span className="text-lg text-gray-500">({car.year})</span>
             </h1>
             <div className="bg-blue-100 text-blue-700 font-bold text-lg inline-block px-3 py-1 mb-2">
               ₦{car.price?.toLocaleString() || "N/A"}
@@ -135,7 +137,7 @@ export default function CarDetails() {
 
             <div className="flex items-center gap-2 text-sm text-green-600 mb-4">
               <Eye className="w-5 h-5" />
-              <span>{car.views || 0} people viewed this car</span>
+              <span>Click on images to expand</span>
             </div>
 
             <div className="my-4">

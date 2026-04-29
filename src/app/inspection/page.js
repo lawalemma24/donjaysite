@@ -96,15 +96,12 @@ function InspectionPageContent() {
     if (!date) return;
     (async () => {
       try {
-        const res = await fetch(
-          apiUrl(`/inspections/available-slots?date=${date}`),
-          {
-            headers: {
-              "Content-Type": "application/json",
-              Authorization: `Bearer ${localStorage.getItem("token")}`,
-            },
-          }
-        );
+        const res = await fetch(apiUrl(`/api/inspections/slots?date=${date}`), {
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
+        });
         const data = await res.json();
         const slotsData = data.slots || [];
         const flattened = slotsData.flatMap((p) =>
@@ -135,7 +132,7 @@ function InspectionPageContent() {
   return (
     <div className="min-h-screen bg-white px-4 py-16">
       <div className="max-w-7xl mx-auto px-8 pt-4 mt-5 mb-5">
-        <nav className="text-sm text-gray-500">
+        <nav className="text-sm text-gray-500 hidden md:block">
           Home <span className="mx-1">/</span>
           <span className="text-blue font-medium">
             {view === "gallery" ? "Select Car" : "Book Inspection"}

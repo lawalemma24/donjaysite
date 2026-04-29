@@ -58,7 +58,7 @@ export default function Buydeals() {
         setTotalPages(1);
         setTotalEntries(data.length);
       } else {
-        console.warn("⚠️ Unexpected API shape:", data);
+        console.warn(" Unexpected API shape:", data);
         setDeals([]);
         setTotalPages(1);
         setTotalEntries(0);
@@ -144,11 +144,10 @@ export default function Buydeals() {
                 setStatusFilter(status);
                 setPage(1);
               }}
-              className={`px-3 py-1 rounded border ${
-                statusFilter === status
-                  ? "bg-blue text-white border-blue"
-                  : "border-gray-300 hover:bg-gray-100"
-              }`}
+              className={`px-3 py-1 rounded border ${statusFilter === status
+                ? "bg-blue text-white border-blue"
+                : "border-gray-300 hover:bg-gray-100"
+                }`}
             >
               {status
                 ? status.charAt(0).toUpperCase() + status.slice(1)
@@ -176,101 +175,144 @@ export default function Buydeals() {
                 <th>Year</th>
                 <th>Condition</th>
                 <th>Price</th>
+                <th>Receipt</th>
                 <th>Status</th>
                 <th>Date Listed</th>
                 <th className="w-[60px]"></th>
               </tr>
             </thead>
             <tbody>
-              {deals.map((deal, i) => (
-                <tr
-                  key={deal._id || i}
-                  className="border-b border-text-muted/70 last:border-b-0"
-                >
-                  <td className="py-4">{(page - 1) * pageSize + i + 1}</td>
-                  <td className="py-4 flex items-center gap-3">
-                    <img
-                      src={
-                        deal.customer?.profilePic || "/images/default-car.png"
-                      }
-                      alt=""
-                      className="w-10 h-10 rounded-full border border-text-muted/70 object-cover"
-                    />
-                    {deal.customer?.name || "-"}
-                  </td>
-                  <td className="py-4 text-black text-sm">
-                    {deal.primaryCar?.carName || "-"}
-                  </td>
-                  <td className="py-4 text-text-muted">
-                    {deal.primaryCar?.year || "-"}
-                  </td>
-                  <td className="py-4">{deal.primaryCar?.condition || "-"}</td>
-                  <td className="py-4">{deal.formattedOfferPrice || "-"}</td>
-                  <td className="py-4">
-                    <div
-                      className={`px-3 py-1 rounded-full text-xs font-medium inline-block ${getStatusColor(
-                        deal.status
-                      )}`}
-                    >
-                      {deal.status || "Pending"}
-                    </div>
-                  </td>
-                  <td className="py-4 text-black/60">
-                    {deal.createdAt?.slice(0, 10) || "-"}
-                  </td>
-                  <td className="py-4 relative">
-                    <button
-                      className="p-2 rounded-full hover:bg-gray-100"
-                      onClick={() =>
-                        setActionMenuOpenFor(
-                          actionMenuOpenFor === deal._id ? null : deal._id
-                        )
-                      }
-                    >
-                      <MoreVertical size={18} />
-                    </button>
+              {deals.map((deal, i) => {
+                // Robust file type detection
+                const receiptUrl = deal.receiptUrl?.toLowerCase() || "";
+                const isPdf = receiptUrl.includes(".pdf") || receiptUrl.includes("/raw/upload/") && receiptUrl.includes("deal_documents");
+                const isWord = receiptUrl.includes(".doc");
 
-                    {actionMenuOpenFor === deal._id && (
-                      <div className="absolute right-0 mt-2 z-50 bg-white border border-gray-200 rounded shadow w-60 text-sm">
-                        <button
-                          className="w-full flex items-center gap-2 px-3 py-2 hover:bg-gray-100"
-                          onClick={() => {
-                            setSelectedForView(deal);
-                            setActionMenuOpenFor(null);
-                          }}
-                        >
-                          <Eye size={16} className="text-gray-600" />
-                          View Details
-                        </button>
+                return (
+                  <tr
+                    key={deal._id || i}
+                    className="border-b border-text-muted/70 last:border-b-0"
+                  >
+                    <td className="py-4">{(page - 1) * pageSize + i + 1}</td>
+                    <td className="py-4 flex items-center gap-3">
+                      <img
+                        src={
+                          deal.customer?.profilePic || "/images/default-car.png"
+                        }
+                        alt=""
+                        className="w-10 h-10 rounded-full border border-text-muted/70 object-cover"
+                      />
+                      {deal.customer?.name || "-"}
+                    </td>
+                    <td className="py-4 text-black text-sm">
+                      {deal.primaryCar?.carName || "-"}{" "}
+                      <span className="text-gray-500">
+                        {deal.primaryCar?.carModel || ""}
+                      </span>
+                    </td>
 
-                        <button
-                          className="w-full flex items-center gap-2 px-3 py-2 hover:bg-gray-100"
-                          onClick={() => handleAction(deal._id, "reject")}
+                    <td className="py-4 text-text-muted">
+                      {deal.primaryCar?.year || "-"}
+                    </td>
+                    <td className="py-4">{deal.primaryCar?.condition || "-"}</td>
+                    <td className="py-4">{deal.formattedOfferPrice || "-"}</td>
+                    <td className="py-4">
+                      {deal.receiptUrl ? (
+                        <a
+                          href={deal.receiptUrl}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="block w-10 h-10 rounded border border-gray-200 overflow-hidden hover:opacity-80 transition-opacity"
+                          title="View Receipt"
                         >
-                          <Download size={16} className="text-gray-600" />
-                          Reject Deal
-                        </button>
-
-                        <button
-                          className="w-full flex items-center gap-2 px-3 py-2 hover:bg-gray-100"
-                          onClick={() => handleAction(deal._id, "approve")}
-                        >
-                          <CheckCircle size={16} className="text-gray-600" />
-                          Approve Deal
-                        </button>
-
-                        <button
-                          className="w-full flex items-center gap-2 px-3 py-2 hover:bg-gray-100 text-red-600"
-                          onClick={() => handleDelete(deal._id)}
-                        >
-                          <Trash2 size={16} className="text-red-600" />
-                          Delete Deal
-                        </button>
+                          {isPdf ? (
+                            <div className="w-full h-full bg-gray-100 flex items-center justify-center text-[10px] font-bold text-red-500">
+                              PDF
+                            </div>
+                          ) : isWord ? (
+                            <div className="w-full h-full bg-gray-100 flex items-center justify-center text-[10px] font-bold text-blue-500">
+                              DOC
+                            </div>
+                          ) : (
+                            <img
+                              src={deal.receiptUrl}
+                              alt="Receipt"
+                              className="w-full h-full object-cover"
+                            />
+                          )}
+                        </a>
+                      ) : (
+                        <span className="text-gray-400 text-xs italic">
+                          No Receipt
+                        </span>
+                      )}
+                    </td>
+                    <td className="py-4">
+                      <div
+                        className={`px-3 py-1 rounded-full text-xs font-medium inline-block ${getStatusColor(
+                          deal.status
+                        )}`}
+                      >
+                        {deal.status || "Pending"}
                       </div>
-                    )}
-                  </td>
-                </tr>
-              ))}
+                    </td>
+                    <td className="py-4 text-black/60">
+                      {deal.createdAt?.slice(0, 10) || "-"}
+                    </td>
+                    <td className="py-4 relative">
+                      <button
+                        className="p-2 rounded-full hover:bg-gray-100"
+                        onClick={() =>
+                          setActionMenuOpenFor(
+                            actionMenuOpenFor === deal._id ? null : deal._id
+                          )
+                        }
+                      >
+                        <MoreVertical size={18} />
+                      </button>
+
+                      {actionMenuOpenFor === deal._id && (
+                        <div className="absolute right-0 mt-2 z-50 bg-white border border-gray-200 rounded shadow w-60 text-sm">
+                          <button
+                            className="w-full flex items-center gap-2 px-3 py-2 hover:bg-gray-100"
+                            onClick={() => {
+                              setSelectedForView(deal);
+                              setActionMenuOpenFor(null);
+                            }}
+                          >
+                            <Eye size={16} className="text-gray-600" />
+                            View Details
+                          </button>
+
+                          <button
+                            className="w-full flex items-center gap-2 px-3 py-2 hover:bg-gray-100"
+                            onClick={() => handleAction(deal._id, "reject")}
+                          >
+                            <Download size={16} className="text-gray-600" />
+                            Reject Deal
+                          </button>
+
+                          <button
+                            className="w-full flex items-center gap-2 px-3 py-2 hover:bg-gray-100"
+                            onClick={() => handleAction(deal._id, "approve")}
+                          >
+                            <CheckCircle size={16} className="text-gray-600" />
+                            Approve Deal
+                          </button>
+
+                          <button
+                            className="w-full flex items-center gap-2 px-3 py-2 hover:bg-gray-100 text-red-600"
+                            onClick={() => handleDelete(deal._id)}
+                          >
+                            <Trash2 size={16} className="text-red-600" />
+                            Delete Deal
+                          </button>
+                        </div>
+                      )}
+                    </td>
+                  </tr>
+                );
+              })}
             </tbody>
           </table>
         )}
@@ -302,9 +344,8 @@ export default function Buydeals() {
                 <button
                   key={`page-${num}`}
                   onClick={() => handlePageChange(num)}
-                  className={`px-3 py-1 rounded border border-text-muted ${
-                    page === num ? "bg-blue text-white" : "hover:bg-gray-100"
-                  }`}
+                  className={`px-3 py-1 rounded border border-text-muted ${page === num ? "bg-blue text-white" : "hover:bg-gray-100"
+                    }`}
                 >
                   {num}
                 </button>
@@ -313,9 +354,8 @@ export default function Buydeals() {
             <span className="px-2">...</span>
             <button
               onClick={() => handlePageChange(totalPages)}
-              className={`px-3 py-1 rounded border border-text-muted ${
-                page === totalPages ? "bg-blue text-white" : "hover:bg-gray-100"
-              }`}
+              className={`px-3 py-1 rounded border border-text-muted ${page === totalPages ? "bg-blue text-white" : "hover:bg-gray-100"
+                }`}
             >
               {totalPages}
             </button>

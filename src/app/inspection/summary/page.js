@@ -53,7 +53,7 @@ export default function InspectionOfferReview({
         customerNotes: note || "",
       };
 
-      const res = await fetch(apiUrl("/inspections/book"), {
+      const res = await fetch(apiUrl("/api/inspections/book"), {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -78,7 +78,7 @@ export default function InspectionOfferReview({
   return (
     <div className="min-h-screen bg-white px-4 py-16">
       <div className="max-w-7xl mx-auto px-8 pt-4 mt-5 mb-5">
-        <nav className="text-sm text-gray-500">
+        <nav className="text-sm text-gray-500 hidden md:block">
           Home <span className="mx-1">/</span> Garage{" "}
           <span className="mx-1">/</span>
           <span className="text-blue font-medium">Review Booking</span>

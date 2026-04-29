@@ -18,14 +18,24 @@ export default function RootLayout({ children }) {
   const [loading, setLoading] = useState(true);
   const pathname = usePathname();
 
+  // Initial preloader on first load
   useEffect(() => {
     const timer = setTimeout(() => setLoading(false), 1500);
     return () => clearTimeout(timer);
   }, []);
 
+  // Preloader + scroll to top on route change
   useEffect(() => {
     if (!pathname) return;
+
+    // Start loader
     setLoading(true);
+
+    // Scroll to top
+    if (typeof window !== "undefined") {
+      window.scrollTo({ top: 0, left: 0, behavior: "smooth" });
+    }
+
     const timer = setTimeout(() => setLoading(false), 800);
     return () => clearTimeout(timer);
   }, [pathname]);
@@ -34,8 +44,6 @@ export default function RootLayout({ children }) {
     <html lang="en">
       <body className={`${poppins.variable} antialiased`}>
         <AuthProvider>
-          {" "}
-          {/* ⬅️ wrap entire app */}
           {loading && <Preloader />}
           <LayoutWrapper>{children}</LayoutWrapper>
           <Toaster position="top-center" reverseOrder={false} />

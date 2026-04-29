@@ -5,11 +5,210 @@ import { useRouter } from "next/navigation";
 import { uploadToCloudinary } from "@/utils/uploadToCloudinary";
 import toast from "react-hot-toast";
 
-const SellPage = () => {
+const CAR_DATA = {
+  Toyota: [
+    "Corolla",
+    "Camry",
+    "RAV4",
+    "Hilux",
+    "Land Cruiser",
+    "Prius",
+    "Yaris",
+    "C-HR",
+    "Supra",
+    "Fortuner",
+    "Avalon",
+    "Sequoia",
+    "4Runner",
+    "Mirai",
+    "Highlander",
+    "Venza",
+    "Solara",
+    "FJ-cruiser",
+    "tundra",
+    "Tacoma ",
+    "Sienna",
+  ],
+
+  Honda: [
+    "Civic",
+    "Accord",
+    "CR-V",
+    "Pilot",
+    "HR-V",
+    "Fit",
+    "Odyssey",
+    "Ridgeline",
+    "Insight",
+    "Passport",
+    " Crosstour",
+  ],
+
+  Ford: [
+    "F-150",
+    "Mustang",
+    "Explorer",
+    "Escape",
+    "Ranger",
+    "Edge",
+    "Bronco",
+    "Focus",
+    "Fiesta",
+    "EcoSport",
+    "Expedition",
+  ],
+
+  Chevrolet: [
+    "Silverado",
+    "Malibu",
+    "Camaro",
+    "Equinox",
+    "Tahoe",
+    "Suburban",
+    "Trailblazer",
+    "Colorado",
+    "Blazer",
+    "Impala",
+    "Corvette",
+  ],
+
+  BMW: [
+    "1 Series",
+    "2 Series",
+    "3 Series",
+    "4 Series",
+    "5 Series",
+    "7 Series",
+    "X1",
+    "X3",
+    "X5",
+    "X7",
+    "Z4",
+    "i3",
+    "i4",
+    "iX",
+  ],
+
+  MercedesBenz: [
+    "A-Class",
+    "C-Class",
+    "E-Class",
+    "S-Class",
+    "GLA",
+    "GLC",
+    "GLE",
+    "GLS",
+    "EQC",
+    "AMG GT",
+    "GLK350",
+    "M-Class",
+    "C300",
+    "CLA-class",
+  ],
+
+  Audi: [
+    "A3",
+    "A4",
+    "A6",
+    "A8",
+    "Q3",
+    "Q5",
+    "Q7",
+    "Q8",
+    "RS3",
+    "RS7",
+    "e-tron",
+  ],
+
+  Nissan: [
+    "Altima",
+    "Sentra",
+    "Maxima",
+    "Leaf",
+    "Rogue",
+    "Pathfinder",
+    "Murano",
+    "Armada",
+    "370Z",
+    "GT-R",
+  ],
+
+  Volkswagen: [
+    "Golf",
+    "Polo",
+    "Passat",
+    "Jetta",
+    "Tiguan",
+    "Atlas",
+    "Arteon",
+    "Beetle",
+  ],
+
+  Hyundai: [
+    "Elantra",
+    "Sonata",
+    "Tucson",
+    "Santa Fe",
+    "Palisade",
+    "Venue",
+    "Ioniq 5",
+    "Ioniq 6",
+    "Ix35",
+    "Kona",
+    "grandeur",
+    "creta",
+  ],
+
+  Kia: [
+    "Rio",
+    "Forte",
+    "Sportage",
+    "Sorento",
+    "Telluride",
+    "Soul",
+    "K5",
+    "EV6",
+  ],
+
+  Subaru: ["Impreza", "WRX", "Legacy", "Outback", "Forester", "Crosstrek"],
+
+  Mazda: ["Mazda3", "Mazda6", "CX-3", "CX-30", "CX-5", "CX-9", "MX-5 Miata"],
+
+  Tesla: ["Model S", "Model 3", "Model X", "Model Y", "Cybertruck"],
+
+  Lexus: ["ES", "IS", "GS", "LS", "NX", "RX", "UX", "LC", "GX", "RX450H"],
+
+  Porsche: ["911", "Boxster", "Cayman", "Cayenne", "Macan", "Taycan"],
+
+  Jaguar: ["XE", "XF", "XJ", "F-Pace", "E-Pace", "I-Pace"],
+
+  LandRover: ["Range Rover", "Discovery", "Defender", "Velar", "Evoque"],
+
+  Volvo: ["S60", "S90", "V60", "V90", "XC40", "XC60", "XC90"],
+
+  Renault: ["Clio", "Megane", "Captur", "Kadjar", "Talisman", "Scenic"],
+
+  Peugeot: ["208", "308", "2008", "3008", "5008", "508"],
+
+  Fiat: ["500", "Panda", "Punto", "Tipo", "500X"],
+
+  Citroen: ["C3", "C4", "C5 Aircross", "Berlingo", "C3 Aircross"],
+
+  Mitsubishi: ["Mirage", "Lancer", "Outlander", "Eclipse Cross", "ASX"],
+
+  AudiSport: ["RS Q3", "RS Q8"],
+
+  Acura: ["Integra", "TLX", "RDX", "MDX"],
+
+  Infiniti: ["Q50", "Q60", "QX50", "QX60", "QX80"],
+};
+
+const swapPage = () => {
   const [form, setForm] = useState({
     carName: "",
+    carModel: "",
     year: "2023",
-    condition: "used",
+    condition: "preowned",
     transmission: "Automatic",
     fuelType: "Petrol",
     engine: "",
@@ -29,8 +228,9 @@ const SellPage = () => {
       const car = JSON.parse(stored);
       setForm({
         carName: car.carName || "",
+        carModel: car.carModel || "",
         year: car.year || "",
-        condition: car.condition || "used",
+        condition: car.condition || "preowned",
         transmission: car.transmission || "Automatic",
         fuelType: car.fuelType || "Petrol",
         engine: car.engine || "",
@@ -41,6 +241,16 @@ const SellPage = () => {
       setImages(car.images?.map((url) => ({ file: null, preview: url })) || []);
     }
   }, []);
+
+  const handleMakeChange = (e) => {
+    const selectedMake = e.target.value;
+
+    setForm((prev) => ({
+      ...prev,
+      carName: selectedMake,
+      carModel: "", // reset model when make changes
+    }));
+  };
 
   const handleImageChange = (e) => {
     const files = Array.from(e.target.files);
@@ -56,6 +266,7 @@ const SellPage = () => {
 
     const required = [
       "carName",
+      "carModel",
       "year",
       "condition",
       "transmission",
@@ -65,7 +276,13 @@ const SellPage = () => {
       "price",
     ];
 
-    const missing = required.filter((key) => !form[key]?.trim());
+    const isEmpty = (value) => {
+      if (value === null || value === undefined) return true;
+      if (typeof value === "string") return value.trim() === "";
+      return false;
+    };
+
+    const missing = required.filter((key) => isEmpty(form[key]));
     if (missing.length > 0) {
       toast.error("Please fill all required fields: " + missing.join(", "));
       return;
@@ -95,11 +312,20 @@ const SellPage = () => {
       );
 
       const carToReview = {
-        ...form,
-        condition: form.condition.toLowerCase(),
-        transmission: form.transmission.toLowerCase(),
-        fuelType: form.fuelType.toLowerCase(),
-        images: finalImages,
+        carName: form.carName.trim(),
+        carModel: form.carModel.trim(),
+        year: Number(form.year),
+        isSwap: true,
+        condition: form.condition,
+        transmission: form.transmission.toLowerCase().trim(),
+        fuelType: form.fuelType.toLowerCase().trim(),
+        engine: form.engine.trim(),
+        mileage: Number(form.mileage),
+        price: Number(String(form.price).replace(/,/g, "")),
+        note: form.note?.trim() || "",
+        images: finalImages.filter(
+          (img) => typeof img === "string" && img !== ""
+        ),
       };
 
       sessionStorage.setItem("carToReview", JSON.stringify(carToReview));
@@ -116,32 +342,67 @@ const SellPage = () => {
   return (
     <div className="min-h-screen bg-white px-4 py-16">
       <div className="max-w-7xl mx-auto px-8 pt-4 mt-5 mb-5">
-        <nav className="text-sm text-gray-500">Create car for Swap</nav>
+        <nav className="text-sm text-gray-500">
+          Home / Garage / Car Details / swap
+        </nav>
       </div>
 
       <div className="flex justify-center mb-16">
         <div className="w-full max-w-2xl bg-white rounded-2xl shadow-lg p-8">
           <h1 className="text-2xl font-semibold text-center text-black mb-2">
-            Add Car To Listing
+            Add Your Car
           </h1>
           <p className="text-black/80 text-center text-sm mb-8">
-            Tell us about the car you want to List
+            Tell us about the car you want to swap
           </p>
 
           <form className="space-y-6" onSubmit={handleSubmit}>
             {/* NAME + YEAR */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <div>
-                <label className="block text-sm font-medium text-gray-700">
-                  Make/Name of car
-                </label>
-                <input
-                  className="mt-1 block w-full rounded-md border-gray-300 shadow-sm h-10 px-3 border"
-                  value={form.carName}
-                  onChange={(e) =>
-                    setForm({ ...form, carName: e.target.value })
-                  }
-                />
+            <div className="grid grid-cols-1  gap-6">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                {/* Car Make */}
+                <div>
+                  <label className="block text-sm font-medium text-gray-700">
+                    Car Make
+                  </label>
+                  <select
+                    className="mt-1 block w-full rounded-md border-gray-300 shadow-sm h-10 px-3 border"
+                    value={form.carName}
+                    onChange={handleMakeChange}
+                  >
+                    <option value="">Select Make</option>
+                    {Object.keys(CAR_DATA).map((make) => (
+                      <option key={make} value={make}>
+                        {make}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+
+                {/* Car Model */}
+                <div>
+                  <label className="block text-sm font-medium text-gray-700">
+                    Car Model
+                  </label>
+                  <select
+                    className="mt-1 block w-full rounded-md border-gray-300 shadow-sm h-10 px-3 border"
+                    value={form.carModel}
+                    onChange={(e) =>
+                      setForm({ ...form, carModel: e.target.value })
+                    }
+                    disabled={!form.carName}
+                  >
+                    <option value="">
+                      {form.carName ? "Select Model" : "Select Make First"}
+                    </option>
+                    {form.carName &&
+                      CAR_DATA[form.carName].map((model) => (
+                        <option key={model} value={model}>
+                          {model}
+                        </option>
+                      ))}
+                  </select>
+                </div>
               </div>
 
               <div>
@@ -153,7 +414,7 @@ const SellPage = () => {
                   value={form.year}
                   onChange={(e) => setForm({ ...form, year: e.target.value })}
                 >
-                  {Array.from({ length: 30 }, (_, i) => 2025 - i).map((yr) => (
+                  {Array.from({ length: 30 }, (_, i) => 2026 - i).map((yr) => (
                     <option key={yr}>{yr}</option>
                   ))}
                 </select>
@@ -173,8 +434,9 @@ const SellPage = () => {
                     setForm({ ...form, condition: e.target.value })
                   }
                 >
-                  <option>used</option>
-                  <option>new</option>
+                  <option value="brand_new">Brand_New</option>
+                  <option value="foreign_used">Foreign_Used</option>
+                  <option value="preowned">PreOwned</option>
                 </select>
               </div>
 
@@ -324,4 +586,4 @@ const SellPage = () => {
   );
 };
 
-export default SellPage;
+export default swapPage;

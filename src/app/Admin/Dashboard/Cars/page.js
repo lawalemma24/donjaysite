@@ -14,6 +14,7 @@ import {
   Edit,
   CheckCircle,
   XCircle,
+  Eye,
 } from "lucide-react";
 import FilterCard from "../components/FilterCard";
 import AddUserModal from "../components/adduser";
@@ -25,6 +26,7 @@ import AddCarForm from "../components/addcar";
 import ProtectedRoute from "@/app/protectedroutes/protected";
 import api from "@/utils/api";
 import toast from "react-hot-toast";
+import ListedCarDetails from "../components/carlisteddetails";
 
 export default function CarListingPage() {
   const [cars, setCars] = useState([]);
@@ -240,7 +242,7 @@ export default function CarListingPage() {
                         alt={car.carName}
                         className="w-10 h-10 rounded-full border border-text-muted/70 object-cover"
                       />
-                      {car.carName}
+                      {car.carName} {car.carModel}
                     </td>
                     <td className="py-4 text-text-muted">{car.year}</td>
                     <td className="py-4">{car.condition || "N/A"}</td>
@@ -268,6 +270,16 @@ export default function CarListingPage() {
 
                       {actionMenuOpenFor === car._id && (
                         <div className="absolute right-0 mt-2 z-50 bg-white border border-gray-200 rounded shadow w-40 text-sm">
+                          <button
+                            className="w-full flex items-center gap-2 px-3 py-2 hover:bg-gray-100"
+                            onClick={() => {
+                              setSelectedForView(car); // <-- Set selected car
+                              setActionMenuOpenFor(null);
+                            }}
+                          >
+                            <Eye className="text-green-500 w-5 h-5" />
+                            Preview Details
+                          </button>
                           <button
                             className="w-full flex items-center gap-2 px-3 py-2 hover:bg-gray-100"
                             onClick={() => {
@@ -369,11 +381,12 @@ export default function CarListingPage() {
 
         {showAddUser && <AddCarForm onClose={() => setShowAddUser(false)} />}
         {selectedForView && (
-          <ViewUserModal
-            user={selectedForView}
+          <ListedCarDetails
+            car={selectedForView}
             onClose={() => setSelectedForView(null)}
           />
         )}
+
         {selectedForDelete && (
           <DeleteUserConfirm
             user={selectedForDelete}

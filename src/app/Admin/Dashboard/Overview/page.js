@@ -7,6 +7,9 @@ import Buydeals from "../components/buydeals";
 import Selldeals from "../components/selldeals";
 import Swapdeals from "../components/swapdeals";
 import { useState } from "react";
+import DealsCompletedCard from "../components/completeddeals";
+import PendingDealsCard from "../components/pendingdeals";
+import TotalUsersCard from "../components/totalusers";
 
 export default function DashboardPage() {
   const [active, setActive] = useState("buy");
@@ -27,39 +30,13 @@ export default function DashboardPage() {
         {/* widgets */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
           {/* Total Users */}
-          <div className="bg-white rounded-2xl shadow-sm p-4 sm:p-5 flex items-center gap-3 sm:gap-4">
-            <div className="bg-blue-100 text-blue-600 p-2 sm:p-3 rounded-full">
-              <User size={22} />
-            </div>
-            <div>
-              <p className="text-gray-500 text-sm font-medium">Total Users</p>
-              <p className="text-xl sm:text-2xl font-bold text-black">120</p>
-            </div>
-          </div>
+          <TotalUsersCard />
 
           {/* Pending Deals */}
-          <div className="bg-white rounded-2xl shadow-sm p-4 sm:p-5 flex items-center gap-3 sm:gap-4">
-            <div className="bg-red-100 text-red-600 p-2 sm:p-3 rounded-full">
-              <Ellipsis size={22} />
-            </div>
-            <div>
-              <p className="text-gray-500 text-sm font-medium">Pending Deals</p>
-              <p className="text-xl sm:text-2xl font-bold text-black">80</p>
-            </div>
-          </div>
+          <PendingDealsCard />
 
           {/* Deals Completed */}
-          <div className="bg-white rounded-2xl shadow-sm p-4 sm:p-5 flex items-center gap-3 sm:gap-4">
-            <div className="bg-green-100 text-green-600 p-2 sm:p-3 rounded-full">
-              <CheckCircle size={22} />
-            </div>
-            <div>
-              <p className="text-gray-500 text-sm font-medium">
-                Deals Completed
-              </p>
-              <p className="text-xl sm:text-2xl font-bold text-black">300</p>
-            </div>
-          </div>
+          <DealsCompletedCard />
 
           {/* Total Revenue */}
           <div className="bg-white rounded-2xl shadow-sm p-4 sm:p-5 flex items-center gap-3 sm:gap-4">

@@ -24,7 +24,7 @@ export default function SwapDealDetails({ deal, onClose }) {
 
   return (
     <div
-      className="fixed inset-0 bg-black/60 z-50 flex justify-center items-center"
+      className="fixed inset-0 bg-black/60 z-50 flex justify-center p-3 items-center"
       onClick={onClose}
     >
       <div

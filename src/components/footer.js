@@ -102,7 +102,6 @@ const Footer = () => {
     }
   };
 
-  // Smooth scroll logic
   const handleScrollLink = (e, sectionId) => {
     e.preventDefault();
     if (!sectionId) return;
@@ -160,7 +159,6 @@ const Footer = () => {
             </ul>
           </div>
 
-          {/* Logo and Socials */}
           <div className="lg:col-span-1 md:col-span-2">
             <div className="flex flex-col items-start lg:items-end">
               <img
@@ -193,7 +191,7 @@ const Footer = () => {
 
         <div className="flex flex-col sm:flex-row justify-between items-center text-xs text-white space-y-1 sm:space-y-0">
           <p>Driven by trust. Powered by innovation</p>
-          <p>&copy; 2025 Don-Jay Autos Limited. All rights reserved</p>
+          <p>&copy; 2026 Don-Jay Autos Limited. All rights reserved</p>
         </div>
       </div>
 

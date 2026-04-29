@@ -39,8 +39,8 @@ export default function CarMarketplace() {
 
         setAllCars(clean);
         setFilteredCars(clean);
-        setPage(1);
         setCars(clean.slice(0, PER_PAGE));
+        setPage(1);
       } catch (err) {
         console.error("Error fetching cars:", err);
       } finally {
@@ -51,23 +51,6 @@ export default function CarMarketplace() {
   }, []);
 
   const handleFilterAndSearch = () => {
-    const noFiltersApplied =
-      !search &&
-      !condition &&
-      !make &&
-      !transmission &&
-      !fuel &&
-      !priceRange[0] &&
-      !priceRange[1] &&
-      !yearRange[0] &&
-      !yearRange[1];
-
-    if (noFiltersApplied) {
-      setFilteredCars(allCars);
-      setPage(1);
-      return;
-    }
-
     const filtered = allCars.filter((car) => {
       const carName = car.carName || "";
 
@@ -75,21 +58,17 @@ export default function CarMarketplace() {
         !search || carName.toLowerCase().includes(search.toLowerCase());
 
       const matchCondition =
-        !condition ||
-        (car.condition &&
-          car.condition.toLowerCase() === condition.toLowerCase());
+        !condition || car.condition?.toLowerCase() === condition.toLowerCase();
 
       const matchMake =
         !make || carName.toLowerCase().startsWith(make.toLowerCase());
 
       const matchTransmission =
         !transmission ||
-        (car.transmission &&
-          car.transmission.toLowerCase() === transmission.toLowerCase());
+        car.transmission?.toLowerCase() === transmission.toLowerCase();
 
       const matchFuel =
-        !fuel ||
-        (car.fuelType && car.fuelType.toLowerCase() === fuel.toLowerCase());
+        !fuel || car.fuelType?.toLowerCase() === fuel.toLowerCase();
 
       const minPrice = parseInt(priceRange[0], 10);
       const maxPrice = parseInt(priceRange[1], 10);
@@ -116,6 +95,7 @@ export default function CarMarketplace() {
 
     setFilteredCars(filtered);
     setPage(1);
+    setCars(filtered.slice(0, PER_PAGE)); // ✅ CRITICAL FIX
   };
 
   useEffect(() => {
@@ -128,11 +108,8 @@ export default function CarMarketplace() {
   }, [condition, make, yearRange, priceRange, transmission, fuel]);
 
   useEffect(() => {
-    if (filteredCars.length > 0) {
-      const start = (page - 1) * PER_PAGE;
-      const paginated = filteredCars.slice(start, start + PER_PAGE);
-      setCars(paginated);
-    }
+    const start = (page - 1) * PER_PAGE;
+    setCars(filteredCars.slice(start, start + PER_PAGE)); // ✅ allow empty
   }, [page, filteredCars]);
 
   const resetFilters = () => {
@@ -143,7 +120,10 @@ export default function CarMarketplace() {
     setPriceRange(["", ""]);
     setTransmission("");
     setFuel("");
-    setTimeout(() => handleFilterAndSearch(), 0);
+
+    setFilteredCars(allCars);
+    setCars(allCars.slice(0, PER_PAGE)); // ✅ FIX
+    setPage(1);
   };
 
   return (
@@ -177,15 +157,16 @@ export default function CarMarketplace() {
 
           <div className="mb-4">
             <h3 className="font-medium mb-2">Condition</h3>
-            {["Brand New", "Used"].map((c) => (
-              <label key={c} className="flex items-center gap-2">
+
+            {["Brand-new", "foreign-used", "certfied pre-owned"].map((c) => (
+              <label key={c} className="flex items-center gap-2 capitalize">
                 <input
                   type="radio"
                   name="condition"
                   checked={condition === c}
                   onChange={() => setCondition(c)}
                 />
-                {c}
+                {c.replace("-", " ")}
               </label>
             ))}
           </div>
@@ -197,11 +178,40 @@ export default function CarMarketplace() {
               value={make}
               onChange={(e) => setMake(e.target.value)}
             >
-              <option value="">All Makes</option>
-              <option>Mercedes</option>
-              <option>Toyota</option>
-              <option>Honda</option>
-              <option>Tesla</option>
+              <option value="">All Makes</option> <option>Acura</option>{" "}
+              <option>Alfa Romeo</option> <option>Audi</option>{" "}
+              <option>Aston Martin</option> <option>Bentley</option>{" "}
+              <option>BMW</option> <option>Bugatti</option>{" "}
+              <option>Buick</option> <option>BYD</option>{" "}
+              <option>Cadillac</option> <option>Changan</option>{" "}
+              <option>Chery</option> <option>Chevrolet</option>{" "}
+              <option>Chrysler</option> <option>Citroën</option>{" "}
+              <option>Dacia</option> <option>Daewoo</option>{" "}
+              <option>Daihatsu</option> <option>Dodge</option>{" "}
+              <option>Ferrari</option> <option>Fiat</option>{" "}
+              <option>Ford</option> <option>Geely</option>{" "}
+              <option>Genesis</option> <option>GMC</option>{" "}
+              <option>Great Wall</option> <option>Haval</option>{" "}
+              <option>Honda</option> <option>Hyundai</option>{" "}
+              <option>Infiniti</option> <option>Isuzu</option>{" "}
+              <option>Jaguar</option> <option>Jeep</option> <option>Kia</option>{" "}
+              <option>Lamborghini</option> <option>Land Rover</option>{" "}
+              <option>Lexus</option> <option>Lincoln</option>{" "}
+              <option>Lotus</option> <option>Maserati</option>{" "}
+              <option>Maybach</option> <option>Mazda</option>{" "}
+              <option>McLaren</option> <option>Mercedes-Benz</option>{" "}
+              <option>Mini</option> <option>Mitsubishi</option>{" "}
+              <option>Nissan</option> <option>Opel</option>{" "}
+              <option>Pagani</option> <option>Peugeot</option>{" "}
+              <option>Porsche</option> <option>Proton</option>{" "}
+              <option>Ram</option> <option>Renault</option>{" "}
+              <option>Rolls-Royce</option> <option>Saab</option>{" "}
+              <option>Seat</option> <option>Skoda</option>{" "}
+              <option>Smart</option> <option>Subaru</option>{" "}
+              <option>Suzuki</option> <option>Tata</option>{" "}
+              <option>Tesla</option> <option>Toyota</option>{" "}
+              <option>Vauxhall</option> <option>Volkswagen</option>{" "}
+              <option>Volvo</option> <option>Wuling</option>
             </select>
           </div>
 

@@ -47,7 +47,7 @@ export default function InspectionPage() {
   const fetchInspections = async (page = 1) => {
     setLoading(true);
     try {
-      const res = await api.get(apiUrl("/inspections/admin/all"), {
+      const res = await api.get(apiUrl("/api/inspections/admin/all"), {
         params: { page, limit: 7 },
       });
       const data = res.data?.inspections || [];

@@ -1,4 +1,5 @@
 "use client";
+import { useEffect, useState } from "react";
 import {
   BarChart,
   Bar,
@@ -8,24 +9,94 @@ import {
   Tooltip,
   ResponsiveContainer,
 } from "recharts";
+import { apiUrl } from "@/utils/apihelper";
 
-const data = [
-  { name: "Jan", users: 120 },
-  { name: "Feb", users: 230 },
-  { name: "Mar", users: 250 },
-  { name: "Apr", users: 310 },
-  { name: "May", users: 360 },
-  { name: "Jun", users: 290 },
-];
+const BASE = apiUrl("/api/users");
 
 export default function UserGrowthChart() {
+  const [data, setData] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+  // Map month index to month name
+  const monthNames = [
+    "Jan",
+    "Feb",
+    "Mar",
+    "Apr",
+    "May",
+    "Jun",
+    "Jul",
+    "Aug",
+    "Sep",
+    "Oct",
+    "Nov",
+    "Dec",
+  ];
+
+  useEffect(() => {
+    const token =
+      typeof window !== "undefined" ? localStorage.getItem("token") : null;
+
+    async function fetchUsers() {
+      setLoading(true);
+      setError(null);
+
+      try {
+        const res = await fetch(`${BASE}?limit=1000`, {
+          headers: { Authorization: token ? `Bearer ${token}` : "" },
+        });
+
+        if (!res.ok) {
+          const txt = await res.text();
+          throw new Error(
+            `Failed to fetch users refresh: ${res.status} ${txt}`
+          );
+        }
+
+        const result = await res.json();
+        const users = Array.isArray(result.users) ? result.users : [];
+
+        // Aggregate users by month
+        const monthCounts = {};
+        users.forEach((u) => {
+          if (!u.createdAt) return;
+          const d = new Date(u.createdAt);
+          const key = `${monthNames[d.getMonth()]} ${d.getFullYear()}`;
+          monthCounts[key] = (monthCounts[key] || 0) + 1;
+        });
+
+        // Sort months chronologically
+        const sortedData = Object.entries(monthCounts)
+          .sort((a, b) => {
+            const [mA, yA] = a[0].split(" ");
+            const [mB, yB] = b[0].split(" ");
+            return new Date(`${mA} 1, ${yA}`) - new Date(`${mB} 1, ${yB}`);
+          })
+          .map(([name, users]) => ({ name, users }));
+
+        setData(sortedData);
+      } catch (err) {
+        console.error(err);
+        setError(err.message || "Failed to fetch user data");
+      } finally {
+        setLoading(false);
+      }
+    }
+
+    fetchUsers();
+  }, []);
+
+  if (loading) return <div>Loading chart...</div>;
+  if (error) return <div className="text-red-600">Error: {error}</div>;
+  if (!data.length) return <div>No user data to display.</div>;
+
   return (
     <div className="bg-white shadow rounded-2xl p-3 sm:p-4 w-full overflow-hidden">
       <h2 className="text-base sm:text-lg font-semibold mb-3 sm:mb-4">
         User Growth
       </h2>
 
-      {/* Set fixed chart height to avoid overflow */}
       <div className="w-full h-56 sm:h-72">
         <ResponsiveContainer width="100%" height="100%">
           <BarChart

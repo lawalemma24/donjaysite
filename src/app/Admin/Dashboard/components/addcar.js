@@ -5,12 +5,211 @@ import api from "@/utils/api";
 import toast from "react-hot-toast";
 import { uploadToCloudinary } from "@/utils/uploadToCloudinary"; // updated helper
 
+const carData = {
+  Toyota: [
+    "Corolla",
+    "Camry",
+    "RAV4",
+    "Hilux",
+    "Land Cruiser",
+    "Prius",
+    "Yaris",
+    "C-HR",
+    "Supra",
+    "Fortuner",
+    "Avalon",
+    "Sequoia",
+    "4Runner",
+    "Mirai",
+    "Highlander",
+    "Venza",
+    "Solara",
+    "FJ-cruiser",
+    "tundra",
+    "Tacoma ",
+    "Sienna",
+  ],
+
+  Honda: [
+    "Civic",
+    "Accord",
+    "CR-V",
+    "Pilot",
+    "HR-V",
+    "Fit",
+    "Odyssey",
+    "Ridgeline",
+    "Insight",
+    "Passport",
+    " Crosstour",
+  ],
+
+  Ford: [
+    "F-150",
+    "Mustang",
+    "Explorer",
+    "Escape",
+    "Ranger",
+    "Edge",
+    "Bronco",
+    "Focus",
+    "Fiesta",
+    "EcoSport",
+    "Expedition",
+  ],
+
+  Chevrolet: [
+    "Silverado",
+    "Malibu",
+    "Camaro",
+    "Equinox",
+    "Tahoe",
+    "Suburban",
+    "Trailblazer",
+    "Colorado",
+    "Blazer",
+    "Impala",
+    "Corvette",
+  ],
+
+  BMW: [
+    "1 Series",
+    "2 Series",
+    "3 Series",
+    "4 Series",
+    "5 Series",
+    "7 Series",
+    "X1",
+    "X3",
+    "X5",
+    "X7",
+    "Z4",
+    "i3",
+    "i4",
+    "iX",
+  ],
+
+  MercedesBenz: [
+    "A-Class",
+    "C-Class",
+    "E-Class",
+    "S-Class",
+    "GLA",
+    "GLC",
+    "GLE",
+    "GLS",
+    "EQC",
+    "AMG GT",
+    "GLK350",
+    "M-Class",
+    "C300",
+    "CLA-class",
+  ],
+
+  Audi: [
+    "A3",
+    "A4",
+    "A6",
+    "A8",
+    "Q3",
+    "Q5",
+    "Q7",
+    "Q8",
+    "RS3",
+    "RS7",
+    "e-tron",
+  ],
+
+  Nissan: [
+    "Altima",
+    "Sentra",
+    "Maxima",
+    "Leaf",
+    "Rogue",
+    "Pathfinder",
+    "Murano",
+    "Armada",
+    "370Z",
+    "GT-R",
+  ],
+
+  Volkswagen: [
+    "Golf",
+    "Polo",
+    "Passat",
+    "Jetta",
+    "Tiguan",
+    "Atlas",
+    "Arteon",
+    "Beetle",
+  ],
+
+  Hyundai: [
+    "Elantra",
+    "Sonata",
+    "Tucson",
+    "Santa Fe",
+    "Palisade",
+    "Venue",
+    "Ioniq 5",
+    "Ioniq 6",
+    "Ix35",
+    "Kona",
+    "grandeur",
+    "creta",
+  ],
+
+  Kia: [
+    "Rio",
+    "Forte",
+    "Sportage",
+    "Sorento",
+    "Telluride",
+    "Soul",
+    "K5",
+    "EV6",
+  ],
+
+  Subaru: ["Impreza", "WRX", "Legacy", "Outback", "Forester", "Crosstrek"],
+
+  Mazda: ["Mazda3", "Mazda6", "CX-3", "CX-30", "CX-5", "CX-9", "MX-5 Miata"],
+
+  Tesla: ["Model S", "Model 3", "Model X", "Model Y", "Cybertruck"],
+
+  Lexus: ["ES", "IS", "GS", "LS", "NX", "RX", "UX", "LC", "GX", "RX450H"],
+
+  Porsche: ["911", "Boxster", "Cayman", "Cayenne", "Macan", "Taycan"],
+
+  Jaguar: ["XE", "XF", "XJ", "F-Pace", "E-Pace", "I-Pace"],
+
+  LandRover: ["Range Rover", "Discovery", "Defender", "Velar", "Evoque"],
+
+  Volvo: ["S60", "S90", "V60", "V90", "XC40", "XC60", "XC90"],
+
+  Renault: ["Clio", "Megane", "Captur", "Kadjar", "Talisman", "Scenic"],
+
+  Peugeot: ["208", "308", "2008", "3008", "5008", "508"],
+
+  Fiat: ["500", "Panda", "Punto", "Tipo", "500X"],
+
+  Citroen: ["C3", "C4", "C5 Aircross", "Berlingo", "C3 Aircross"],
+
+  Mitsubishi: ["Mirage", "Lancer", "Outlander", "Eclipse Cross", "ASX"],
+
+  AudiSport: ["RS Q3", "RS Q8"],
+
+  Acura: ["Integra", "TLX", "RDX", "MDX"],
+
+  Infiniti: ["Q50", "Q60", "QX50", "QX60", "QX80"],
+};
+
 export default function AddCarForm({
-  onClose = () => {},
-  onSuccess = () => {},
+  onClose = () => { },
+  onSuccess = () => { },
 }) {
   const [formData, setFormData] = useState({
     carName: "",
+    carModel: "",
     year: "",
     condition: "",
     transmission: "",
@@ -47,35 +246,32 @@ export default function AddCarForm({
       return;
     }
 
+    if (!formData.carName || !formData.carModel) {
+      toast.error("Please select both car make and model");
+      return;
+    }
+
     try {
       setLoading(true);
-      console.log("[CREATE CAR] Uploading images to Cloudinary...");
 
-      // Extract file objects
       const files = images.map((img) => img.file);
-
-      // Upload all images in parallel
       const uploadedUrls = await uploadToCloudinary(files);
-      console.log("Uploaded image URLs:", uploadedUrls);
 
-      // Prepare final payload
       const payload = {
         carName: formData.carName,
+        carModel: formData.carModel,
         year: Number(formData.year),
-        condition: formData.condition.toLowerCase(),
+        condition: formData.condition,
         transmission: formData.transmission.toLowerCase(),
         fuelType: formData.fuelType.toLowerCase(),
         engine: formData.engine,
         mileage: Number(formData.mileage),
         price: Number(formData.price),
         note: formData.note,
-        images: uploadedUrls, // flat array of URLs
+        images: uploadedUrls,
       };
 
-      console.log("[CREATE CAR] Submitting payload:", payload);
-
       const res = await api.post("/", payload);
-      console.log("[CREATE CAR] Server response:", res.data);
 
       if (res.status === 201) {
         toast.success(res.data.message || "Car added successfully");
@@ -85,7 +281,6 @@ export default function AddCarForm({
         toast.error("Unexpected server response");
       }
     } catch (err) {
-      console.error("[CREATE CAR] Error:", err);
       toast.error(err.response?.data?.message || "Failed to create car");
     } finally {
       setLoading(false);
@@ -103,31 +298,74 @@ export default function AddCarForm({
             </p>
 
             <div className="grid md:grid-cols-3 gap-4">
-              <FormField
-                label="Make/Name of car"
-                name="carName"
-                type="text"
-                placeholder="Mercedes Benz GLE"
-                onChange={handleChange}
-              />
+              {/* Car Make Dropdown */}
+              <div>
+                <label className="text-sm">Make</label>
+                <select
+                  name="carName"
+                  value={formData.carName}
+                  onChange={(e) =>
+                    setFormData({
+                      ...formData,
+                      carName: e.target.value,
+                      carModel: "", // reset model when make changes
+                    })
+                  }
+                  className="w-full border rounded-md p-2 mt-1 border-text-muted/70 focus:border-blue outline-none"
+                >
+                  <option value="">Select Make</option>
+                  {Object.keys(carData).map((make) => (
+                    <option key={make} value={make}>
+                      {make}
+                    </option>
+                  ))}
+                </select>
+              </div>
+
+              {/* Car Model Dropdown */}
+              <div>
+                <label className="text-sm">Model</label>
+                <select
+                  name="carModel"
+                  value={formData.carModel}
+                  onChange={handleChange}
+                  disabled={!formData.carName}
+                  className="w-full border rounded-md p-2 mt-1 border-text-muted/70 focus:border-blue outline-none"
+                >
+                  <option value="">Select Model</option>
+                  {formData.carName &&
+                    carData[formData.carName].map((model) => (
+                      <option key={model} value={model}>
+                        {model}
+                      </option>
+                    ))}
+                </select>
+              </div>
+
               <FormSelect
                 label="Year"
                 name="year"
-                options={[2025, 2024, 2023, 2022, 2021]}
+                options={Array.from(
+                  { length: 2026 - 1996 + 1 },
+                  (_, i) => 2026 - i
+                )}
                 onChange={handleChange}
               />
+
               <FormSelect
                 label="Condition"
                 name="condition"
-                options={["new", "used", "certified pre-owned"]}
+                options={["brand_new", "foreign_used", "preowned"]}
                 onChange={handleChange}
               />
+
               <FormSelect
                 label="Transmission"
                 name="transmission"
                 options={["automatic", "manual", "cvt"]}
                 onChange={handleChange}
               />
+
               <FormSelect
                 label="Fuel Type"
                 name="fuelType"
@@ -141,6 +379,7 @@ export default function AddCarForm({
                 ]}
                 onChange={handleChange}
               />
+
               <FormField
                 label="Engine"
                 name="engine"
@@ -148,6 +387,7 @@ export default function AddCarForm({
                 placeholder="3.0 L Inline-6 turbo + hybrid"
                 onChange={handleChange}
               />
+
               <FormField
                 label="Mileage"
                 name="mileage"
@@ -155,6 +395,7 @@ export default function AddCarForm({
                 placeholder="16300"
                 onChange={handleChange}
               />
+
               <FormField
                 label="Price"
                 name="price"

@@ -18,22 +18,18 @@ export default function ProtectedRoute({ children, allowedRoles }) {
         if (stored) {
           currentUser = JSON.parse(stored);
         } else {
-          toast.error("No access rights");
         }
       } else {
       }
 
       // Not logged in
       if (!currentUser) {
-        toast.error("Not logged in. Please login");
         router.push("/auth/login");
         return;
       }
 
       // Role restriction
       if (allowedRoles && !allowedRoles.includes(currentUser.role)) {
-        toast.error(" Unauthorized role");
-
         // Clean up invalid session
         localStorage.removeItem("user");
         localStorage.removeItem("token");
