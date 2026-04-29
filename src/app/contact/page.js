@@ -59,7 +59,7 @@ export default function Contact() {
 
   return (
     <div className="bg-white">
-      {/* Blue Header Section */}
+      {/* Blue Head Section */}
       <div className="relative text-center text-white">
         <div className="bg-gradient-to-r from-blue-600 to-indigo-700 h-[400px] relative z-0 clip-path-wave flex flex-col items-center justify-center px-4">
           <h1 className="text-3xl font-bold">Contact Us</h1>
@@ -73,7 +73,7 @@ export default function Contact() {
         </div>
       </div>
 
-      {/* Main Contact Section */}
+      {/* Contact Section */}
       <div className="max-w-4xl mx-auto px-4 py-10 grid md:grid-cols-3 relative z-10 -mt-32 rounded-lg mb-16">
         {/* Left Info Box */}
         <div className="bg-indigo-50 p-6 md:col-span-1 md:rounded-tl-lg md:rounded-bl-lg md:rounded-tr-none rounded-t-lg">
@@ -116,7 +116,7 @@ export default function Contact() {
           </div>
         </div>
 
-        {/* Right Contact Form */}
+        {/* Right Contact */}
         <div className="bg-white md:col-span-2 p-6 md:rounded-tr-lg md:rounded-br-lg rounded-b-lg">
           <h2 className="text-xl font-semibold text-gray-800 mb-4">
             Send us a message
