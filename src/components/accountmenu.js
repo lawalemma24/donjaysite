@@ -44,6 +44,7 @@ const AccountMenu = () => {
         onClick={() => setOpen(!open)}
         className="flex items-center gap-2 px-3 py-2 hover:bg-gray-50"
       >
+
         {user?.profilePic && user.profilePic.trim() !== "" ? (
           <div
             className="w-8 h-8 rounded-full bg-center bg-cover"
@@ -56,6 +57,7 @@ const AccountMenu = () => {
         )}
 
         <span className="font-medium hidden lg:block">Profile</span>
+
 
         <svg
           className={`w-4 h-4 transform transition-transform ${
