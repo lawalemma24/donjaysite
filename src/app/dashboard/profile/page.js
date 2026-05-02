@@ -62,7 +62,7 @@ const Dashboard = () => {
       if (!token) throw new Error("No valid token. Please log in again.");
 
       const response = await fetch(
-        `https://donjay.vercel.app/api/users/${user._id}`,
+        `https://donjay-backend.vercel.app/api/users/${user._id}`,
         {
           method: "PUT",
           headers: {
@@ -97,8 +97,8 @@ const Dashboard = () => {
         );
         throw new Error(
           result.error ||
-            result.message ||
-            `Failed to update user (${response.status})`
+          result.message ||
+          `Failed to update user (${response.status})`
         );
       }
 
@@ -147,22 +147,20 @@ const Dashboard = () => {
             <div className="space-y-2">
               <button
                 onClick={() => setActiveTab("profile")}
-                className={`w-full text-left px-4 py-2 rounded flex items-center gap-2 ${
-                  activeTab === "profile"
+                className={`w-full text-left px-4 py-2 rounded flex items-center gap-2 ${activeTab === "profile"
                     ? "bg-blue/10 border-l-4 border-blue text-blue font-medium"
                     : "hover:bg-gray-100 text-gray-600"
-                }`}
+                  }`}
               >
                 <User size={14} /> Profile Settings
               </button>
 
               <button
                 onClick={() => setActiveTab("password")}
-                className={`w-full text-left px-4 py-2 rounded flex items-center gap-2 ${
-                  activeTab === "password"
+                className={`w-full text-left px-4 py-2 rounded flex items-center gap-2 ${activeTab === "password"
                     ? "bg-blue/10 border-l-4 border-blue text-blue font-medium"
                     : "hover:bg-gray-100 text-gray-600"
-                }`}
+                  }`}
               >
                 <KeyRound size={14} /> Password
               </button>

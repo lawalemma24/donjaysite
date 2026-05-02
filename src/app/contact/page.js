@@ -30,7 +30,7 @@ export default function Contact() {
     setStatus({ type: "", message: "" });
 
     try {
-      const res = await fetch("https://donjay.vercel.app/api/contact/submit", {
+      const res = await fetch("https://donjay-backend.vercel.app/api/contact/submit", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(formData),
@@ -124,11 +124,10 @@ export default function Contact() {
 
           {status.message && (
             <p
-              className={`mb-4 px-4 py-2 rounded ${
-                status.type === "success"
+              className={`mb-4 px-4 py-2 rounded ${status.type === "success"
                   ? "bg-green-100 text-green-700"
                   : "bg-red-100 text-red-700"
-              }`}
+                }`}
             >
               {status.message}
             </p>

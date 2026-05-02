@@ -2,7 +2,7 @@ import axios from "axios";
 
 // Fallback URL if env variable is missing
 const BASE_URL =
-  process.env.NEXT_PUBLIC_API_BASE_URL || "https://donjay.vercel.app";
+  process.env.NEXT_PUBLIC_API_BASE_URL || "https://donjay-backend.vercel.app";
 
 const messagesApi = axios.create({
   baseURL: `${BASE_URL}/api/messages`,
