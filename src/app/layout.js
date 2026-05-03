@@ -1,12 +1,6 @@
-"use client";
 import "./globals.css";
 import { Poppins } from "next/font/google";
-import LayoutWrapper from "@/components/layoutwrapper";
-import { Toaster } from "react-hot-toast";
-import { useEffect, useState } from "react";
-import { usePathname } from "next/navigation";
-import Preloader from "@/components/preloader";
-import { AuthProvider } from "./contexts/AuthContext";
+import RootLayoutClient from "@/components/RootLayoutClient";
 
 const poppins = Poppins({
   subsets: ["latin"],
@@ -14,40 +8,43 @@ const poppins = Poppins({
   variable: "--font-poppins",
 });
 
+export const metadata = {
+  title: {
+    default: "Donjay Autos — Buy, Sell, Swap & Inspect Cars in Nigeria",
+    template: "%s | Donjay Autos",
+  },
+  description:
+    "Experience the best car deals in Nigeria. We help you buy, sell, swap and inspect vehicles with transparency and trust.",
+  icons: {
+    icon: [
+      { url: "/favicon-32x32.png", sizes: "32x32", type: "image/png" },
+      { url: "/favicon-16x16.png", sizes: "16x16", type: "image/png" },
+      { url: "/favicon.ico" },
+    ],
+    apple: [
+      { url: "/apple-touch-icon.png", sizes: "180x180", type: "image/png" },
+    ],
+    other: [
+      {
+        rel: "android-chrome",
+        url: "/android-chrome-192x192.png",
+        sizes: "192x192",
+      },
+      {
+        rel: "android-chrome",
+        url: "/android-chrome-512x512.png",
+        sizes: "512x512",
+      },
+    ],
+  },
+  manifest: "/site.webmanifest",
+};
+
 export default function RootLayout({ children }) {
-  const [loading, setLoading] = useState(true);
-  const pathname = usePathname();
-
-  // Initial preloader on first load
-  useEffect(() => {
-    const timer = setTimeout(() => setLoading(false), 1500);
-    return () => clearTimeout(timer);
-  }, []);
-
-  // Preloader + scroll to top on route change
-  useEffect(() => {
-    if (!pathname) return;
-
-    // Start loader
-    setLoading(true);
-
-    // Scroll to top
-    if (typeof window !== "undefined") {
-      window.scrollTo({ top: 0, left: 0, behavior: "smooth" });
-    }
-
-    const timer = setTimeout(() => setLoading(false), 800);
-    return () => clearTimeout(timer);
-  }, [pathname]);
-
   return (
     <html lang="en">
       <body className={`${poppins.variable} antialiased`}>
-        <AuthProvider>
-          {loading && <Preloader />}
-          <LayoutWrapper>{children}</LayoutWrapper>
-          <Toaster position="top-center" reverseOrder={false} />
-        </AuthProvider>
+        <RootLayoutClient>{children}</RootLayoutClient>
       </body>
     </html>
   );
