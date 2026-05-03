@@ -9,8 +9,12 @@ const poppins = Poppins({
 });
 
 export const metadata = {
-  title: "Donjay",
-  description: "Donjay Site",
+  title: {
+    default: "Donjay Autos — Buy, Sell, Swap & Inspect Cars in Nigeria",
+    template: "%s | Donjay Autos",
+  },
+  description:
+    "Experience the best car deals in Nigeria. We help you buy, sell, swap and inspect vehicles with transparency and trust.",
   icons: {
     icon: [
       { url: "/favicon-32x32.png", sizes: "32x32", type: "image/png" },
