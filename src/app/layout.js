@@ -38,6 +38,9 @@ export const metadata = {
     ],
   },
   manifest: "/site.webmanifest",
+  verification: {
+    google: "10Botm-7z2VFzwu7NmQPdct3AwUsjYcs0T5CVCm94Ek",
+  },
 };
 
 export default function RootLayout({ children }) {
