@@ -14,7 +14,7 @@ export const metadata = {
     template: "%s | Donjay Autos",
   },
   description:
-    "Experience the best car deals in Nigeria. We help you buy, sell, swap and inspect vehicles with transparency and trust.",
+    "Looking for your next ride? Browse cars for sale in Nigeria, compare prices, sell or swap vehicles and book trusted car inspections easily.",
   icons: {
     icon: [
       { url: "/favicon-32x32.png", sizes: "32x32", type: "image/png" },
