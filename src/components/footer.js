@@ -82,8 +82,8 @@ const links = [
     type: "contact",
     items: [
       { label: "Address", value: "Lagos, Nigeria" },
-      { label: "Phone", value: "08012345678" },
-      { label: "Email", value: "donjayauto@gmail.com" },
+      { label: "Phone", value: "08146506157" },
+      { label: "Email", value: "donjayautos@gmail.com" },
     ],
   },
 ];
