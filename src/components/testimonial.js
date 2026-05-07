@@ -4,7 +4,7 @@ const testimonials = [
   {
     name: "Andrew Chibuike ",
     comment:
-      "I sold my Toyota Corolla in just a few hours. The process was straightforward and stress-free.",
+      "Sold my Toyota Corolla in just a few hours. The process was straightforward and stress-free.",
     image: "/images/nige.webp",
     stars: 5,
   },
@@ -16,9 +16,9 @@ const testimonials = [
     stars: 5,
   },
   {
-    name: "Cynthia Blessing",
+    name: "Diana Blessing",
     comment:
-      "I bought my Honda Accord here and it was exactly as described clean, affordable, and ready to drive.",
+      "Bought my Honda Accord here and it was exactly as described clean, affordable and ready to drive.",
     image: "/images/testimonial3.png",
     stars: 5,
   },

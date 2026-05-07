@@ -25,14 +25,14 @@ export default function CarCard({ car }) {
       </div>
 
       <div className="mt-2">
-        <h3 className=" font-semibold text-black">
+        <h3 className="font-semibold text-black truncate">
           {car.carName} <span>{car.carModel}</span>{" "}
           <span className="text-sm text-gray-500">{car.year}</span>
         </h3>
       </div>
 
       <div className="mt-1 flex items-center gap-4 text-sm text-text-muted">
-        <p className="text-text-muted text-sm">{car.note || ""}</p>
+        <p className="text-text-muted text-sm line-clamp-2">{car.note || ""}</p>
 
         <div className="flex justify-end mt-2">
           <Link href={`/garage/details/${car.id || car._id}`}>

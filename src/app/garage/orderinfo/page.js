@@ -76,33 +76,28 @@ export default function OrderInfo() {
           <div className="grid grid-cols-2 gap-3">
             <div>
               <label className="block text-sm font-medium mb-1">State</label>
-              <select
+              <input
                 name="state"
+                type="text"
                 value={form.state}
                 onChange={handleChange}
+                placeholder="Enter your state..."
                 required
                 className="w-full border border-lightgrey rounded-lg px-3 py-2 text-sm focus:border-blue focus:outline-none"
-              >
-                <option value="">Select State</option>
-                <option>Lagos</option>
-                <option>Abuja</option>
-                <option>Kano</option>
-              </select>
+              />
             </div>
+
             <div>
               <label className="block text-sm font-medium mb-1">City</label>
-              <select
+              <input
                 name="city"
+                type="text"
                 value={form.city}
                 onChange={handleChange}
+                placeholder="Enter your city..."
                 required
                 className="w-full border border-lightgrey rounded-lg px-3 py-2 text-sm focus:border-blue focus:outline-none"
-              >
-                <option value="">Select City</option>
-                <option>Ikeja</option>
-                <option>Victoria Island</option>
-                <option>Maitama</option>
-              </select>
+              />
             </div>
           </div>
 
