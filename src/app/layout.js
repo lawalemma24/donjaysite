@@ -14,28 +14,11 @@ export const metadata = {
     template: "%s | Donjay Autos",
   },
   description:
-    "Experience the best car deals in Nigeria. We help you buy, sell, swap and inspect vehicles with transparency and trust.",
+    "Looking for your next ride? Browse cars for sale in Nigeria, compare prices, sell or swap vehicles and book trusted car inspections easily.",
   icons: {
-    icon: [
-      { url: "/favicon-32x32.png", sizes: "32x32", type: "image/png" },
-      { url: "/favicon-16x16.png", sizes: "16x16", type: "image/png" },
-      { url: "/favicon.ico" },
-    ],
-    apple: [
-      { url: "/apple-touch-icon.png", sizes: "180x180", type: "image/png" },
-    ],
-    other: [
-      {
-        rel: "android-chrome",
-        url: "/android-chrome-192x192.png",
-        sizes: "192x192",
-      },
-      {
-        rel: "android-chrome",
-        url: "/android-chrome-512x512.png",
-        sizes: "512x512",
-      },
-    ],
+    icon: "/favicon.ico",
+    shortcut: "/favicon.ico",
+    apple: "/apple-touch-icon.png",
   },
   manifest: "/site.webmanifest",
   verification: {

@@ -2,21 +2,21 @@ import TestimonialCard from "./testimonialcard";
 
 const testimonials = [
   {
-    name: "Andrew John",
+    name: "Andrew Chibuike ",
     comment:
       "I sold my Toyota Corolla in just a few hours. The process was straightforward and stress-free.",
-    image: "/images/testimonial1.png",
+    image: "/images/nige.webp",
     stars: 5,
   },
   {
-    name: "Gabriel Sam",
+    name: "Gabriel Abayomi",
     comment:
       "Booked an inspection before buying a used car. The report was thorough and helped me make the right decision.",
-    image: "/images/testimonial2.png",
+    image: "/images/nige1.jpg",
     stars: 5,
   },
   {
-    name: "Cynthia Philip",
+    name: "Cynthia Blessing",
     comment:
       "I bought my Honda Accord here and it was exactly as described clean, affordable, and ready to drive.",
     image: "/images/testimonial3.png",
