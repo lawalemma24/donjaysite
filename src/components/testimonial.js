@@ -5,7 +5,7 @@ const testimonials = [
     name: "Andrew Chibuike ",
     comment:
       "Sold my Toyota Corolla in just a few hours. The process was straightforward and stress-free.",
-    image: "/images/nige.webp",
+    image: "/images/andd.jpeg",
     stars: 5,
   },
   {
