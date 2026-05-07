@@ -30,11 +30,14 @@ export default function Contact() {
     setStatus({ type: "", message: "" });
 
     try {
-      const res = await fetch("https://donjay-backend.vercel.app/api/contact/submit", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(formData),
-      });
+      const res = await fetch(
+        "https://donjay-backend.vercel.app/api/contact/submit",
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(formData),
+        }
+      );
 
       const data = await res.json();
 
@@ -91,11 +94,11 @@ export default function Contact() {
             </div>
             <div className="flex items-center gap-3">
               <FaEnvelope className="text-blue-600 text-xl" />
-              <span className="text-gray-700">donjayauto@gmail.com</span>
+              <span className="text-gray-700">donjayautos@gmail.com</span>
             </div>
             <div className="flex items-center gap-3">
               <FaPhone className="text-blue-600 text-xl" />
-              <span className="text-gray-700">08012345678</span>
+              <span className="text-gray-700">08146506157</span>
             </div>
           </div>
 
@@ -124,10 +127,11 @@ export default function Contact() {
 
           {status.message && (
             <p
-              className={`mb-4 px-4 py-2 rounded ${status.type === "success"
+              className={`mb-4 px-4 py-2 rounded ${
+                status.type === "success"
                   ? "bg-green-100 text-green-700"
                   : "bg-red-100 text-red-700"
-                }`}
+              }`}
             >
               {status.message}
             </p>
