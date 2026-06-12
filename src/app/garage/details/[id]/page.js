@@ -1,8 +1,8 @@
 "use client";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useParams, useRouter } from "next/navigation";
 import Image from "next/image";
-import { Eye, MessageCircle } from "lucide-react";
+import { Eye, MessageCircle, ChevronLeft, ChevronRight } from "lucide-react";
 import RelatedCars from "@/components/relatedcars";
 import api from "@/utils/api";
 
@@ -22,6 +22,17 @@ export default function CarDetails() {
   const [modalImage, setModalImage] = useState(null);
   const [submitting, setSubmitting] = useState(false);
   const [showNotRegistered, setShowNotRegistered] = useState(false);
+  const scrollRef = useRef(null);
+
+  const scroll = (direction) => {
+    if (scrollRef.current) {
+      const { scrollLeft } = scrollRef.current;
+      const scrollAmount = 200;
+      const scrollTo = direction === "left" ? scrollLeft - scrollAmount : scrollLeft + scrollAmount;
+      scrollRef.current.scrollTo({ left: scrollTo, behavior: "smooth" });
+    }
+  };
+
 
   useEffect(() => {
     const fetchCar = async () => {
@@ -107,22 +118,43 @@ export default function CarDetails() {
               />
             </div>
 
-            <div className="flex gap-3 mt-4 overflow-x-auto scrollbar-hide">
-              {allImages.map((img, idx) => (
-                <div
-                  key={idx}
-                  className={`relative w-24 h-20 flex-shrink-0 border rounded overflow-hidden cursor-pointer 
-        ${img === mainImage ? "border-black" : "border-lightgrey"}`}
-                  onClick={() => handleThumbnailClick(img)}
-                >
-                  <Image
-                    src={img}
-                    alt={`Thumbnail ${idx}`}
-                    fill
-                    className="object-cover"
-                  />
-                </div>
-              ))}
+            <div className="relative flex items-center mt-4">
+              <button
+                onClick={() => scroll("left")}
+                className="absolute left-0 z-10 bg-white/80 p-1 rounded-full shadow-md hover:bg-white transition-colors"
+                aria-label="Scroll left"
+              >
+                <ChevronLeft className="w-5 h-5 text-gray-700" />
+              </button>
+
+              <div
+                ref={scrollRef}
+                className="flex gap-3 overflow-x-auto scrollbar-hide px-8 scroll-smooth"
+              >
+                {allImages.map((img, idx) => (
+                  <div
+                    key={idx}
+                    className={`relative w-24 h-20 flex-shrink-0 border rounded overflow-hidden cursor-pointer 
+          ${img === mainImage ? "border-black" : "border-lightgrey"}`}
+                    onClick={() => handleThumbnailClick(img)}
+                  >
+                    <Image
+                      src={img}
+                      alt={`Thumbnail ${idx}`}
+                      fill
+                      className="object-cover"
+                    />
+                  </div>
+                ))}
+              </div>
+
+              <button
+                onClick={() => scroll("right")}
+                className="absolute right-0 z-10 bg-white/80 p-1 rounded-full shadow-md hover:bg-white transition-colors"
+                aria-label="Scroll right"
+              >
+                <ChevronRight className="w-5 h-5 text-gray-700" />
+              </button>
             </div>
           </div>
 
