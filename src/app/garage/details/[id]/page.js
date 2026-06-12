@@ -193,7 +193,7 @@ export default function CarDetails() {
             </div>
 
             <a
-              href={`https://wa.me/2349082824893?text=${encodeURIComponent(
+              href={`https://wa.me/2348146506157?text=${encodeURIComponent(
                 `Hello Donjay, I'm interested in the ${car.carName} ${car.carModel} (${car.year}) priced at ₦${car.price?.toLocaleString()}. I'd like more details.`
               )}`}
               target="_blank"
