@@ -2,7 +2,7 @@
 import { useState, useEffect } from "react";
 import { useParams, useRouter } from "next/navigation";
 import Image from "next/image";
-import { Eye } from "lucide-react";
+import { Eye, MessageCircle } from "lucide-react";
 import RelatedCars from "@/components/relatedcars";
 import api from "@/utils/api";
 
@@ -191,6 +191,18 @@ export default function CarDetails() {
                 Buy
               </button>
             </div>
+
+            <a
+              href={`https://wa.me/2349082824893?text=${encodeURIComponent(
+                `Hello Donjay, I'm interested in the ${car.carName} ${car.carModel} (${car.year}) priced at ₦${car.price?.toLocaleString()}. I'd like more details.`
+              )}`}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="w-full bg-[#25D366] text-white rounded-lg px-9 py-2 font-medium hover:bg-[#22c35e] mt-4 flex items-center justify-center gap-2"
+            >
+              <MessageCircle className="w-5 h-5" />
+              Chat on WhatsApp
+            </a>
           </div>
         </div>
       </div>
