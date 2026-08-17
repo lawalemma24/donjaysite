@@ -37,6 +37,7 @@ body {
 *::-webkit-scrollbar {
   display: none;
 }
+
 /* ensure inputs have border and no ring */
 input,
 textarea,

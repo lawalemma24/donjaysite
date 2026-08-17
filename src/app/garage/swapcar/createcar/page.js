@@ -201,6 +201,16 @@ const CAR_DATA = {
   Acura: ["Integra", "TLX", "RDX", "MDX"],
 
   Infiniti: ["Q50", "Q60", "QX50", "QX60", "QX80"],
+
+  Chery: [
+    "Tiggo 9",
+    "Tiggo 8 Pro",
+    "Tiggo 4",
+    "Q",
+    "Himla",
+    "Icaur",
+    "Arrizo 5",
+  ],
 };
 
 const swapPage = () => {
