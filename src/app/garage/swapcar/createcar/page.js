@@ -424,7 +424,7 @@ const swapPage = () => {
                   value={form.year}
                   onChange={(e) => setForm({ ...form, year: e.target.value })}
                 >
-                  {Array.from({ length: 30 }, (_, i) => 2026 - i).map((yr) => (
+                  {Array.from({ length: 31 }, (_, i) => 2027 - i).map((yr) => (
                     <option key={yr}>{yr}</option>
                   ))}
                 </select>

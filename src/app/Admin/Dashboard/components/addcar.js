@@ -356,8 +356,8 @@ export default function AddCarForm({
                 label="Year"
                 name="year"
                 options={Array.from(
-                  { length: 2026 - 1996 + 1 },
-                  (_, i) => 2026 - i
+                  { length: 2027 - 1996 + 1 },
+                  (_, i) => 2027 - i
                 )}
                 onChange={handleChange}
               />
