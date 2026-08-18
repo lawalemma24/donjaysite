@@ -208,7 +208,7 @@ const CAR_DATA = {
     "Tiggo 4",
     "Q",
     "Himla",
-    "Icaur",
+    "ICAR",
     "Arrizo 5",
   ],
 };
