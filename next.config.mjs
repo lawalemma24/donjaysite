@@ -1,16 +1,13 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   images: {
-    domains: [
-      "api.dicebear.com", // ✅ ADD THIS
-      "avatar.iran.liara.run",
-      "example.com",
-      "images.unsplash.com",
-      "res.cloudinary.com",
+    remotePatterns: [
+      { protocol: "https", hostname: "api.dicebear.com" },
+      { protocol: "https", hostname: "avatar.iran.liara.run" },
+      { protocol: "https", hostname: "example.com" },
+      { protocol: "https", hostname: "images.unsplash.com" },
+      { protocol: "https", hostname: "res.cloudinary.com" },
     ],
-  },
-  eslint: {
-    ignoreDuringBuilds: true,
   },
   turbopack: {
     root: "./",
